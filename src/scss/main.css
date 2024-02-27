@@ -1,0 +1,105 @@
+.border-round-1em {
+  border-radius: 1em !important;
+}
+
+.border-round-2em {
+  border-radius: 2em !important;
+}
+
+.border-round-3em {
+  border-radius: 3em !important;
+}
+
+body {
+  padding: 10px;
+  font-family: "Roboto";
+  box-sizing: border-box;
+  width: calc(100vw - 20px);
+  height: calc(100vh - 20px);
+  background-color: #f7f7f7;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+.error-border {
+  border: 1px solid red;
+}
+
+.errorCard {
+  position: relative;
+  top: -200px;
+  transition: top 1s ease-in-out !important;
+  z-index: -1;
+  background: #fca3a3 !important;
+}
+.errorCard.show {
+  top: 0;
+}
+
+.up-shadow {
+  transition: all 0.3s ease;
+}
+.up-shadow:hover {
+  box-shadow: 1px 1px 2px 2px rgba(0, 0, 0, 0.3);
+  transform: translate(-1px, -1px);
+}
+
+.down-shadow {
+  transition: all 0.2s ease;
+}
+.down-shadow:hover {
+  transform: scale(0.99) translateY(1px);
+  box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.3);
+}
+
+.in-depth {
+  transform: scale(0.99) translateY(1px);
+  box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.3);
+  background-color: #f7f7f7;
+}
+
+.my-tabs {
+  border-radius: 15px;
+  min-width: auto !important;
+  min-height: auto !important;
+  padding: 7px 16px !important;
+}
+
+.shadow {
+  box-shadow: 1px 1px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+.shadow-inner {
+  box-shadow: inset 1px 1px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+.table-container {
+  height: 100% !important;
+  padding: 30px 0;
+}
+
+.padding30 {
+  padding: 30px !important;
+}
+
+.margin30 {
+  margin: 30px !important;
+  box-sizing: border-box;
+}
+
+.background {
+  background-color: #f7f7f7;
+}
+
+.disabled {
+  background-color: #f7f7f7;
+}
+
+.align-top {
+  vertical-align: top;
+}
+
+/*# sourceMappingURL=main.css.map */
