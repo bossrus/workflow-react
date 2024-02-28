@@ -1,10 +1,15 @@
 import LoginComponent from '@/components/login/login.component.tsx';
-import mainDepartmentsComponents from '@/components/settings/departments/_mainDepartmentsComponent.tsx';
+import mainDepartmentsComponents from '@/components/settings/departments/_mainDepartments.component.tsx';
+import mainTypesOfWorkComponents from '@/components/settings/typesOfWork/_mainTypesOfWork.component.tsx';
 
 const routes = [
 	{
 		path: '/settings/departments',
 		Component: mainDepartmentsComponents,
+	},
+	{
+		path: '/settings/types-of-work',
+		Component: mainTypesOfWorkComponents,
 	},
 	{
 		path: '/settings',

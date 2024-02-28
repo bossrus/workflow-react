@@ -26,13 +26,13 @@ function mainDepartmentsComponents() {
 	const [numberInWorkflow, setNumberInWorkflow] = useState('');
 	const [isUsedInWorkflow, setIsUsedInWorkflow] = useState(true);
 	const [switchLabel, setSwitchLabel] = useState('');
-	const [editedDepartment, setEditedDepartment] = useState('');
+	const [titleOfEditedDepartment, setTitleOfEditedDepartment] = useState('');
 	const [stopSave, setStopSave] = useState(true);
 
 	useEffect(() => {
 		if (currentDepartment) {
 			setTitle(departmentsObject[currentDepartment].title);
-			setEditedDepartment(departmentsObject[currentDepartment].title);
+			setTitleOfEditedDepartment(departmentsObject[currentDepartment].title);
 			setNumberInWorkflow(departmentsObject[currentDepartment].numberInWorkflow);
 			setIsUsedInWorkflow(departmentsObject[currentDepartment].isUsedInWorkflow);
 		}
@@ -69,7 +69,7 @@ function mainDepartmentsComponents() {
 			currentDepartment: id,
 		}));
 		if (id === undefined) {
-			setEditedDepartment('');
+			setTitleOfEditedDepartment('');
 		}
 	};
 
@@ -77,7 +77,7 @@ function mainDepartmentsComponents() {
 		setTitle('');
 		setNumberInWorkflow('');
 		setIsUsedInWorkflow(true);
-		setEditedDepartment('');
+		setTitleOfEditedDepartment('');
 		setStopSave(true);
 		changeEditedDepartment(undefined);
 	};
@@ -155,7 +155,7 @@ function mainDepartmentsComponents() {
 					className={'in-depth border-round-1em'}
 				>
 					{
-						editedDepartment !== '' && <>
+						titleOfEditedDepartment !== '' && <>
 							<Typography
 								variant="h5"
 								component="h2"
@@ -167,7 +167,7 @@ function mainDepartmentsComponents() {
 									borderRadius: '10px',
 								}}>
 
-								Редактирование отдела «<strong>{editedDepartment}</strong>»
+								Редактирование отдела «<strong>{titleOfEditedDepartment}</strong>»
 							</Typography>
 						</>
 					}
@@ -234,14 +234,14 @@ function mainDepartmentsComponents() {
 						disabled={stopSave}
 						onClick={saveDepartment}
 					>
-						{editedDepartment === ''
+						{titleOfEditedDepartment === ''
 							? 'Добавить новый отдел'
-							: `Сохранить отдел «${editedDepartment}»`
+							: `Сохранить отдел «${titleOfEditedDepartment}»`
 
 						}
 					</Button>
 
-					{editedDepartment !== '' &&
+					{titleOfEditedDepartment !== '' &&
 						<Button
 							variant="contained"
 							size="small"
@@ -251,7 +251,7 @@ function mainDepartmentsComponents() {
 							className={'up-shadow'}
 							onClick={() => changeEditedDepartment(undefined)}
 						>
-							отменить редактирование отдела «{editedDepartment}»
+							отменить редактирование отдела «{titleOfEditedDepartment}»
 						</Button>}
 
 				</Box>

@@ -2,7 +2,7 @@ export interface ICurrentStatesLocal {
 	error: string;
 	data: string;
 	currentDepartment: string;
-	currentType: string;
+	currentTypeOfWork: string;
 	currentWorkflowInWork: string;
 	currentFirm: string;
 	currentWindow: string;

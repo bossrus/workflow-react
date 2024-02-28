@@ -92,7 +92,7 @@ export const createExtraReducers = <T>(storeName: string) => (builder: ActionRed
 					return action.type === patchOne.fulfilled.type && action.store === storeName;
 				},
 				(state, action: PayloadAction<TWithId<T>>) => {
-					console.log('отловили departments patch');
+					console.log('отловили patch');
 					console.log('\taction.payload = ', action.payload);
 					state.data[action.payload._id!] = {
 						...state.data[action.payload._id!],
@@ -106,6 +106,8 @@ export const createExtraReducers = <T>(storeName: string) => (builder: ActionRed
 					return action.type === patchOne.rejected.type && action.payload?.store === storeName;
 				},
 				(state, action: PayloadAction<IError | undefined | null>) => {
+					console.log('отловили patch error');
+					console.log('\taction.payload = ', action.payload);
 					if (action.payload)
 						state.error = {
 							status: action.payload.status,

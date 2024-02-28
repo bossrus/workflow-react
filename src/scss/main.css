@@ -1,3 +1,21 @@
+.my-snackbar-enter {
+  transform: translateY(-100%);
+}
+
+.my-snackbar-enter-active {
+  transform: translateY(0);
+  transition: transform 500ms;
+}
+
+.my-snackbar-exit {
+  transform: translateY(0);
+}
+
+.my-snackbar-exit-active {
+  transform: translateY(-100%);
+  transition: transform 500ms;
+}
+
 .border-round-1em {
   border-radius: 1em !important;
 }

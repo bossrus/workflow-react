@@ -3,15 +3,18 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { authLoad, load, patchOne } from '@/store/_api.slice.ts';
 import { TAppDispatch } from '@/store/_store.ts';
-import { Box } from '@mui/material';
+import { Alert, Box, Snackbar } from '@mui/material';
 import routes from '@/routes/route.ts';
 import { useLocation, useNavigate, useRoutes } from 'react-router-dom';
 import { getAuth } from '@/_security/auth.ts';
-import { IAuthInterface } from '@/interfaces/auth.interface.ts';
+import { IAuthInterface, IError } from '@/interfaces/auth.interface.ts';
 import { useWebSocket } from '@/components/app/websocket.hook.ts';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import AppHeaderComponent from '@/components/app/appHeader.component.tsx';
 import { clearMe } from '@/store/me.slice.ts';
+import { clearDepartmentsError } from '@/store/departments.slice.ts';
+import { clearUsersError } from '@/store/users.slice.ts';
+import { clearTypesOfWorkError } from '@/store/typesOfWork.slice.ts';
 
 function App() {
 
@@ -22,9 +25,35 @@ function App() {
 
 	const [auth, setAuth] = useState<IAuthInterface | null>(null);
 
+
+	const [anyError, setAnyError] = useState<string>('');
 	const { me, meError, departmentsObject, users, onlineUsers } = useReduxSelectors();
 
+	const {
+		departmentsError,
+		usersError,
+		onlineUsersError,
+		typesOfWorkError,
+	} = useReduxSelectors();
+
+	const errors = [departmentsError, usersError, onlineUsersError, typesOfWorkError];
+
 	const dispatch = useDispatch<TAppDispatch>();
+
+	useEffect(() => {
+		const messages = errors.filter(Boolean).map(error => (error as IError).message);
+		if (messages.length > 0) {
+			setTimeout(() => {
+				console.log('запускаем очистку ошибок');
+				dispatch(clearDepartmentsError());
+				dispatch(clearUsersError());
+				dispatch(clearTypesOfWorkError());
+				console.log('очистили');
+			}, 5000);
+		}
+		setAnyError(messages.join('\n'));
+	}, [departmentsError, usersError, onlineUsersError, typesOfWorkError]);
+
 
 	useEffect(() => {
 		if (location != '/login')
@@ -101,6 +130,19 @@ function App() {
 			{location != '/login' ?
 				(
 					<Box display="flex" flexDirection="column" height="100%">
+						<Snackbar
+							anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+							open={anyError !== ''}
+							sx={{ verticalAlign: 'center' }}
+						>
+							<Alert
+								severity="warning"
+								variant="filled"
+								sx={{ width: '100%', alignContent: 'center', verticalAlign: 'center' }}
+							>
+								{anyError}
+							</Alert>
+						</Snackbar>
 						<AppHeaderComponent
 							changeMyDepartment={changeMyDepartment}
 							changeSounds={changeSounds}

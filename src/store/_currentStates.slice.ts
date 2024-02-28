@@ -20,3 +20,4 @@ export const { setState } = currentStatesSlice.actions;
 export const currentStatesReducer = currentStatesSlice.reducer;
 
 export const selectCurrentStates = (state: TAppState) => state.currentStates;
+export const selectCurrentStatesError = (state: TAppState) => state.currentStates.error;

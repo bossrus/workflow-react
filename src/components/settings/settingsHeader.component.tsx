@@ -21,7 +21,7 @@ const tabs = [
 	},
 	{
 		label: 'Типы работ',
-		url: 'types',
+		url: 'types-of-work',
 	},
 	{
 		label: 'Сотрудники',

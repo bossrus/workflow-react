@@ -7,6 +7,9 @@ import { IError } from '@/interfaces/auth.interface.ts';
 interface AxiosError {
 	response?: {
 		status: number;
+		data: {
+			message: string;
+		}
 	};
 	message: string;
 }
@@ -85,7 +88,7 @@ export const patchOne = createAsyncThunk<any, { url: IUrls, data: any }, { rejec
 			}
 			return rejectWithValue({
 				status: err.response.status,
-				message: err.message,
+				message: err.response.data.message,
 				store: url,
 			});
 		}
