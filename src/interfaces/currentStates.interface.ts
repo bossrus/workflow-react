@@ -6,6 +6,8 @@ export interface ICurrentStatesLocal {
 	currentWorkflowInWork: string;
 	currentFirm: string;
 	currentWindow: string;
+	currentModification: string;
+	currentUser: string;
 }
 
 export type ICurrentStates = Partial<ICurrentStatesLocal>;

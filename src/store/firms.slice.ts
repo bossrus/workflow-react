@@ -1,6 +1,6 @@
 // src/store/firms.slice.ts
 import { createSlice } from '@reduxjs/toolkit';
-import { IFirm, IFirmStore } from '@/interfaces/firm.interface.ts';
+import { IFirm, IFirmsObject, IFirmStore } from '@/interfaces/firm.interface.ts';
 import { createExtraReducers } from '@/store/_shared.reducers.ts';
 import {
 	createAllItemsArraySelector,
@@ -19,7 +19,7 @@ export const firmsSlice = createSlice({
 	name: '@@firms',
 	initialState,
 	reducers: {
-		clearFirmsError: (state, _action) => {
+		clearFirmsError: (state) => {
 			state.error = undefined;
 		},
 	},
@@ -30,6 +30,8 @@ export const { clearFirmsError } = firmsSlice.actions;
 export const firmsReducer = firmsSlice.reducer;
 
 export const selectAllFirmsArray = createAllItemsArraySelector<IFirm>('firms');
-export const selectAllFirmsObject = (state: TAppState) => selectAllItemsObject(state, 'firms');
+export const selectAllFirmsObject = (state: TAppState) => selectAllItemsObject(state, 'firms') as IFirmsObject;
 export const selectFirmById = createItemByIdSelector<IFirm>('firms');
 export const selectFirmVersionById = createItemVersionByIdSelector<IFirm>('firms');
+
+export const selectFirmsError = (state: TAppState) => state.firms.error;

@@ -1,6 +1,6 @@
 // src/store/modifications.slice.ts
 import { createSlice } from '@reduxjs/toolkit';
-import { IModification, IModificationStore } from '@/interfaces/modification.interface.ts';
+import { IModification, IModificationsObject, IModificationStore } from '@/interfaces/modification.interface.ts';
 import { createExtraReducers } from '@/store/_shared.reducers.ts';
 import {
 	createAllItemsArraySelector,
@@ -19,7 +19,7 @@ export const modificationsSlice = createSlice({
 	name: '@@modifications',
 	initialState,
 	reducers: {
-		clearModificationsError: (state, _action) => {
+		clearModificationsError: (state) => {
 			state.error = undefined;
 		},
 	},
@@ -30,6 +30,8 @@ export const { clearModificationsError } = modificationsSlice.actions;
 export const modificationsReducer = modificationsSlice.reducer;
 
 export const selectAllModificationsArray = createAllItemsArraySelector<IModification>('modifications');
-export const selectAllModificationsObject = (state: TAppState) => selectAllItemsObject(state, 'modifications');
+export const selectAllModificationsObject = (state: TAppState): IModificationsObject => selectAllItemsObject(state, 'modifications') as IModificationsObject;
 export const selectModificationById = createItemByIdSelector<IModification>('modifications');
 export const selectModificationVersionById = createItemVersionByIdSelector<IModification>('modifications');
+
+export const selectModificationsError = (state: TAppState) => state.modifications.error;

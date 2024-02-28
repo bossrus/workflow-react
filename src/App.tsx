@@ -7,14 +7,12 @@ import { Alert, Box, Snackbar } from '@mui/material';
 import routes from '@/routes/route.ts';
 import { useLocation, useNavigate, useRoutes } from 'react-router-dom';
 import { getAuth } from '@/_security/auth.ts';
-import { IAuthInterface, IError } from '@/interfaces/auth.interface.ts';
+import { IAuthInterface } from '@/interfaces/auth.interface.ts';
 import { useWebSocket } from '@/components/app/websocket.hook.ts';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import AppHeaderComponent from '@/components/app/appHeader.component.tsx';
 import { clearMe } from '@/store/me.slice.ts';
-import { clearDepartmentsError } from '@/store/departments.slice.ts';
-import { clearUsersError } from '@/store/users.slice.ts';
-import { clearTypesOfWorkError } from '@/store/typesOfWork.slice.ts';
+import { useErrors } from '@/_hooks/errors.hook.ts';
 
 function App() {
 
@@ -26,34 +24,11 @@ function App() {
 	const [auth, setAuth] = useState<IAuthInterface | null>(null);
 
 
-	const [anyError, setAnyError] = useState<string>('');
-	const { me, meError, departmentsObject, users, onlineUsers } = useReduxSelectors();
+	const { me, meError, departmentsObject, usersObject: users, onlineUsers } = useReduxSelectors();
 
-	const {
-		departmentsError,
-		usersError,
-		onlineUsersError,
-		typesOfWorkError,
-	} = useReduxSelectors();
-
-	const errors = [departmentsError, usersError, onlineUsersError, typesOfWorkError];
+	const { anyError } = useErrors();
 
 	const dispatch = useDispatch<TAppDispatch>();
-
-	useEffect(() => {
-		const messages = errors.filter(Boolean).map(error => (error as IError).message);
-		if (messages.length > 0) {
-			setTimeout(() => {
-				console.log('запускаем очистку ошибок');
-				dispatch(clearDepartmentsError());
-				dispatch(clearUsersError());
-				dispatch(clearTypesOfWorkError());
-				console.log('очистили');
-			}, 5000);
-		}
-		setAnyError(messages.join('\n'));
-	}, [departmentsError, usersError, onlineUsersError, typesOfWorkError]);
-
 
 	useEffect(() => {
 		if (location != '/login')
@@ -91,6 +66,7 @@ function App() {
 			dispatch(load({ url: 'firms' }));
 			dispatch(load({ url: 'modifications' }));
 			dispatch(load({ url: 'users' }));
+			dispatch(load({ url: 'users' }));
 			dispatch(load({ url: 'typesOfWork' }));
 		}
 	}, [dispatch, me]);
@@ -98,7 +74,7 @@ function App() {
 	const { isConnected, socket } = useWebSocket(auth, me, users);
 
 	const connectToWebsocket = () => {
-		console.log('мы коннект');
+		console.log('мы коннект к вебсокету');
 		if (socket)
 			(socket as Socket).connect();
 	};

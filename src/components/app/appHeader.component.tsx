@@ -2,12 +2,12 @@ import { Box, FormControl, MenuItem, Select } from '@mui/material';
 import { IUserObject, IUserUpdate } from '@/interfaces/user.interface.ts';
 import OnlineIconComponent from '@/components/app/onlineIcon.component.tsx';
 import RightButtonsGroupComponent from '@/components/app/rightButtonsGroup.component.tsx';
-import { IDepartmentObject } from '@/interfaces/department.interface.ts';
+import { IDepartmentsObject } from '@/interfaces/department.interface.ts';
 
 interface IAppHeaderProps {
 	me: IUserUpdate,
 	onlineUsers: string[],
-	departments: IDepartmentObject,
+	departments: IDepartmentsObject,
 	isConnected: boolean,
 	users: IUserObject,
 	connectToWebsocket: () => void,

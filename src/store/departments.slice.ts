@@ -1,6 +1,6 @@
 // src/store/departments.slice.ts
 import { createSlice } from '@reduxjs/toolkit';
-import { IDepartment, IDepartmentObject, IDepartmentStore } from '@/interfaces/department.interface.ts';
+import { IDepartment, IDepartmentsObject, IDepartmentStore } from '@/interfaces/department.interface.ts';
 import { createExtraReducers } from '@/store/_shared.reducers.ts';
 import {
 	createAllItemsArraySelector,
@@ -30,7 +30,7 @@ export const { clearDepartmentsError } = departmentsSlice.actions;
 export const departmentsReducer = departmentsSlice.reducer;
 
 export const selectAllDepartmentsArray = createAllItemsArraySelector<IDepartment>('departments');
-export const selectAllDepartmentsObject = (state: TAppState): IDepartmentObject => selectAllItemsObject(state, 'departments') as IDepartmentObject;
+export const selectAllDepartmentsObject = (state: TAppState): IDepartmentsObject => selectAllItemsObject(state, 'departments') as IDepartmentsObject;
 
 export const selectDepartmentsError = (state: TAppState) => state.departments.error;
 
