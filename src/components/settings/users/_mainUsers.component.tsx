@@ -10,50 +10,52 @@ import { IUser, IUserObject, IUserUpdate } from '@/interfaces/user.interface.ts'
 import { deleteOne, patchOne } from '@/store/_api.slice.ts';
 import makeSlug from '@/_services/makeSlug.ts';
 import { loadUsers } from '@/components/settings/users/loadUsers.service.ts';
+import CheckListMainUserComponent from '@/components/settings/users/checkList.MainUser.component.tsx';
+import { IUserRight, USER_RIGHTS } from '@/_constants/userRights.ts';
 
 function mainUsersComponents() {
 	const [users, setUsers] = useState<IUser[]>([]);
 	const [usersObject, setUsersObject] = useState<IUserObject>({});
 
 	useEffect(() => {
-		(async () => {
-			usersLoading(await loadUsers());
-		})();
+		usersLoadingFromApi();
 	}, []);
 
-	const usersLoading = (newUsersObject: IUserObject) => {
-		setUsers(Object.values(newUsersObject));
+	const usersLoadingFromApi = async (): Promise<void> => {
+		fillLocalUserList(await loadUsers());
+	};
+
+	const fillLocalUserList = (newUsersObject: IUserObject) => {
 		setUsersObject(newUsersObject);
+		setUsers(Object.values(newUsersObject));
 		console.log('переменные присвоены');
 	};
 
+	const [rights, setRights] = useState<string[]>([]);
 
 	const { currentUser } = useReduxSelectors().states;
 	const [name, setName] = useState('');
-	const [departments, setDepartments] = useState<string[]>([]);
-	const [canMakeModification, setCanMakeModification] = useState<boolean>(false);
-	const [canSeeStatistics, setCanSeeStatistics] = useState<boolean>(false);
-	const [isAdmin, setIsAdmin] = useState<boolean>(false);
-	const [canStartStopWork, setCanStartStopWork] = useState<boolean>(false);
-	const [canWriteToSupport, setCanWriteToSupport] = useState<boolean>(true);
+	const [usersDepartments, setUsersDepartments] = useState<string[]>([]);
 	const [nameOfEditedUser, setNameOfEditedUser] = useState('');
 	const [stopSave, setStopSave] = useState(true);
 	const [login, setLogin] = useState('');
 	const [password, setPassword] = useState('');
 
-	const { departmentsObject: listOfDepartments } = useReduxSelectors();
+	const { departmentsObject, departmentsArray } = useReduxSelectors();
 	useEffect(() => {
 		if (currentUser) {
 			setName(usersObject[currentUser].name);
 			setNameOfEditedUser(usersObject[currentUser].name);
-			setDepartments(usersObject[currentUser].departments);
-			setCanMakeModification(usersObject[currentUser].canMakeModification);
-			setCanSeeStatistics(usersObject[currentUser].canSeeStatistics);
-			setCanStartStopWork(usersObject[currentUser].canStartStopWorks);
-			setIsAdmin(usersObject[currentUser].isAdmin);
+			setUsersDepartments(usersObject[currentUser].departments);
 			setLogin(usersObject[currentUser].login);
-			setPassword(usersObject[currentUser].password);
-			setCanWriteToSupport(usersObject[currentUser].canWriteToSupport);
+
+			const newRights: IUserRight[] = [];
+			usersObject[currentUser].canMakeModification && newRights.push('create');
+			usersObject[currentUser].canSeeStatistics && newRights.push('stat');
+			usersObject[currentUser].canStartStopWorks && newRights.push('start');
+			usersObject[currentUser].isAdmin && newRights.push('admin');
+			usersObject[currentUser].canWriteToSupport && newRights.push('write');
+			setRights(newRights);
 		}
 	}, [currentUser]);
 
@@ -65,19 +67,22 @@ function mainUsersComponents() {
 
 		const duplicateName = users.some(user => (currentUser !== undefined && user._id !== currentUser) && makeSlug(user.name) === nameSlug);
 		const duplicateLogin = users.some(user => (currentUser !== undefined && user._id !== currentUser) && makeSlug(user.login) === loginSlug);
+		console.log('duplicateName = ', duplicateName);
+		console.log('duplicateLogin = ', duplicateLogin);
+		//TODO а вот фигушки!
 
 		if (name !== '' && login != '' && !duplicateName && !duplicateLogin) {
 			if (currentUser !== undefined) {
 				let currentUserSlug = makeSlug(usersObject[currentUser].name);
 				let isTitleChanged = nameSlug !== currentUserSlug;
-				let isCanMakeModificationChanged = canMakeModification !== usersObject[currentUser].canMakeModification;
-				let isCanWriteToSupportChanged = canWriteToSupport !== usersObject[currentUser].canWriteToSupport;
-				let isSeeStatisticsChanged = canSeeStatistics !== usersObject[currentUser].canSeeStatistics;
-				let isStartStopWorksChanged = canStartStopWork !== usersObject[currentUser].canStartStopWorks;
-				let isAdminChanged = isAdmin !== usersObject[currentUser].isAdmin;
+				let isCanMakeModificationChanged = usersObject[currentUser].canMakeModification !== rights.includes('create');
+				let isCanWriteToSupportChanged = usersObject[currentUser].canWriteToSupport !== rights.includes('write');
+				let isSeeStatisticsChanged = usersObject[currentUser].canSeeStatistics !== rights.includes('stat');
+				let isStartStopWorksChanged = usersObject[currentUser].canStartStopWorks !== rights.includes('start');
+				let isAdminChanged = usersObject[currentUser].isAdmin !== rights.includes('admin');
 				let passwordChanged = password !== '';
 				let loginChanged = login !== usersObject[currentUser].login;
-				let departmentsChanged = JSON.stringify(departments.sort()) !== JSON.stringify(usersObject[currentUser].departments.sort());
+				let departmentsChanged = JSON.stringify(usersDepartments.sort()) !== JSON.stringify(usersObject[currentUser].departments.sort());
 
 
 				canSave = isTitleChanged ||
@@ -91,7 +96,7 @@ function mainUsersComponents() {
 					departmentsChanged;
 			} else {
 				canSave = name != '' &&
-					departments.length > 0 &&
+					usersDepartments.length > 0 &&
 					login != '' &&
 					password != '';
 			}
@@ -101,7 +106,7 @@ function mainUsersComponents() {
 		setStopSave(!canSave);
 
 
-	}, [name, departments, canMakeModification, canSeeStatistics, isAdmin, canStartStopWork, canWriteToSupport, login, password]);
+	}, [name, usersDepartments, rights, login, password]);
 
 	const dispatch = useDispatch<TAppDispatch>();
 
@@ -116,12 +121,8 @@ function mainUsersComponents() {
 
 	const clearFields = () => {
 		setName('');
-		setDepartments([]);
-		setCanMakeModification(false);
-		setCanSeeStatistics(false);
-		setIsAdmin(false);
-		setCanStartStopWork(false);
-		setCanWriteToSupport(true);
+		setUsersDepartments([]);
+		setRights([]);
 		setNameOfEditedUser('');
 		setLogin('');
 		setPassword('');
@@ -134,25 +135,40 @@ function mainUsersComponents() {
 		dispatch(deleteOne({ url: 'users', id }));
 		const newUsersObject = { ...usersObject };
 		delete newUsersObject[id];
-		usersLoading(newUsersObject);
+		fillLocalUserList(newUsersObject);
 	};
 
-	const saveUser = () => {
+	const saveUser = async () => {
 		const user: IUserUpdate = {};
 		if (currentUser !== undefined) user._id = usersObject[currentUser]._id;
-		if (currentUser == undefined || canMakeModification !== usersObject[currentUser].canMakeModification) user.canMakeModification = canMakeModification;
-		if (currentUser == undefined || canWriteToSupport !== usersObject[currentUser].canWriteToSupport) user.canWriteToSupport = canWriteToSupport;
-		if (currentUser == undefined || canSeeStatistics !== usersObject[currentUser].canSeeStatistics) user.canSeeStatistics = canSeeStatistics;
-		if (currentUser == undefined || canStartStopWork !== usersObject[currentUser].canStartStopWorks) user.canStartStopWorks = canStartStopWork;
-		if (currentUser == undefined || isAdmin !== usersObject[currentUser].isAdmin) user.isAdmin = isAdmin;
+		if (currentUser == undefined || usersObject[currentUser].canMakeModification !== rights.includes('create')) user.canMakeModification = rights.includes('create');
+		if (currentUser == undefined || usersObject[currentUser].canWriteToSupport !== rights.includes('write')) user.canWriteToSupport = rights.includes('write');
+		if (currentUser == undefined || usersObject[currentUser].canSeeStatistics !== rights.includes('stat')) user.canSeeStatistics = rights.includes('stat');
+		if (currentUser == undefined || usersObject[currentUser].canStartStopWorks !== rights.includes('start')) user.canStartStopWorks = rights.includes('start');
+		if (currentUser == undefined || usersObject[currentUser].isAdmin !== rights.includes('admin')) user.isAdmin = rights.includes('admin');
 		if (currentUser == undefined || password !== '') user.password = password;
 		if (currentUser == undefined || login !== usersObject[currentUser].login) user.login = login;
 		if (currentUser == undefined || name !== usersObject[currentUser].login) user.name = name;
-		if (currentUser == undefined || JSON.stringify(departments.sort()) !== JSON.stringify(usersObject[currentUser].departments.sort())) user.departments = departments;
+		if (currentUser == undefined || JSON.stringify(usersDepartments.sort()) !== JSON.stringify(usersObject[currentUser].departments.sort())) user.departments = usersDepartments;
 
-		dispatch(patchOne({ url: 'users', data: user }));
+		console.log(user);
+
+		await dispatch(patchOne({ url: 'users', data: user }));
+
+		if (!currentUser) {
+			await usersLoadingFromApi();
+		} else {
+			const newUserObject = { ...usersObject };
+			newUserObject[currentUser] = { ...newUserObject[currentUser], ...user };
+			fillLocalUserList(newUserObject);
+		}
+
 		clearFields();
 	};
+
+	useEffect(() => {
+		console.log('usersDepartments = ', usersDepartments);
+	}, [usersDepartments]);
 
 	return (
 		<>
@@ -174,7 +190,7 @@ function mainUsersComponents() {
 											flexGrow={1}
 											minWidth={250}>
 											<OneUserComponent
-												listOfDepartments={listOfDepartments}
+												listOfDepartments={departmentsObject}
 												deleteUser={deleteUser}
 												currentUser={currentUser}
 												changeEditedUser={changeEditedUser}
@@ -210,14 +226,57 @@ function mainUsersComponents() {
 							</Typography>
 						</>
 					}
-					<TextField
-						fullWidth
-						id="title"
-						label="Название отдела"
-						variant="standard"
-						value={name}
-						onChange={(e) => setName(e.target.value)}
-					/>
+					<Box display="flex" flexWrap="wrap" flexGrow={1} gap={2} sx={{ alignContent: 'flex-start' }}>
+						<Box display={'flex'} flexDirection={'column'}>
+							<Typography variant="caption" sx={{ color: '#989a9b' }}>
+								отделы:
+							</Typography>
+							<CheckListMainUserComponent
+								list={departmentsArray}
+								usingElements={usersDepartments}
+								changeUsingElements={setUsersDepartments}
+							/>
+						</Box>
+						<Box width="100%" minWidth={200} flexBasis={0} flexGrow={1}>
+							<TextField
+								fullWidth
+								id="name"
+								label="Имя"
+								variant="standard"
+								value={name}
+								onChange={(e) => setName(e.target.value)}
+								sx={{ pb: 1 }}
+							/>
+							<TextField
+								fullWidth
+								id="login"
+								label="Логин"
+								variant="standard"
+								value={login}
+								onChange={(e) => setLogin(e.target.value)}
+								sx={{ pb: 1 }}
+							/>
+							<TextField
+								fullWidth
+								id="password"
+								label="Пароль"
+								variant="standard"
+								value={password}
+								onChange={(e) => setPassword(e.target.value)}
+							/>
+						</Box>
+						<Box display={'flex'} flexDirection={'column'}>
+							<Typography variant="caption" sx={{ color: '#989a9b' }}>
+								права:
+							</Typography>
+							<CheckListMainUserComponent
+								list={USER_RIGHTS}
+								usingElements={rights}
+								changeUsingElements={setRights}
+							/>
+						</Box>
+					</Box>
+
 					<Button
 						variant="contained"
 						size="small"
@@ -229,8 +288,8 @@ function mainUsersComponents() {
 						onClick={saveUser}
 					>
 						{nameOfEditedUser === ''
-							? 'Добавить новый отдел'
-							: `Сохранить отдел «${nameOfEditedUser}»`
+							? 'Добавить нового сотрудника'
+							: `Сохранить изменения в сотруднике «${nameOfEditedUser}»`
 
 						}
 					</Button>

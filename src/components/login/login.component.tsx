@@ -4,10 +4,11 @@ import { MouseEvent, useEffect, useState } from 'react';
 import { createOne } from '@/store/_api.slice.ts';
 import { useDispatch, useSelector } from 'react-redux';
 import { TAppDispatch, TAppState } from '@/store/_store.ts';
-import { clearMeError, selectMe, selectMeError } from '@/store/me.slice.ts';
-import { IUser } from '@/interfaces/user.interface.ts';
+import { clearMeError, selectMeError } from '@/store/me.slice.ts';
 import { setAuth } from '@/_security/auth.ts';
 import { useNavigate } from 'react-router-dom';
+import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
+import { clearErrors } from '@/_hooks/errors.hook.ts';
 
 function LoginComponent() {
 	const [showPassword, setShowPassword] = useState(false);
@@ -22,13 +23,13 @@ function LoginComponent() {
 	const [password, setPassword] = useState('');
 	const [wasTry, setWasTry] = useState(false);
 
-	const loginData = useSelector<TAppState>((state) =>
-		selectMe(state),
-	) as IUser;
+	const { me: loginData } = useReduxSelectors();
 
 	useEffect(() => {
+		clearErrors(dispatch);
 		dispatch(clearMeError());
 	}, []);
+
 
 	const loginError = useSelector<TAppState>((state) =>
 		selectMeError(state),
@@ -36,7 +37,7 @@ function LoginComponent() {
 
 	const dispatch = useDispatch<TAppDispatch>();
 
-	async function handleClickLoginButton() {
+	async function clickLoginButton() {
 		setWasTry(true);
 		dispatch(createOne({
 			url: 'users/login', data: {
@@ -49,7 +50,7 @@ function LoginComponent() {
 	const navigate = useNavigate();
 	useEffect(() => {
 		if (Object.keys(loginData).length > 0) {
-			setAuth(loginData._id, loginData.loginToken as string);
+			setAuth(loginData._id!, loginData.loginToken as string);
 			navigate('/');
 		}
 	}, [loginData]);
@@ -104,7 +105,7 @@ function LoginComponent() {
 						onChange={(e) => setPassword(e.target.value)}
 					/>
 					<Button variant="contained" color="primary" sx={{ mt: '2em' }} fullWidth
-							onClick={handleClickLoginButton}>
+							onClick={clickLoginButton}>
 						Войти
 					</Button>
 				</CardContent>

@@ -4,7 +4,7 @@ import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
 import { tooltipProps } from '@/scss/tooltipsProps.ts';
 import { IUser } from '@/interfaces/user.interface.ts';
 import { IDepartmentsObject } from '@/interfaces/department.interface.ts';
-import OneUserCheckboxComponent from '@/components/settings/users/oneUser.checkbox.component.tsx';
+import CheckedStringOneUserComponent from '@/components/settings/users/checkedString.oneUser.component.tsx';
 
 interface IOneUserProps {
 	changeEditedUser: (id: string) => void;
@@ -27,6 +27,7 @@ function OneUserComponent({
 								  canSeeStatistics,
 								  isAdmin,
 								  canStartStopWorks,
+								  canWriteToSupport,
 								  login,
 							  },
 						  }: IOneUserProps) {
@@ -69,16 +70,19 @@ function OneUserComponent({
 						имеющиеся права:
 					</Typography>
 					{
-						canMakeModification && <OneUserCheckboxComponent title={'создать новые номера'} />
+						canMakeModification && <CheckedStringOneUserComponent title={'создать новые номера'} />
 					}
 					{
-						canSeeStatistics && <OneUserCheckboxComponent title={'видеть статистику'} />
+						canSeeStatistics && <CheckedStringOneUserComponent title={'видеть статистику'} />
 					}
 					{
-						canStartStopWorks && <OneUserCheckboxComponent title={'начинать и завершать работу'} />
+						canStartStopWorks && <CheckedStringOneUserComponent title={'начинать и завершать работу'} />
 					}
 					{
-						isAdmin && <OneUserCheckboxComponent title={'администрировать'} />
+						canWriteToSupport && <CheckedStringOneUserComponent title={'писать в поддержку'} />
+					}
+					{
+						isAdmin && <CheckedStringOneUserComponent title={'администрировать'} />
 					}
 				</Box>
 

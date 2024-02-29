@@ -5,7 +5,7 @@ interface IProps {
 	title: string;
 }
 
-function OneUserCheckboxComponent({ title }: IProps) {
+function CheckedStringOneUserComponent({ title }: IProps) {
 	return (
 		<Box display="flex" alignItems="center">
 			<CheckBoxOutlinedIcon
@@ -18,4 +18,4 @@ function OneUserCheckboxComponent({ title }: IProps) {
 	);
 }
 
-export default OneUserCheckboxComponent;
+export default CheckedStringOneUserComponent;
