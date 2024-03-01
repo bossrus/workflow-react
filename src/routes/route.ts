@@ -4,6 +4,7 @@ import mainTypesOfWorkComponent from '@/components/settings/typesOfWork/_mainTyp
 import mainModificationsComponent from '@/components/settings/modifications/_mainModifications.component.tsx';
 import mainFirmsComponents from '@/components/settings/firms/_mainFirms.component.tsx';
 import mainUsersComponents from '@/components/settings/users/_mainUsers.component.tsx';
+import meSettingsComponent from '@/components/settings/me/meSettings.component.tsx';
 
 const routes = [
 	{
@@ -27,8 +28,12 @@ const routes = [
 		Component: mainUsersComponents,
 	},
 	{
+		path: '/settings/error',
+		Component: meSettingsComponent,
+	},
+	{
 		path: '/settings',
-		Component: mainDepartmentsComponent, //TODO сделать по умолчанию "о бо мне"
+		Component: meSettingsComponent,
 	},
 	{
 		path: '/login',

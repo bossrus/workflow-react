@@ -5,7 +5,7 @@ import { authLoad, load, patchOne } from '@/store/_api.slice.ts';
 import { TAppDispatch } from '@/store/_store.ts';
 import { Alert, Box, Snackbar } from '@mui/material';
 import routes from '@/routes/route.ts';
-import { useLocation, useNavigate, useRoutes } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useRoutes } from 'react-router-dom';
 import { getAuth } from '@/_security/auth.ts';
 import { IAuthInterface } from '@/interfaces/auth.interface.ts';
 import { useWebSocket } from '@/components/app/websocket.hook.ts';
@@ -28,6 +28,8 @@ function App() {
 
 	const { anyError } = useErrors();
 
+	const [meEmailError, setMeEmailError] = useState('');
+
 	const dispatch = useDispatch<TAppDispatch>();
 
 	useEffect(() => {
@@ -44,6 +46,14 @@ function App() {
 				}
 
 			})();
+		if (location == '/settings/error') {
+			setMeEmailError('Неверная ссылка подтверждения почты.<br/>Нажмите кнопку "Выслать повторное письмо со ссылкой" и перейдите по ссылке из нового письма');
+			setTimeout(() => {
+				navigate('/settings');
+			}, 5000);
+		} else {
+			setMeEmailError('');
+		}
 	}, [location]);
 
 	useEffect(() => {
@@ -108,15 +118,21 @@ function App() {
 					<Box display="flex" flexDirection="column" height="100%">
 						<Snackbar
 							anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-							open={anyError !== ''}
+							open={anyError !== '' || meEmailError !== ''}
 							sx={{ verticalAlign: 'center' }}
 						>
 							<Alert
 								severity="warning"
 								variant="filled"
-								sx={{ width: '100%', alignContent: 'center', verticalAlign: 'center' }}
+								sx={{
+									fontSize: '13px',
+									width: '100%',
+									alignContent: 'center',
+									verticalAlign: 'center',
+								}}
 							>
 								{anyError}
+								{meEmailError.split('<br/>').map((item, i) => <p key={i}>{item}</p>)}
 							</Alert>
 						</Snackbar>
 						<AppHeaderComponent
@@ -133,9 +149,11 @@ function App() {
 						<Box flexGrow={1}>
 							{routePage}
 						</Box>
-						<Box bgcolor="lightcoral" mt={'20px'}>
+						<Box mt={'20px'}>
 							{location != '/login' &&
-								(<>\ Панель управления \ \ Создать новый заказ \ \ Статистика \</>)}
+								(<> \ <Link to={'/settings'}>Настройки</Link> \ \ Создать новый заказ \ \ Статистика
+									\</>)
+							}
 						</Box>
 					</Box>
 				)

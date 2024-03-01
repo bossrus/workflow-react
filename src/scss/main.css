@@ -120,6 +120,11 @@ body {
   vertical-align: top;
 }
 
+.justify-center {
+  display: flex !important;
+  justify-content: center !important;
+}
+
 .text-gray {
   color: #000000;
 }

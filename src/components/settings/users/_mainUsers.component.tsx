@@ -65,13 +65,18 @@ function mainUsersComponents() {
 		let loginSlug = makeSlug(login);
 
 
-		const duplicateName = users.some(user => (currentUser !== undefined && user._id !== currentUser) && makeSlug(user.name) === nameSlug);
-		const duplicateLogin = users.some(user => (currentUser !== undefined && user._id !== currentUser) && makeSlug(user.login) === loginSlug);
-		console.log('duplicateName = ', duplicateName);
-		console.log('duplicateLogin = ', duplicateLogin);
-		//TODO а вот фигушки!
+		let duplicate = false;
+		for (let user of users) {
+			if (
+				(makeSlug(user.name) === nameSlug || makeSlug(user.login) === loginSlug)
+				&& user._id !== currentUser
+			) {
+				duplicate = true;
+				break;
+			}
+		}
 
-		if (name !== '' && login != '' && !duplicateName && !duplicateLogin) {
+		if (name !== '' && login != '' && !duplicate) {
 			if (currentUser !== undefined) {
 				let currentUserSlug = makeSlug(usersObject[currentUser].name);
 				let isTitleChanged = nameSlug !== currentUserSlug;
@@ -83,7 +88,6 @@ function mainUsersComponents() {
 				let passwordChanged = password !== '';
 				let loginChanged = login !== usersObject[currentUser].login;
 				let departmentsChanged = JSON.stringify(usersDepartments.sort()) !== JSON.stringify(usersObject[currentUser].departments.sort());
-
 
 				canSave = isTitleChanged ||
 					isCanMakeModificationChanged ||
@@ -217,7 +221,7 @@ function mainUsersComponents() {
 								color={'yellow'}
 								sx={{
 									mb: '1em',
-									backgroundColor: '#0288d1', // Замените #color на желаемый цвет фона
+									backgroundColor: '#0288d1',
 									textAlign: 'center',
 									borderRadius: '10px',
 								}}>

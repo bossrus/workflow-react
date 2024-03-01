@@ -26,8 +26,5 @@ export const Root = ({ myStore }: { myStore: Store }) => (
 createRoot(rootElement!).render(<Root myStore={myStore} />);
 
 
-//TODO ПАНЕЛЬ УПРАВЛЕНИЯ:
-//TODO      добавить пользователи
-
 //TODO обновление всех сущностей через вебсокет. включая удаление
 //TODO      добавить возможность создать новый заказ

@@ -16,6 +16,11 @@ export const mesSlice = createSlice({
 	name: '@@mes',
 	initialState,
 	reducers: {
+		changeMeEmail: (state, action: PayloadAction<{ id: string, email: string }>) => {
+			const { id, email } = action.payload;
+			if (action.payload.email)
+				state.data[id].email = email;
+		},
 		clearMeError: (state) => {
 			state.error = undefined;
 		},
@@ -76,7 +81,7 @@ export const mesSlice = createSlice({
 
 export const meReducer = mesSlice.reducer;
 
-export const { clearMeError, clearMe } = mesSlice.actions;
+export const { clearMeError, clearMe, changeMeEmail } = mesSlice.actions;
 export const selectMe = createSelector(
 	(state: TAppState) => state.me.data,
 	(me) => {
