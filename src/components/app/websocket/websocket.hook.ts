@@ -7,8 +7,15 @@ import { setOnline } from '@/store/usersOnline.slice.ts';
 import { IAuthInterface } from '@/interfaces/auth.interface.ts';
 import { IUserObject, IUserUpdate } from '@/interfaces/user.interface.ts';
 import { TAppDispatch } from '@/store/_store.ts';
+import { removeUser } from '@/store/users.slice.ts';
 
-export const useWebSocket = (auth: IAuthInterface | null, me: IUserUpdate, users: IUserObject) => {
+interface IProps {
+	auth: IAuthInterface | null;
+	users: IUserObject;
+	me: IUserUpdate;
+}
+
+export const useWebSocket = ({ auth, me, users }: IProps) => {
 	const [isConnected, setIsConnected] = useState(false);
 	const dispatch = useDispatch<TAppDispatch>();
 	let socket: Socket | null = null;
@@ -22,6 +29,7 @@ export const useWebSocket = (auth: IAuthInterface | null, me: IUserUpdate, users
 		if (id == me._id && me.version !== version) {
 			dispatch(loadById({ url: 'users/me', id }));
 		}
+		if (operation === 'delete' && users[id]) dispatch(removeUser(id));
 	};
 
 	useEffect(() => {

@@ -8,6 +8,7 @@ import { usersOnlineReducer } from '@/store/usersOnline.slice.ts';
 import { typesOfWorksReducer } from '@/store/typesOfWork.slice.ts';
 import { modificationsReducer } from '@/store/modifications.slice.ts';
 import { currentStatesReducer } from '@/store/_currentStates.slice.ts';
+import { workflowsReducer } from '@/store/workflows.slice.ts';
 
 
 export const myStore = configureStore({
@@ -20,6 +21,7 @@ export const myStore = configureStore({
 		me: meReducer,
 		typesOfWork: typesOfWorksReducer,
 		currentStates: currentStatesReducer,
+		workflows: workflowsReducer,
 	},
 });
 

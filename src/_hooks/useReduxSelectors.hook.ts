@@ -13,7 +13,7 @@ import { selectAllUsersArray, selectAllUsersObject, selectUsersError } from '@/s
 import { selectOnlineUsers, selectOnlineUsersError } from '@/store/usersOnline.slice.ts';
 import { ICurrentStates } from '@/interfaces/currentStates.interface.ts';
 import { selectCurrentStates } from '@/store/_currentStates.slice.ts';
-import { ITypeOfWork, ITypeOfWorkObject } from '@/interfaces/worktype.interface.ts';
+import { ITypeOfWork, ITypesOfWorkObject } from '@/interfaces/worktype.interface.ts';
 import {
 	selectAllTypesOfWorkArray,
 	selectAllTypesOfWorkObject,
@@ -27,6 +27,8 @@ import {
 } from '@/store/modifications.slice.ts';
 import { IFirm, IFirmsObject } from '@/interfaces/firm.interface.ts';
 import { selectAllFirmsArray, selectAllFirmsObject, selectFirmsError } from '@/store/firms.slice.ts';
+import { IWorkflow, IWorkflowsObject } from '@/interfaces/workflow.interface.ts';
+import { selectAllWorkflowsArray, selectAllWorkflowsObject, selectWorkflowsError } from '@/store/workflows.slice.ts';
 
 export const useReduxSelectors = () => {
 
@@ -54,9 +56,13 @@ export const useReduxSelectors = () => {
 
 	const states = useSelector<TAppState, ICurrentStates>((state) => selectCurrentStates(state));
 
-	const typesOfWorkObject = useSelector<TAppState, ITypeOfWorkObject>((state) => selectAllTypesOfWorkObject(state));
+	const typesOfWorkObject = useSelector<TAppState, ITypesOfWorkObject>((state) => selectAllTypesOfWorkObject(state));
 	const typesOfWorkArray = useSelector<TAppState, ITypeOfWork[]>((state) => selectAllTypesOfWorkArray(state));
 	const typesOfWorkError = useSelector<TAppState, IError | null | undefined>((state) => selectTypesOfWorkError(state));
+
+	const workflowsObject = useSelector<TAppState, IWorkflowsObject>((state) => selectAllWorkflowsObject(state));
+	const workflowsArray = useSelector<TAppState, IWorkflow[]>((state) => selectAllWorkflowsArray(state));
+	const workflowsError = useSelector<TAppState, IError | null | undefined>((state) => selectWorkflowsError(state));
 
 
 	return {
@@ -87,5 +93,9 @@ export const useReduxSelectors = () => {
 		typesOfWorkObject,
 		typesOfWorkArray,
 		typesOfWorkError,
+
+		workflowsObject,
+		workflowsArray,
+		workflowsError,
 	};
 };

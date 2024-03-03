@@ -8,7 +8,7 @@ import routes from '@/routes/route.ts';
 import { Link, useLocation, useNavigate, useRoutes } from 'react-router-dom';
 import { getAuth } from '@/_security/auth.ts';
 import { IAuthInterface } from '@/interfaces/auth.interface.ts';
-import { useWebSocket } from '@/components/app/websocket.hook.ts';
+import { useWebSocket } from '@/components/app/websocket/websocket.hook.ts';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import AppHeaderComponent from '@/components/app/appHeader.component.tsx';
 import { clearMe } from '@/store/me.slice.ts';
@@ -24,7 +24,13 @@ function App() {
 	const [auth, setAuth] = useState<IAuthInterface | null>(null);
 
 
-	const { me, meError, departmentsObject, usersObject: users, onlineUsers } = useReduxSelectors();
+	const {
+		departmentsObject: departments,
+		me,
+		meError,
+		usersObject: users,
+		onlineUsers,
+	} = useReduxSelectors();
 
 	const { anyError } = useErrors();
 
@@ -78,10 +84,11 @@ function App() {
 			dispatch(load({ url: 'users' }));
 			dispatch(load({ url: 'users' }));
 			dispatch(load({ url: 'typesOfWork' }));
+			dispatch(load({ url: 'workflows' }));
 		}
 	}, [dispatch, me]);
 
-	const { isConnected, socket } = useWebSocket(auth, me, users);
+	const { isConnected, socket } = useWebSocket({ auth, me, users });
 
 	const connectToWebsocket = () => {
 		console.log('мы коннект к вебсокету');
@@ -140,7 +147,7 @@ function App() {
 							changeSounds={changeSounds}
 							logout={logout}
 							users={users}
-							departments={departmentsObject}
+							departments={departments}
 							me={me}
 							isConnected={isConnected}
 							connectToWebsocket={connectToWebsocket}

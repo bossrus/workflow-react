@@ -17,6 +17,9 @@ export const usersSlice = createSlice({
 		clearUsersError: (state) => {
 			state.error = undefined;
 		},
+		removeUser: (state, action: PayloadAction<string>) => {
+			delete state.data[action.payload];
+		},
 	},
 	extraReducers: (builder) => {
 		builder
@@ -79,7 +82,7 @@ export const usersSlice = createSlice({
 	},
 });
 
-export const { clearUsersError } = usersSlice.actions;
+export const { clearUsersError, removeUser } = usersSlice.actions;
 export const usersReducer = usersSlice.reducer;
 
 export const selectAllUsersArray = createSelector(
