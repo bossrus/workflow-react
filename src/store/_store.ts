@@ -1,30 +1,37 @@
-//src/store/_store.ts
+// src/store/_store.ts
 import { configureStore } from '@reduxjs/toolkit';
-import { departmentsReducer } from '@/store/departments.slice.ts';
-import { firmsReducer } from '@/store/firms.slice.ts';
-import { usersReducer } from '@/store/users.slice.ts';
+import { createEntitySlice } from '@/store/_sliceFactory.ts';
 import { meReducer } from '@/store/me.slice.ts';
-import { usersOnlineReducer } from '@/store/usersOnline.slice.ts';
-import { typesOfWorksReducer } from '@/store/typesOfWork.slice.ts';
-import { modificationsReducer } from '@/store/modifications.slice.ts';
 import { currentStatesReducer } from '@/store/_currentStates.slice.ts';
-import { workflowsReducer } from '@/store/workflows.slice.ts';
+import { usersOnlineReducer } from '@/store/usersOnline.slice.ts';
+
+
+//уточнять названия в //src/interfaces/api.interface.ts
+export const departments = createEntitySlice('departments');
+export const firms = createEntitySlice('firms');
+export const users = createEntitySlice('users');
+export const typesOfWork = createEntitySlice('typesOfWork');
+export const modifications = createEntitySlice('modifications');
+export const workflows = createEntitySlice('workflows');
+export const flashes = createEntitySlice('flashes');
+export const invites = createEntitySlice('invites');
 
 
 export const myStore = configureStore({
 	reducer: {
-		departments: departmentsReducer,
-		firms: firmsReducer,
-		modifications: modificationsReducer,
-		users: usersReducer,
+		departments: departments.reducer,
+		firms: firms.reducer,
+		modifications: modifications.reducer,
+		users: users.reducer,
 		usersOnline: usersOnlineReducer,
 		me: meReducer,
-		typesOfWork: typesOfWorksReducer,
+		typesOfWork: typesOfWork.reducer,
 		currentStates: currentStatesReducer,
-		workflows: workflowsReducer,
+		workflows: workflows.reducer,
+		flashes: flashes.reducer,
+		invites: invites.reducer,
 	},
 });
 
 export type TAppState = ReturnType<typeof myStore.getState>;
-
 export type TAppDispatch = typeof myStore.dispatch;

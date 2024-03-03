@@ -9,17 +9,15 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { TAppDispatch } from '@/store/_store.ts';
 import { setState } from '@/store/_currentStates.slice.ts';
-import { IDepartmentUpdate } from '@/interfaces/department.interface.ts';
+import { IDepartment, IDepartmentUpdate } from '@/interfaces/department.interface.ts';
 import { deleteOne, patchOne } from '@/store/_api.slice.ts';
 import makeSlug from '@/_services/makeSlug.ts';
 
 const FALSE_COLOR = '#92a38f';
 
 function mainDepartmentsComponents() {
-	const { departmentsArray: departments } = useReduxSelectors();
-	// const { departmentsArray: depArr } = useReduxSelectors();
-	// const departments = [...depArr, ...depArr, ...depArr, ...depArr, ...depArr, ...depArr];
-	departments.sort((a, b) => +a.numberInWorkflow - +b.numberInWorkflow);
+	const { departmentsArray } = useReduxSelectors();
+	const [departments, setDepartments] = useState<IDepartment[]>([]);
 	const { departmentsObject } = useReduxSelectors();
 	const { currentDepartment } = useReduxSelectors().states;
 	const [title, setTitle] = useState('');
@@ -28,6 +26,17 @@ function mainDepartmentsComponents() {
 	const [switchLabel, setSwitchLabel] = useState('');
 	const [titleOfEditedDepartment, setTitleOfEditedDepartment] = useState('');
 	const [stopSave, setStopSave] = useState(true);
+
+	useEffect(() => {
+		const newDepartments = [...departmentsArray];
+		newDepartments.sort((a, b) => {
+			const numA = isNaN(Number(a.numberInWorkflow)) ? Infinity : +a.numberInWorkflow;
+			const numB = isNaN(Number(b.numberInWorkflow)) ? Infinity : +b.numberInWorkflow;
+			return numA - numB;
+		});
+		console.log('после сортировки newDepartments = ', newDepartments);
+		setDepartments(newDepartments);
+	}, [departmentsArray]);
 
 	useEffect(() => {
 		if (currentDepartment) {

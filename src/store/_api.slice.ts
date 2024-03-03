@@ -2,6 +2,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axiosCreate from '@/_api/axiosCreate.ts';
 import { IError } from '@/interfaces/auth.interface.ts';
+import { IUrls } from '@/interfaces/api.interface.ts';
 
 
 interface AxiosError {
@@ -121,6 +122,7 @@ export const authLoad = createAsyncThunk<any, void, { rejectValue: IError }>(
 	async (_, { dispatch, rejectWithValue }) => {
 		const url = 'users/auth';
 		try {
+			console.log('url = ', url);
 			const response = await axiosCreate.get(url);
 			dispatch({ type: authLoad.fulfilled.type, payload: response.data, store: url });
 		} catch (e) {

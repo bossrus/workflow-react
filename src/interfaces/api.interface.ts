@@ -1,13 +1,14 @@
-const URLS = [
-    'workflows',
-    'users',
-    'users/me',
-    'users/login',
-    'departments',
-    'firms',
-    'modifications',
-    'typesOfWork',
-    'invites',
-    'flashes',
+//src/interfaces/api.interface.ts
+export const URLS = [
+	'workflows',
+	'users',
+	'departments',
+	'firms',
+	'modifications',
+	'typesOfWork',
+	'invites',
+	'flashes',
+	'users/login',
+	'users/me',
 ] as const;
-type IUrls = (typeof URLS)[number];
+export type IUrls = (typeof URLS)[number];

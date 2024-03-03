@@ -1,15 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { useDispatch } from 'react-redux';
-import { TAppDispatch } from '@/store/_store.ts';
+import { firms, modifications, TAppDispatch, typesOfWork, users } from '@/store/_store.ts';
 import { IError } from '@/interfaces/auth.interface.ts';
-import { clearDepartmentsError } from '@/store/departments.slice.ts';
-import { clearUsersError } from '@/store/users.slice.ts';
-import { clearTypesOfWorkError } from '@/store/typesOfWork.slice.ts';
-import { clearModificationsError } from '@/store/modifications.slice.ts';
-import { clearFirmsError } from '@/store/firms.slice.ts';
 import { useNavigate } from 'react-router-dom';
 import { clearMe } from '@/store/me.slice.ts';
+import { departments } from '@/store/_store.ts';
 
 export const useErrors = () => {
 	const [anyError, setAnyError] = useState<string>('');
@@ -62,10 +58,10 @@ export const useErrors = () => {
 
 export const clearErrors = (dispatch: TAppDispatch) => {
 	console.log('запускаем очистку ошибок');
-	dispatch(clearDepartmentsError());
-	dispatch(clearUsersError());
-	dispatch(clearTypesOfWorkError());
-	dispatch(clearModificationsError());
-	dispatch(clearFirmsError());
+	dispatch(departments.actions.clearErrors());
+	dispatch(users.actions.clearErrors());
+	dispatch(typesOfWork.actions.clearErrors());
+	dispatch(modifications.actions.clearErrors());
+	dispatch(firms.actions.clearErrors());
 	console.log('очистили');
 };
