@@ -1,12 +1,12 @@
 import { IError } from '@/interfaces/auth.interface.ts';
 
 export interface IFirm {
-	_id?: string;
+	_id: string;
 	title: string;
-	titleSlug?: string;
+	titleSlug: string;
 	basicPriority: number;
-	version?: number;
-	isDeleted?: number;
+	version: number;
+	isDeleted: number;
 }
 
 export interface IFirmsObject {

@@ -1,6 +1,5 @@
 import { Box, Button, FormControlLabel, FormGroup, TextField, Typography } from '@mui/material';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
-import SettingsHeaderComponent from '@/components/settings/settingsHeader.component.tsx';
 import OneDepartmentComponent from '@/components/settings/departments/oneDepartment.component.tsx';
 import { MaterialUISwitch, SwitchStyledIcon } from '@/scss/switchStyled.ts';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
@@ -10,12 +9,12 @@ import { useDispatch } from 'react-redux';
 import { TAppDispatch } from '@/store/_store.ts';
 import { setState } from '@/store/_currentStates.slice.ts';
 import { IDepartment, IDepartmentUpdate } from '@/interfaces/department.interface.ts';
-import { deleteOne, patchOne } from '@/store/_api.slice.ts';
+import { deleteOne, patchOne } from '@/store/_shared.thunks.ts';
 import makeSlug from '@/_services/makeSlug.ts';
 
 const FALSE_COLOR = '#92a38f';
 
-function mainDepartmentsComponents() {
+function MainDepartmentsComponents() {
 	const { departmentsArray } = useReduxSelectors();
 	const [departments, setDepartments] = useState<IDepartment[]>([]);
 	const { departmentsObject } = useReduxSelectors();
@@ -127,10 +126,7 @@ function mainDepartmentsComponents() {
 
 	return (
 		<>
-			<Box display="flex" flexDirection="column" height="100%" boxShadow={3} borderRadius={2} bgcolor={'white'}>
-				<Box p={2}>
-					<SettingsHeaderComponent activeSettingsTab={'Отделы'} />
-				</Box>
+			<Box display="flex" flexDirection="column" height="100%">
 				<table className={'table-container'}>
 					<tbody>
 					<tr>
@@ -269,4 +265,4 @@ function mainDepartmentsComponents() {
 	);
 }
 
-export default mainDepartmentsComponents;
+export default MainDepartmentsComponents;

@@ -1,7 +1,7 @@
 import { Socket } from 'socket.io-client';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { authLoad, load, patchOne } from '@/store/_api.slice.ts';
+import { authLoad, load, patchOne } from '@/store/_shared.thunks.ts';
 import { TAppDispatch } from '@/store/_store.ts';
 import { Alert, Box, Snackbar } from '@mui/material';
 import routes from '@/routes/route.ts';
@@ -42,11 +42,15 @@ function App() {
 		if (location != '/login')
 			(async () => {
 				const localAuth = await getAuth();
+				console.log('авторизация = ', localAuth);
+
 				setAuth(localAuth);
 				if (!localAuth)
 					navigate('/login');
 				else {
+					console.log('\tполучили какую-то авторизацию. моя длина = ', Object.keys(me).length);
 					if (Object.keys(me).length === 0) {
+						console.log('\tвключаем получение по танку');
 						dispatch(authLoad());
 					}
 				}
@@ -63,8 +67,9 @@ function App() {
 	}, [location]);
 
 	useEffect(() => {
+		console.log('ошибка в получении меня', meError);
 		if (location != '/login')
-			if (meError && meError.status == 403)
+			if (meError)
 				navigate('/login');
 	}, [location, meError]);
 
@@ -121,49 +126,55 @@ function App() {
 	return (
 		<>
 			{location != '/login' ?
-				(
-					<Box display="flex" flexDirection="column" height="100%">
-						<Snackbar
-							anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-							open={anyError !== '' || meEmailError !== ''}
-							sx={{ verticalAlign: 'center' }}
-						>
-							<Alert
-								severity="warning"
-								variant="filled"
-								sx={{
-									fontSize: '13px',
-									width: '100%',
-									alignContent: 'center',
-									verticalAlign: 'center',
-								}}
+				(<>
+					{Object.keys(me).length > 0 &&
+						<Box display="flex" flexDirection="column" height="100%">
+							<Snackbar
+								anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+								open={anyError !== '' || meEmailError !== ''}
+								sx={{ verticalAlign: 'center' }}
 							>
-								{anyError}
-								{meEmailError.split('<br/>').map((item, i) => <p key={i}>{item}</p>)}
-							</Alert>
-						</Snackbar>
-						<AppHeaderComponent
-							changeMyDepartment={changeMyDepartment}
-							changeSounds={changeSounds}
-							logout={logout}
-							users={users}
-							departments={departments}
-							me={me}
-							isConnected={isConnected}
-							connectToWebsocket={connectToWebsocket}
-							onlineUsers={onlineUsers}
-						/>
-						<Box flexGrow={1}>
-							{routePage}
-						</Box>
-						<Box mt={'20px'}>
-							{location != '/login' &&
-								(<> \ <Link to={'/settings'}>Настройки</Link> \ \ Создать новый заказ \ \ Статистика
-									\</>)
-							}
-						</Box>
-					</Box>
-				)
+								<Alert
+									severity="warning"
+									variant="filled"
+									sx={{
+										fontSize: '13px',
+										width: '100%',
+										alignContent: 'center',
+										verticalAlign: 'center',
+									}}
+								>
+									{anyError}
+									{meEmailError.split('<br/>').map((item, i) => <p key={i}>{item}</p>)}
+								</Alert>
+							</Snackbar>
+							<AppHeaderComponent
+								changeMyDepartment={changeMyDepartment}
+								changeSounds={changeSounds}
+								logout={logout}
+								users={users}
+								departments={departments}
+								me={me}
+								isConnected={isConnected}
+								connectToWebsocket={connectToWebsocket}
+								onlineUsers={onlineUsers}
+							/>
+							<Box flexGrow={1}>
+								{routePage}
+							</Box>
+							<Box mt={'20px'}>
+								{location != '/login' &&
+									(<>
+										\ <Link to={'/settings'}>Настройки</Link> \
+										\ <Link to={'/main/create'}> Создать новый заказ</Link> \
+										\ <Link to={'/main/my-department'}> Элемент в моём отделе </Link> \
+
+										\ Статистика
+										\</>)
+								}
+							</Box>
+						</Box>}
+				</>)
 				: (
 					<Box
 						display="flex"

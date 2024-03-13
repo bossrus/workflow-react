@@ -1,19 +1,18 @@
 import { Box, Button, TextField, Typography } from '@mui/material';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
-import SettingsHeaderComponent from '@/components/settings/settingsHeader.component.tsx';
 import OneUserComponent from '@/components/settings/users/oneUser.component.tsx';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { TAppDispatch } from '@/store/_store.ts';
 import { setState } from '@/store/_currentStates.slice.ts';
 import { IUser, IUserObject, IUserUpdate } from '@/interfaces/user.interface.ts';
-import { deleteOne, patchOne } from '@/store/_api.slice.ts';
+import { deleteOne, patchOne } from '@/store/_shared.thunks.ts';
 import makeSlug from '@/_services/makeSlug.ts';
 import { loadUsers } from '@/components/settings/users/loadUsers.service.ts';
 import CheckListMainUserComponent from '@/components/settings/users/checkList.MainUser.component.tsx';
 import { IUserRight, USER_RIGHTS } from '@/_constants/userRights.ts';
 
-function mainUsersComponents() {
+function MainUsersComponents() {
 	const [users, setUsers] = useState<IUser[]>([]);
 	const [usersObject, setUsersObject] = useState<IUserObject>({});
 
@@ -176,10 +175,7 @@ function mainUsersComponents() {
 
 	return (
 		<>
-			<Box display="flex" flexDirection="column" height="100%" boxShadow={3} borderRadius={2} bgcolor={'white'}>
-				<Box p={2}>
-					<SettingsHeaderComponent activeSettingsTab={'Сотрудники'} />
-				</Box>
+			<Box display="flex" flexDirection="column" height="100%">
 				<table className={'table-container'}>
 					<tbody>
 					<tr>
@@ -317,4 +313,4 @@ function mainUsersComponents() {
 	);
 }
 
-export default mainUsersComponents;
+export default MainUsersComponents;

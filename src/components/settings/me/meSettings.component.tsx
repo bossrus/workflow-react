@@ -1,8 +1,16 @@
-import { Box, Button, FormControlLabel, FormGroup, TextField, Typography, useTheme } from '@mui/material';
-import SettingsHeaderComponent from '@/components/settings/settingsHeader.component.tsx';
+import {
+	Box,
+	Button,
+	FormControlLabel,
+	FormGroup, IconButton,
+	InputAdornment,
+	TextField,
+	Typography,
+	useTheme,
+} from '@mui/material';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import RowInMeSettingsComponent from '@/components/settings/me/rowInMeSettings.component.tsx';
-import { useEffect, useState } from 'react';
+import { MouseEvent, useEffect, useState } from 'react';
 import axiosCreate from '@/_api/axiosCreate.ts';
 import { IUserUpdate } from '@/interfaces/user.interface.ts';
 import { TAppDispatch } from '@/store/_store.ts';
@@ -11,7 +19,8 @@ import { changeMeEmail } from '@/store/me.slice.ts';
 import { MaterialUISwitch, SwitchStyledIcon } from '@/scss/switchStyled.ts';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import { patchOne } from '@/store/_api.slice.ts';
+import { patchOne } from '@/store/_shared.thunks.ts';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 function MeSettingsComponent() {
 	const { me, departmentsObject } = useReduxSelectors();
@@ -19,13 +28,20 @@ function MeSettingsComponent() {
 	const [disableButton, setDisableButton] = useState(false);
 	const [canSendLetters, setCanSendLetters] = useState(false);
 
+	const [showPassword, setShowPassword] = useState(false);
+	const [password, setPassword] = useState('');
+
+	const handleMouseDownPassword = (event: MouseEvent<HTMLButtonElement>) => {
+		event.preventDefault();
+	};
+
 	const dispatch = useDispatch<TAppDispatch>();
-	const changeEmail = () => {
+	const changeEmail = async () => {
 		const newUser: IUserUpdate = {
 			_id: me._id,
 			email,
 		};
-		axiosCreate.patch('users/email', newUser);
+		await axiosCreate.patch('users/email', newUser);
 		dispatch(changeMeEmail({
 			id: me._id!,
 			email,
@@ -41,6 +57,20 @@ function MeSettingsComponent() {
 		dispatch(patchOne({
 			url: 'users/me',
 			data: newMe,
+		}));
+	};
+
+	const changePassword = () => {
+		const newUser: IUserUpdate = {
+			_id: me._id,
+			password,
+		};
+		setPassword('');
+		setShowPassword(false);
+
+		dispatch(patchOne({
+			url: 'users/me',
+			data: newUser,
 		}));
 	};
 
@@ -67,11 +97,7 @@ function MeSettingsComponent() {
 			{
 				Object.keys(me).length > 0 && Object.keys(departmentsObject).length > 0 &&
 				(
-					<Box display="flex" flexDirection="column" height="100%" boxShadow={3} borderRadius={2}
-						 bgcolor={'white'} padding={'0 15px'}>
-						<Box p={2}>
-							<SettingsHeaderComponent activeSettingsTab={'Мои настройки'} />
-						</Box>
+					<Box display="flex" flexDirection="column" height="100%" pt={4}>
 						<table className={'table-container'}>
 							<tbody>
 							<tr>
@@ -88,7 +114,7 @@ function MeSettingsComponent() {
 											{me.login}
 										</RowInMeSettingsComponent>
 										{me.departments
-											&& <>
+											&& <Box pb={2}>
 												<RowInMeSettingsComponent title={'отделы'}>
 													{
 														me.departments.map((department) => (
@@ -98,7 +124,7 @@ function MeSettingsComponent() {
 														))
 													}
 												</RowInMeSettingsComponent>
-											</>
+											</Box>
 										}
 
 										<TextField type={'email'}
@@ -107,7 +133,6 @@ function MeSettingsComponent() {
 												   fullWidth
 												   id="email"
 												   label="электронная почта"
-											// sx={{ pl: 2, pr: 2 }}
 												   inputProps={{
 													   style: {
 														   ...theme.typography.h5,
@@ -144,7 +169,7 @@ function MeSettingsComponent() {
 										</>
 										}
 										{me.email && me.emailConfirmed && <>
-											<FormGroup>
+											<FormGroup sx={{ pt: 2 }}>
 												<FormControlLabel
 													control={
 														<MaterialUISwitch
@@ -183,6 +208,41 @@ function MeSettingsComponent() {
 													onChange={(_event, checked) => changeSubscribe(checked)}
 												/>
 											</FormGroup>
+											<TextField
+												sx={{ pt: 2 }}
+												label="Пароль"
+												id="password"
+												type={showPassword ? 'text' : 'password'}
+												variant="standard"
+												fullWidth
+												InputProps={{
+													endAdornment: (
+														<InputAdornment position="end">
+															<IconButton
+																aria-label="toggle password visibility"
+																onClick={() => setShowPassword(!showPassword)}
+																onMouseDown={handleMouseDownPassword}
+															>
+																{showPassword ? <VisibilityOff /> : <Visibility />}
+															</IconButton>
+														</InputAdornment>
+													),
+												}}
+												value={password}
+												onChange={(e) => setPassword(e.target.value)}
+											/>
+											<Button
+												variant="contained"
+												size="small"
+												fullWidth
+												sx={{ mt: 2, borderRadius: '10px' }}
+												color={'info'}
+												className={'up-shadow'}
+												disabled={password.length === 0}
+												onClick={() => changePassword()}
+											>
+												Обновить пароль
+											</Button>
 										</>}
 									</Box>
 								</td>

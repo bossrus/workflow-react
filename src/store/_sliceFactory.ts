@@ -1,9 +1,8 @@
 //src/store/_sliceFactory.ts
 import {
-	selectAllItemsArray, selectErrors,
-	selectItemById,
-	selectItemVersionById,
+	selectAllItemsArray,
 	selectAllItemsObject,
+	selectErrors,
 } from '@/store/_shared.selectors.ts';
 import { IError } from '@/interfaces/auth.interface.ts';
 import { createSlice, PayloadAction, Reducer, Slice } from '@reduxjs/toolkit';
@@ -29,8 +28,6 @@ export function createEntitySlice<T>(entityNameString: string): {
 	selectors: {
 		selectAllArray: any,
 		selectAllObject: any,
-		selectById: any,
-		selectVersionById: any,
 		selectError: any,
 	},
 } {
@@ -61,8 +58,6 @@ export function createEntitySlice<T>(entityNameString: string): {
 
 	const selectAllArray = selectAllItemsArray<T>(entityName);
 	const selectAllObject = (state: TAppState) => selectAllItemsObject(state, entityName);
-	const selectById = selectItemById<T>(entityName);
-	const selectVersionById = selectItemVersionById<T>(entityName);
 	const selectError = (state: TAppState) => selectErrors(state, entityName);
 
 
@@ -73,8 +68,6 @@ export function createEntitySlice<T>(entityNameString: string): {
 		selectors: {
 			selectAllArray,
 			selectAllObject,
-			selectById,
-			selectVersionById,
 			selectError,
 		},
 	};

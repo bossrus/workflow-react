@@ -33,8 +33,8 @@ function AppHeaderComponent(props: IAppHeaderProps) {
 		<>
 			{departments && me.name && Object.keys(departments).length > 0 &&
 				(<Box display="flex" flexDirection="row" alignItems="center"
-					  marginBottom={'20px'}>
-					<Box display="flex" justifyContent="flex-start" alignItems="center">
+					  marginBottom={'20px'} flexWrap="wrap">
+					<Box display="flex" justifyContent="flex-start" alignItems="center" flexWrap="wrap">
 						<Box marginRight={'20px'}>
 							<OnlineIconComponent
 								isConnected={isConnected}
@@ -42,7 +42,7 @@ function AppHeaderComponent(props: IAppHeaderProps) {
 								users={users}
 								connectToWebsocket={connectToWebsocket} />
 						</Box>
-						{me.name} •
+						{me.name}
 						<FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
 							<Select
 								value={me.currentDepartment}
@@ -62,27 +62,10 @@ function AppHeaderComponent(props: IAppHeaderProps) {
 								}
 							</Select>
 						</FormControl>
-						{/*<NativeSelect*/}
-						{/*	sx={{ ml: '5px', pl: '5px' }}*/}
-						{/*	onChange={changeMyDepartment}*/}
-						{/*	value={me.currentDepartment}*/}
-						{/*>*/}
-						{/*	{*/}
-						{/*		me && me.departments && Object.keys(departments).length > 0 && (*/}
-						{/*			me.departments.map((item) => (*/}
-						{/*				<option key={item} value={item}>*/}
-						{/*					/!*{item}*!/*/}
-						{/*					{departments[item]?.title}*/}
-						{/*				</option>*/}
-						{/*			))*/}
-						{/*		)*/}
-						{/*	}*/}
-						{/*</NativeSelect>*/}
-
 					</Box>
 					<Box display="flex" flexGrow={1} justifyContent="center" alignItems="center">
 					</Box>
-					<Box display="flex" justifyContent="flex-end" alignItems="center">
+					<Box display="flex" justifyContent="flex-end" alignItems="center" flexWrap="wrap">
 						<RightButtonsGroupComponent
 							isSoundOn={me.isSoundOn as boolean}
 							changeSounds={changeSounds}

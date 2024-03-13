@@ -1,5 +1,5 @@
 import { ActionReducerMapBuilder, Draft, PayloadAction } from '@reduxjs/toolkit';
-import { createOne, deleteOne, load, loadById, patchOne } from '@/store/_api.slice.ts';
+import { createOne, deleteOne, load, loadById, patchOne } from '@/store/_shared.thunks.ts';
 import { IError } from '@/interfaces/auth.interface.ts';
 
 type TWithId<T> = T & { _id: string };
@@ -94,6 +94,7 @@ export const createExtraReducers = <T>(storeName: string) => (builder: ActionRed
 				(state, action: PayloadAction<TWithId<T>>) => {
 					console.log('отловили patch');
 					console.log('\taction.payload = ', action.payload);
+					console.log('\t\taction.payload._id = ', action.payload._id);
 					state.data[action.payload._id!] = {
 						...state.data[action.payload._id!],
 						...action.payload,

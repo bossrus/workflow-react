@@ -95,8 +95,18 @@ body {
 }
 
 .table-container {
+  width: 100% !important;
   height: 100% !important;
   padding-bottom: 30px;
+  overflow: auto;
+}
+
+.table-container-pb10 {
+  width: 100% !important;
+  height: 100% !important;
+  padding-bottom: 30px;
+  overflow: auto;
+  padding-bottom: 10px;
 }
 
 .padding30 {
@@ -132,6 +142,10 @@ body {
 .text-bold {
   color: #012673;
   font-weight: bolder !important;
+}
+
+.inactive {
+  opacity: 30%;
 }
 
 /*# sourceMappingURL=main.css.map */

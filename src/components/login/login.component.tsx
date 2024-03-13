@@ -1,10 +1,10 @@
 import { Box, Button, Card, CardContent, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { MouseEvent, useEffect, useState } from 'react';
-import { createOne } from '@/store/_api.slice.ts';
-import { useDispatch, useSelector } from 'react-redux';
-import { TAppDispatch, TAppState } from '@/store/_store.ts';
-import { clearMeError, selectMeError } from '@/store/me.slice.ts';
+import { createOne } from '@/store/_shared.thunks.ts';
+import { useDispatch } from 'react-redux';
+import { TAppDispatch } from '@/store/_store.ts';
+import { clearMeError } from '@/store/me.slice.ts';
 import { setAuth } from '@/_security/auth.ts';
 import { useNavigate } from 'react-router-dom';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
@@ -23,17 +23,12 @@ function LoginComponent() {
 	const [password, setPassword] = useState('');
 	const [wasTry, setWasTry] = useState(false);
 
-	const { me: loginData } = useReduxSelectors();
+	const { me: loginData, meError: loginError } = useReduxSelectors();
 
 	useEffect(() => {
 		clearErrors(dispatch);
 		dispatch(clearMeError());
 	}, []);
-
-
-	const loginError = useSelector<TAppState>((state) =>
-		selectMeError(state),
-	) as string;
 
 	const dispatch = useDispatch<TAppDispatch>();
 
@@ -50,17 +45,23 @@ function LoginComponent() {
 	const navigate = useNavigate();
 	useEffect(() => {
 		if (Object.keys(loginData).length > 0) {
-			setAuth(loginData._id!, loginData.loginToken as string);
+			(async () => {
+				await setAuth(loginData._id!, loginData.loginToken as string);
+			})();
 			navigate('/');
 		}
 	}, [loginData]);
 
-	const [showError, setShowError] = useState(false);
+	const [showError, setShowError] = useState('');
 
 	useEffect(() => {
-		if (wasTry && loginError !== undefined) {
-			setShowError(true);
-			setTimeout(() => setShowError(false), 4000);
+		console.log('loginError = ', loginError);
+		if (wasTry && loginError) {
+			setShowError(loginError.message);
+			setTimeout(() => {
+				setShowError('');
+				setWasTry(false);
+			}, 4000);
 		}
 	}, [loginError]);
 
@@ -110,10 +111,10 @@ function LoginComponent() {
 					</Button>
 				</CardContent>
 			</Card>
-			<Card className={`errorCard ${showError ? 'show' : ''}`}>
+			<Card className={`errorCard ${showError !== '' ? 'show' : ''}`}>
 				<CardContent>
 					<Typography variant="h6" sx={{ m: 'auto' }}>
-						Неверный пользователь или пароль
+						{showError}
 					</Typography>
 				</CardContent>
 			</Card>

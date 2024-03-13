@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { useDispatch } from 'react-redux';
-import { firms, modifications, TAppDispatch, typesOfWork, users } from '@/store/_store.ts';
+import { firms, modifications, TAppDispatch, typesOfWork, users, workflows } from '@/store/_store.ts';
 import { IError } from '@/interfaces/auth.interface.ts';
 import { useNavigate } from 'react-router-dom';
 import { clearMe } from '@/store/me.slice.ts';
@@ -17,10 +17,11 @@ export const useErrors = () => {
 		typesOfWorkError,
 		modificationsError,
 		firmsError,
+		workflowsError,
 	} = useReduxSelectors();
 
 	const errors = [departmentsError, usersError, onlineUsersError, typesOfWorkError, modificationsError,
-		firmsError];
+		firmsError, workflowsError];
 
 	const dispatch = useDispatch<TAppDispatch>();
 	const navigate = useNavigate();
@@ -52,7 +53,7 @@ export const useErrors = () => {
 		}
 
 	}, [departmentsError, usersError, onlineUsersError, typesOfWorkError, modificationsError,
-		firmsError]);
+		firmsError, workflowsError]);
 	return { anyError };
 };
 
@@ -63,5 +64,6 @@ export const clearErrors = (dispatch: TAppDispatch) => {
 	dispatch(typesOfWork.actions.clearErrors());
 	dispatch(modifications.actions.clearErrors());
 	dispatch(firms.actions.clearErrors());
+	dispatch(workflows.actions.clearErrors());
 	console.log('очистили');
 };

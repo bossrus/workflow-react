@@ -1,16 +1,15 @@
 import { Box, Button, TextField, Typography } from '@mui/material';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
-import SettingsHeaderComponent from '@/components/settings/settingsHeader.component.tsx';
 import OneFirmComponent from '@/components/settings/firms/oneFirm.component.tsx';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { TAppDispatch } from '@/store/_store.ts';
 import { setState } from '@/store/_currentStates.slice.ts';
 import { IFirmUpdate } from '@/interfaces/firm.interface.ts';
-import { deleteOne, patchOne } from '@/store/_api.slice.ts';
+import { deleteOne, patchOne } from '@/store/_shared.thunks.ts';
 import makeSlug from '@/_services/makeSlug.ts';
 
-function mainFirmsComponents() {
+function MainFirmsComponents() {
 	const { firmsArray: firms } = useReduxSelectors();
 	firms.sort((a, b) => +a.basicPriority - +b.basicPriority);
 	const { firmsObject } = useReduxSelectors();
@@ -88,10 +87,7 @@ function mainFirmsComponents() {
 	};
 	return (
 		<>
-			<Box display="flex" flexDirection="column" height="100%" boxShadow={3} borderRadius={2} bgcolor={'white'}>
-				<Box p={2}>
-					<SettingsHeaderComponent activeSettingsTab={'Клиенты'} />
-				</Box>
+			<Box display="flex" flexDirection="column" height="100%">
 				<table className={'table-container'}>
 					<tbody>
 					<tr>
@@ -192,4 +188,4 @@ function mainFirmsComponents() {
 	);
 }
 
-export default mainFirmsComponents;
+export default MainFirmsComponents;

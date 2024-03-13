@@ -3,7 +3,7 @@ import { createSelector, createSlice, Draft, PayloadAction } from '@reduxjs/tool
 import { TAppState } from './_store.ts';
 import { IUserObject, IUserStore, IUserUpdate } from '@/interfaces/user.interface.ts';
 import { createExtraReducers } from '@/store/_shared.reducers.ts';
-import { authLoad, createOne } from '@/store/_api.slice.ts';
+import { authLoad, createOne } from '@/store/_shared.thunks.ts';
 import { IError } from '@/interfaces/auth.interface.ts';
 import { clearAuth } from '@/_security/auth.ts';
 
@@ -47,6 +47,7 @@ export const mesSlice = createSlice({
 					return action.type === authLoad.rejected.type && action.payload.store === 'users/auth';
 				},
 				(state, action: PayloadAction<IError | undefined>) => {
+					console.log('ошибка авторизации в танке', action.payload);
 					if (action.payload) {
 						state.data = {};
 						state.error = {

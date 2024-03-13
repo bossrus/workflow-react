@@ -2,7 +2,9 @@ import { IError } from '@/interfaces/auth.interface.ts';
 import { useSelector } from 'react-redux';
 import {
 	departments,
-	firms, flashes, invites,
+	firms,
+	flashes,
+	invites,
 	modifications,
 	TAppState,
 	typesOfWork,
@@ -21,6 +23,7 @@ import { IWorkflow, IWorkflowsObject } from '@/interfaces/workflow.interface.ts'
 import { selectOnlineUsers, selectOnlineUsersError } from '@/store/usersOnline.slice.ts';
 import { IFlashMessagesObject } from '@/interfaces/flashMessage.interface.ts';
 import { IInviteToJoinObject } from '@/interfaces/inviteToJoin.interface.ts';
+import { useMemo } from 'react';
 
 export const useReduxSelectors = () => {
 
@@ -57,6 +60,23 @@ export const useReduxSelectors = () => {
 	const workflowsObject = useSelector<TAppState, IWorkflowsObject>((state) => workflows.selectors.selectAllObject(state));
 	const workflowsArray = useSelector<TAppState, IWorkflow[]>((state) => workflows.selectors.selectAllArray(state));
 	const workflowsError = useSelector<TAppState, IError | null | undefined>((state) => workflows.selectors.selectError(state));
+	const workflowsPublishedObject = useMemo(() => {
+		return Object.entries(workflowsObject).reduce((acc, [key, workflow]) => {
+			if (workflow.isPublished) {
+				acc[key] = workflow;
+			}
+			return acc;
+		}, {} as IWorkflowsObject);
+	}, [workflowsObject]);
+
+	const workflowsNotPublishedObject = useMemo(() => {
+		return Object.entries(workflowsObject).reduce((acc, [key, workflow]) => {
+			if (!workflow.isPublished) {
+				acc[key] = workflow;
+			}
+			return acc;
+		}, {} as IWorkflowsObject);
+	}, [workflowsObject]);
 
 	const flashMessages = useSelector<TAppState, IFlashMessagesObject>((state) => flashes.selectors.selectAllArray(state));
 	const flashMessagesError = useSelector<TAppState, IError | null | undefined>((state) => flashes.selectors.selectError(state));
@@ -72,7 +92,7 @@ export const useReduxSelectors = () => {
 		states,
 
 		departmentsObject,
-		departmentsArray,
+		departmentsArray: [...departmentsArray].sort((a, b) => +a.numberInWorkflow - +b.numberInWorkflow),
 		departmentsError,
 
 		modificationsObject,
@@ -96,6 +116,8 @@ export const useReduxSelectors = () => {
 		typesOfWorkError,
 
 		workflowsObject,
+		workflowsPublishedObject,
+		workflowsNotPublishedObject,
 		workflowsArray,
 		workflowsError,
 

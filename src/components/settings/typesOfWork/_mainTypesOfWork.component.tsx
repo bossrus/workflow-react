@@ -1,16 +1,15 @@
 import { Box, Button, TextField, Typography } from '@mui/material';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
-import SettingsHeaderComponent from '@/components/settings/settingsHeader.component.tsx';
 import OneTypeOfWorkComponent from '@/components/settings/typesOfWork/oneTypeOfWork.component.tsx';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { TAppDispatch } from '@/store/_store.ts';
 import { setState } from '@/store/_currentStates.slice.ts';
 import { ITypeOfWorkUpdate } from '@/interfaces/worktype.interface.ts';
-import { deleteOne, patchOne } from '@/store/_api.slice.ts';
+import { deleteOne, patchOne } from '@/store/_shared.thunks.ts';
 import makeSlug from '@/_services/makeSlug.ts';
 
-function mainTypesOfWorkComponents() {
+function MainTypesOfWorkComponents() {
 	const { typesOfWorkArray: typesOfWork } = useReduxSelectors();
 	const { typesOfWorkObject: typesOfWorkObject } = useReduxSelectors();
 	const { currentTypeOfWork } = useReduxSelectors().states;
@@ -70,10 +69,7 @@ function mainTypesOfWorkComponents() {
 
 	return (
 		<>
-			<Box display="flex" flexDirection="column" height="100%" boxShadow={3} borderRadius={2} bgcolor={'white'}>
-				<Box p={2}>
-					<SettingsHeaderComponent activeSettingsTab={'Типы работ'} />
-				</Box>
+			<Box display="flex" flexDirection="column" height="100%">
 				<table className={'table-container'}>
 					<tbody>
 					<tr>
@@ -167,4 +163,4 @@ function mainTypesOfWorkComponents() {
 	);
 }
 
-export default mainTypesOfWorkComponents;
+export default MainTypesOfWorkComponents;

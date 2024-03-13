@@ -28,30 +28,3 @@ export const selectAllItemsArray = <T>(storeField: keyof TAppState) => {
 
 // @ts-ignore
 export const selectAllItemsObject = (state: TAppState, storeField: keyof TAppState) => (state[storeField] as IEntityStore<any>).data;
-
-export const selectItemById = <T>(storeField: keyof TAppState) => {
-	return createSelector(
-		(state: TAppState, _id: string) => (state[storeField] as IEntityStore<any>).data,
-		(_state: TAppState, id: string) => id,
-		(items, id) => {
-			if (!items || Object.values(items).length === 0 || Array.isArray(items) || typeof items !== 'object' || 'name' in items)
-				return;
-			return (items as { [key: string]: T })[id];
-		},
-	);
-};
-
-type TWithVersion<T> = T & { version?: number };
-
-export const selectItemVersionById = <T>(storeField: keyof TAppState) => {
-	return createSelector(
-		(state: TAppState, _id: string) => (state[storeField] as IEntityStore<any>).data,
-		(_state: TAppState, id: string) => id,
-		(items, id) => {
-			if (!items || Object.values(items).length === 0 || Array.isArray(items) || typeof items !== 'object' || 'name' in items)
-				return;
-			return ((items as unknown) as { [key: string]: TWithVersion<T> })[id].version;
-
-		},
-	);
-};

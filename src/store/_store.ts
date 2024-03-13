@@ -19,14 +19,15 @@ export const invites = createEntitySlice('invites');
 
 export const myStore = configureStore({
 	reducer: {
+		usersOnline: usersOnlineReducer,
+		me: meReducer,
+		currentStates: currentStatesReducer,
+
 		departments: departments.reducer,
 		firms: firms.reducer,
 		modifications: modifications.reducer,
 		users: users.reducer,
-		usersOnline: usersOnlineReducer,
-		me: meReducer,
 		typesOfWork: typesOfWork.reducer,
-		currentStates: currentStatesReducer,
 		workflows: workflows.reducer,
 		flashes: flashes.reducer,
 		invites: invites.reducer,
