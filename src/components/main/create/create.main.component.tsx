@@ -21,13 +21,14 @@ import { ITypeOfWork } from '@/interfaces/worktype.interface.ts';
 import { IModification } from '@/interfaces/modification.interface.ts';
 import { IFirm } from '@/interfaces/firm.interface.ts';
 import axiosCreate from '@/_api/axiosCreate.ts';
-import { IWorkflowUpdate } from '@/interfaces/workflow.interface.ts';
+import { IWorkflowsKeys, IWorkflowUpdate } from '@/interfaces/workflow.interface.ts';
 import { useDispatch } from 'react-redux';
 import { patchOne } from '@/store/_shared.thunks.ts';
 import { TAppDispatch } from '@/store/_store.ts';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const FALSE_COLOR = '#92a38f';
+
 
 // const TEST_DATA1 = 'в этом текстовом боксе нужно сделать «Выделить всё», скопировать в память, и целиком вставить в поле «Описание работы:» на сайте www.work-flow.site. Далее на сайте кликнуть по строке «Распознать текст» под полем «Описание работы».      [<NM>]Destinations D_ZP[<NM>][<SRCHNST>]50000[<SRCHNST>][<TP>]Досыл TIFF[<TP>][<TOSTAT>]on[<TOSTAT>][<FRM>]АЭРОФЛОТ[<FRM>][<DPRT>]Ретушь[<DPRT>][<CNTPGS>]2[<CNTPGS>][<MDFCTR>]0523[<MDFCTR>][<CNTPCTRS>]1[<CNTPCTRS>][<DSCRPTN>]название вёрстки «Destinations D_ZP.indd» количество картинок на обработку ≈ 1 название PDF с комментариями «Destinations D_ZP_comment_Mon_Mar_27_2023_15-21-10.pdf»  ------------ 1294910638-265_1.tif обрабатывать прям в цмике. не переделять ------------ 1294910638-265_1.tif шар вытравить на слой, потом только стёклам сделать прозрачность 70%[<DSCRPTN>]';
 // const TEST_DATA1 = 'в этом текстовом боксе нужно сделать «Выделить всё», скопировать в память, и целиком вставить в поле «Описание работы:» на сайте www.work-flow.site. Далее на сайте кликнуть по строке «Распознать текст» под полем «Описание работы».      [<NM>]++obektiv_APR[<NM>][<SRCHNST>]50000[<SRCHNST>][<TP>]Новый заказ[<TP>][<TOSTAT>]on[<TOSTAT>][<FRM>]журнал S7[<FRM>][<DPRT>]Ретушь[<DPRT>][<CNTPGS>]2[<CNTPGS>][<MDFCTR>]0423[<MDFCTR>][<CNTPCTRS>]1[<CNTPCTRS>][<DSCRPTN>]количество картинок на обработку ≈ 1 название PDF с комментариями «++obektiv_APR_comment_Tue_Mar_14_2023_10-09-13.pdf» [<DSCRPTN>]';
@@ -38,17 +39,20 @@ function CreateMainComponent() {
 		departmentsArray, firmsArray, modificationsArray, typesOfWorkArray, workflowsObject,
 	} = useReduxSelectors();
 
-	const [firm, setFirm] = useState('');
-	const [modification, setModification] = useState('');
-	const [title, setTitle] = useState('');
-	const [idOriginal, setIdOriginal] = useState('');
-	const [typeOfWork, setTypeOfWork] = useState('');
-	const [countOfPages, setCountOfPages] = useState(0);
-	const [countOfPictures, setCountOfPictures] = useState(0);
-	const [urgency, setUrgency] = useState(50000);
-	const [department, setDepartment] = useState('');
-	const [saveToStat, setSaveToStat] = useState(true);
-	const [description, setDescription] = useState(TEST_DATA1);
+	const [workState, setWorkState] = useState<IWorkflowUpdate>({
+		firm: '',
+		modification: '',
+		title: '',
+		mainId: '',
+		type: '',
+		countPages: 0,
+		countPictures: 0,
+		urgency: 50000,
+		currentDepartment: '',
+		setToStat: true,
+		description: TEST_DATA1, //TODO сменитиь на ''
+	});
+
 	const [canAutoConvert, setCanAutoConvert] = useState(false);
 	const [namesToShortList, setNamesToShortList] = useState<IWorkflowUpdate[] | null>(null);
 
@@ -61,78 +65,104 @@ function CreateMainComponent() {
 	console.log('в создании путь = ', id);
 
 	useEffect(() => {
-		if (!id) return;
+		if (!id || Object.keys(workflowsObject).length <= 0) return;
 		const work = workflowsObject[id];
-		setFirm(work.firm);
-		setModification(work.modification);
-		setTitle(work.title);
-		setIdOriginal(work.mainId ? work.mainId : '');
-		setTypeOfWork(work.type);
-		setCountOfPages(work.countPages);
-		setCountOfPictures(work.countPictures);
-		setUrgency(work.urgency);
-		setDepartment(work.currentDepartment);
-		setSaveToStat(work.setToStat);
-		setDescription(work.description);
-
-	}, []);
+		if (!work) return;
+		const newState: IWorkflowUpdate = {
+			firm: work.firm,
+			modification: work.modification,
+			title: work.title,
+			mainId: work.mainId ? work.mainId : '',
+			type: work.type,
+			countPages: work.countPages,
+			countPictures: work.countPictures,
+			urgency: work.urgency,
+			currentDepartment: work.currentDepartment,
+			setToStat: work.setToStat,
+			description: work.description,
+		};
+		setWorkState(newState);
+	}, [workflowsObject]);
 
 	const makeCanSave = (list: IWorkflowUpdate[] | null) => {
-		console.log('можно ли сохранять?');
-		console.log('namesToShortList = ', list);
-		let result: boolean;
+		let result: boolean = false;
 		if (id) {
+			if (Object.keys(workflowsObject).length <= 0) return;
 			const work = workflowsObject[id];
-			const newType = getIDByTitle<ITypeOfWork>(typesOfWorkArray, 'Новый заказ');
-			result = firm != work.firm ||
-				modification != work.modification ||
-				title != work.title ||
-				(typeOfWork != newType ? idOriginal != work.mainId : false) ||
-				typeOfWork != work.type ||
-				countOfPages != work.countPages ||
-				countOfPictures != work.countPictures ||
-				urgency != work.urgency ||
-				department != work.currentDepartment ||
-				saveToStat != work.setToStat ||
-				description != work.description;
+			if (work) {
+				const newType = getIDByTitle<ITypeOfWork>(typesOfWorkArray, 'Новый заказ');
+				result = workState.firm != work.firm ||
+					workState.modification != work.modification ||
+					workState.title != work.title ||
+					(workState.type != newType ? workState.mainId != work.mainId : false) ||
+					workState.type != work.type ||
+					workState.countPages != work.countPages ||
+					workState.countPictures != work.countPictures ||
+					workState.urgency != work.urgency ||
+					workState.currentDepartment != work.currentDepartment ||
+					workState.setToStat != work.setToStat ||
+					workState.description != work.description;
+			}
 		} else {
-			const isCoincidence = list?.some(item => item.title?.toLowerCase() === title.toLowerCase());
-			const index = typesOfWorkArray.findIndex(obj => obj._id === typeOfWork);
-			const isNotNewOrder = index !== -1 && title.length > 0 && typesOfWorkArray[index].title !== 'Новый заказ';
-			const isFormFilled = firm !== '' &&
-				modification !== '' &&
-				title !== '' &&
-				typeOfWork !== '' &&
-				countOfPages !== 0 &&
-				countOfPictures !== 0 &&
-				department !== '' &&
-				description !== '';
-			console.log('\tisCoincidence = ', isCoincidence);
-			console.log('\tisNotNewOrder = ', isNotNewOrder);
-			console.log('\t(isFormFilled) = ', isFormFilled);
-			console.log('\tidOriginal =', idOriginal);
+			const isCoincidence = list?.some(item => item.title?.toLowerCase() === workState.title?.toLowerCase());
+			const index = typesOfWorkArray.findIndex(obj => obj._id === workState.type);
+			const isNotNewOrder = index !== -1 && workState.title!.length > 0 && typesOfWorkArray[index].title !== 'Новый заказ';
+			const isFormFilled = workState.firm !== '' &&
+				workState.modification !== '' &&
+				workState.title !== '' &&
+				workState.type !== '' &&
+				workState.countPages !== 0 &&
+				workState.countPictures !== 0 &&
+				workState.currentDepartment !== '' &&
+				workState.description !== '';
 			result = (isNotNewOrder || !isCoincidence) && isFormFilled;
-			console.log('\t\tитого = ', result);
 		}
 		setCanSave(result);
 	};
 
 	useEffect(() => {
 		makeCanSave(namesToShortList);
-	}, [firm, modification, title, idOriginal, typeOfWork, countOfPages, countOfPictures, urgency, department, description]);
+	}, [workState]);
 
 	const tagsMappings = {
-		'[<FRM>]': (value: string) => setFirm(getIDByTitle<IFirm>(firmsArray, value)),
-		'[<MDFCTR>]': (value: string) => setModification(getIDByTitle<IModification>(modificationsArray, value)),
-		'[<NM>]': setTitle,
-		'[<DPRT>]': (value: string) => setDepartment(getIDByTitle<IDepartment>(departmentsArray, value)),
-		'[<DSCRPTN>]': setDescription,
-		'[<CNTPGS>]': (value: string) => setCountOfPages(Number(value)),
-		'[<SRCHNST>]': (value: string) => setUrgency(Number(value)),
-		'[<CNTPCTRS>]': (value: string) => setCountOfPictures(Number(value)),
-		'[<TOSTAT>]': (value: string) => setSaveToStat(value === 'on'),
-		'[<TP>]': (value: string) => setTypeOfWork(getIDByTitle<ITypeOfWork>(typesOfWorkArray, value)),
+		'[<FRM>]': (value: string, state: IWorkflowUpdate) => ({
+			...state,
+			firm: getIDByTitle<IFirm>(firmsArray, value),
+		}),
+		'[<MDFCTR>]': (value: string, state: IWorkflowUpdate) => ({
+			...state,
+			modification: getIDByTitle<IModification>(modificationsArray, value),
+		}),
+		'[<NM>]': (value: string, state: IWorkflowUpdate) => ({ ...state, title: value }),
+		'[<DPRT>]': (value: string, state: IWorkflowUpdate) => ({
+			...state,
+			currentDepartment: getIDByTitle<IDepartment>(departmentsArray, value),
+		}),
+		'[<DSCRPTN>]': (value: string, state: IWorkflowUpdate) => ({ ...state, description: value }),
+		'[<CNTPGS>]': (value: string, state: IWorkflowUpdate) => ({ ...state, countPages: Number(value) }),
+		'[<SRCHNST>]': (value: string, state: IWorkflowUpdate) => ({ ...state, urgency: Number(value) }),
+		'[<CNTPCTRS>]': (value: string, state: IWorkflowUpdate) => ({ ...state, countPictures: Number(value) }),
+		'[<TOSTAT>]': (value: string, state: IWorkflowUpdate) => ({ ...state, setToStat: value === 'on' }),
+		'[<TP>]': (value: string, state: IWorkflowUpdate) => ({
+			...state,
+			type: getIDByTitle<ITypeOfWork>(typesOfWorkArray, value),
+		}),
 	};
+
+	const convertText = (allDescription: string | undefined) => {
+		if (!allDescription) return null;
+		let newState = { ...workState };
+		for (const [key, getNewState] of Object.entries(tagsMappings)) {
+			const tempTxt = allDescription.split(key);
+			if (tempTxt.length === 3) {
+				newState = getNewState(tempTxt[1], newState);
+			} else {
+				return null;
+			}
+		}
+		setWorkState(newState);
+	};
+
 
 	const getCoincidenceLevel = (original: string, newStr: string) => {
 		let count = 0;
@@ -152,37 +182,37 @@ function CreateMainComponent() {
 	};
 
 	const setShortList = (data: IWorkflowUpdate[]) => {
-		if (firm == '' || modification == '' || title == '') return;
+		if (workState.firm == '' || workState.modification == '' || workState.title == '') return;
 		if (data.length > 0) {
 			for (const element of data) {
 				//в данном случае urgency используется как степень совпадения.
 				// просто лениво создавать новое поле, которое нужно только в одном месте
-				element.urgency = getCoincidenceLevel(element.title!, title);
+				element.urgency = getCoincidenceLevel(element.title!, workState.title!);
 			}
 			data.sort((a, b) => b.urgency! - a.urgency!);
 		}
 		setNamesToShortList(data.length > 0 ? data : null);
 		const firstItem = data.length > 0 ? data[0]._id! : '';
-		console.log('firstItem = ', firstItem);
-		setIdOriginal(firstItem);
+		const newState: IWorkflowUpdate = {
+			...workState,
+			mainId: firstItem,
+		};
+		setWorkState(newState);
 	};
 
 	useEffect(() => {
-		console.log('юзэффект перед запросом списка');
-		if (firm !== '' &&
-			modification !== '') {
+		if (workState.firm !== '' &&
+			workState.modification !== '') {
 			(async () => {
-				console.log('запрос списка');
 				const result = await axiosCreate.post('workflows/in_this_modification',
 					{
-						firm: firm,
-						modification: modification,
+						firm: workState.firm,
+						modification: workState.modification,
 					},
 				);
-				console.log('сохраняем шортлист', result.data);
 				if (result.data == null || result.data.length === 0) {
-					console.log('меняем тип на новый заказ');
-					setTypeOfWork(getIDByTitle<ITypeOfWork>(typesOfWorkArray, 'Новый заказ'));
+					const newState = { ...workState, type: getIDByTitle<ITypeOfWork>(typesOfWorkArray, 'Новый заказ') };
+					setWorkState(newState);
 				}
 				setShortList(result.data);
 				setTimeout(() => {
@@ -191,90 +221,91 @@ function CreateMainComponent() {
 				}, 0);
 			})();
 		}
-	}, [firm,
-		modification,
-		typeOfWork]);
+	}, [workState.firm,
+		workState.modification,
+		workState.type]);
 
 	useEffect(() => {
-		if (firm !== '' && modification !== '' && namesToShortList && namesToShortList.length > 0) {
+		if (workState.firm !== '' && workState.modification !== '' && namesToShortList && namesToShortList.length > 0) {
 			setShortList(namesToShortList);
 		}
-	}, [title]);
+	}, [workState.title]);
 
 	const setShowAnotherNameHandler = () => {
-		const index = typesOfWorkArray.findIndex(obj => obj._id === typeOfWork);
+		const index = typesOfWorkArray.findIndex(obj => obj._id === workState.type);
 		if (index !== -1) {
-			setShowAnotherName(title.length > 0 && typesOfWorkArray[index].title != 'Новый заказ');
+			setShowAnotherName(workState.title!.length > 0 && typesOfWorkArray[index].title != 'Новый заказ');
 		}
 	};
 
 	const dispatch = useDispatch<TAppDispatch>();
 	const saveWork = async () => {
-		const index = typesOfWorkArray.findIndex(obj => obj._id === typeOfWork);
+		console.log('enter to save, id = ', id);
+		if (id && Object.keys(workflowsObject).length <= 0) return;
+		const index = typesOfWorkArray.findIndex(obj => obj._id === workState.type);
 		const work: IWorkflowUpdate = id ? workflowsObject[id] : {};
-		const data: IWorkflowUpdate = {};
-		if (!id || work.firm != data.firm) data.firm = firm;
-		if (!id || work.modification != data.modification) data.modification = modification;
-		if (!id || work.title != data.title) data.title = title;
-		if (!id || work.mainId != data.mainId) if (typesOfWorkArray[index].title != 'Новый заказ') data.mainId = idOriginal;
-		if (!id || work.type != data.type) data.type = typeOfWork;
-		if (!id || work.countPages != data.countPages) data.countPages = countOfPages;
-		if (!id || work.countPictures != data.countPictures) data.countPictures = countOfPictures;
-		if (!id || work.urgency != data.urgency) data.urgency = urgency;
-		if (!id || work.currentDepartment != data.currentDepartment) data.currentDepartment = department;
-		if (!id || work.setToStat != data.setToStat) data.setToStat = saveToStat;
-		if (!id || work.description != data.description) data.description = description;
+		const data: IWorkflowUpdate = id ? { _id: id } : {};
+		if (!id || work.firm != workState.firm) data.firm = workState.firm;
+		if (!id || work.modification != workState.modification) data.modification = workState.modification;
+		if (!id || work.title != workState.title) data.title = workState.title;
+		if (!id || work.mainId != workState.mainId) if (typesOfWorkArray[index].title != 'Новый заказ') data.mainId = workState.mainId;
+		if (!id || work.type != workState.type) data.type = workState.type;
+		if (!id || work.countPages != workState.countPages) data.countPages = workState.countPages;
+		if (!id || work.countPictures != workState.countPictures) data.countPictures = workState.countPictures;
+		if (!id || work.urgency != workState.urgency) data.urgency = workState.urgency;
+		if (!id || work.currentDepartment != workState.currentDepartment) data.currentDepartment = workState.currentDepartment;
+		if (!id || work.setToStat != workState.setToStat) data.setToStat = workState.setToStat;
+		if (!id || work.description != workState.description) data.description = workState.description;
+		console.log('\tsave data:', data);
 		dispatch(patchOne({ url: 'workflows', data }));
 		clearFields();
 	};
 
+	const navigate = useNavigate();
 	const clearFields = () => {
-		setFirm('');
-		setModification('');
-		setTitle('');
-		setIdOriginal('');
-		setTypeOfWork('');
-		setCountOfPages(0);
-		setCountOfPictures(0);
-		setUrgency(50000);
-		setDepartment('');
-		setSaveToStat(true);
-		setDescription('');
+		setWorkState({
+			firm: '',
+			modification: '',
+			title: '',
+			mainId: '',
+			type: '',
+			countPages: 0,
+			countPictures: 0,
+			urgency: 50000,
+			currentDepartment: '',
+			setToStat: true,
+			description: '',
+		});
 		setCanAutoConvert(false);
 		setNamesToShortList(null);
 		setCanSave(false);
 		setShowAnotherName(false);
+		if (id) navigate('/main');
 	};
 
 	useEffect(() => {
 		setShowAnotherNameHandler();
-	}, [typeOfWork]);
+	}, [workState.type]);
 
-	const convertText = (allDescription: string) => {
-		setNamesToShortList(null);
-		for (const [key, setValue] of Object.entries(tagsMappings)) {
-			const tempTxt = allDescription.split(key);
-			if (tempTxt.length === 3) {
-				setValue(tempTxt[1]);
-			} else {
-				return null;
+	const canConvertDescription = (allDescription: string | undefined) => {
+		if (allDescription) {
+			for (const key of Object.keys(tagsMappings)) {
+				const tempTxt = allDescription.split(key);
+				if (tempTxt.length !== 3) {
+					return false;
+				}
 			}
 		}
+		return allDescription !== undefined && allDescription.length > 0;
 	};
 
-	const canConvertDescription = (allDescription: string) => {
-		for (const key of Object.keys(tagsMappings)) {
-			const tempTxt = allDescription.split(key);
-			if (tempTxt.length !== 3) {
-				return false;
-			}
-		}
-		return true;
+	const changeField = (name: IWorkflowsKeys, value: string | number | boolean) => {
+		setWorkState({ ...workState, [name]: value });
 	};
 
 	useEffect(() => {
-		setCanAutoConvert(canConvertDescription(description));
-	}, [description]);
+		setCanAutoConvert(canConvertDescription(workState.description));
+	}, [workState.description]);
 
 	return (
 		<Box display="flex" py={2} height="100%" boxSizing={'border-box'} gap={2}>
@@ -313,8 +344,8 @@ function CreateMainComponent() {
 									id="description"
 									label="Описание заказа"
 									multiline
-									value={description}
-									onChange={(e) => setDescription(e.target.value)}
+									value={workState.description}
+									onChange={(e) => changeField('description', e.target.value)}
 								/>
 							</td>
 						</tr>
@@ -330,7 +361,7 @@ function CreateMainComponent() {
 						color={'success'}
 						className={'up-shadow'}
 						disabled={!canAutoConvert}
-						onClick={() => convertText(description)}
+						onClick={() => convertText(workState.description)}
 					>
 						Автоматическое заполнение полей
 					</Button>
@@ -360,9 +391,9 @@ function CreateMainComponent() {
 							<FormControl variant="standard" fullWidth>
 								<InputLabel id="firms">Клиент</InputLabel>
 								<Select
-									value={firm}
+									value={workState.firm}
 									onChange={(event) => {
-										setFirm(event.target.value);
+										changeField('firm', event.target.value);
 									}}
 									labelId="firms"
 								>
@@ -379,9 +410,9 @@ function CreateMainComponent() {
 							<FormControl variant="standard" fullWidth>
 								<InputLabel id="modifications">Номер журнала</InputLabel>
 								<Select
-									value={modification}
+									value={workState.modification}
 									onChange={(event) => {
-										setModification(event.target.value);
+										changeField('modification', event.target.value);
 									}}
 									labelId="modifications"
 								>
@@ -400,36 +431,35 @@ function CreateMainComponent() {
 								id="title"
 								label="Название заказа "
 								variant="standard"
-								value={title}
-								onChange={(e) => setTitle(e.target.value)}
+								value={workState.title}
+								onChange={(e) => changeField('title', e.target.value)}
 								className={`${showAnotherName ? 'inactive' : ''}`}
 							/>
-							{title.length > 0 &&
+							{namesToShortList && namesToShortList.length > 0 && typesOfWorkArray && typesOfWorkArray.length > 0 && workState.title && workState.title.length > 0 &&
 								<FormControl variant="standard" fullWidth>
 									<Select
 										className={`${showAnotherName ? '' : 'inactive'}`}
-										value={idOriginal}
+										value={workState.mainId}
 										onChange={(event) => {
-											setIdOriginal(event.target.value);
+											changeField('mainId', event.target.value);
 										}}
 										sx={{ pl: '5px' }}
 									>
-										{namesToShortList && typesOfWorkArray && typesOfWorkArray.length > 0 && (
+										{
 											namesToShortList.map((item) => {
 												return (<MenuItem key={item._id} value={item._id}>
 													{item.title}
 												</MenuItem>);
 											})
-										)
 										}
 									</Select>
 								</FormControl>}
 							<FormControl variant="standard" fullWidth>
 								<InputLabel id="typesOfWork">Тип работы</InputLabel>
 								<Select
-									value={typeOfWork}
+									value={workState.type}
 									onChange={(event) => {
-										setTypeOfWork(event.target.value);
+										changeField('type', event.target.value);
 									}}
 									sx={{ pl: '5px' }}
 									labelId="typesOfWork"
@@ -450,8 +480,8 @@ function CreateMainComponent() {
 								label="Количество страниц"
 								variant="standard"
 								type={'number'}
-								value={countOfPages}
-								onChange={(e) => setCountOfPages(+e.target.value)}
+								value={workState.countPages}
+								onChange={(e) => changeField('countPages', +e.target.value)}
 							/>
 							<TextField
 								fullWidth
@@ -459,8 +489,8 @@ function CreateMainComponent() {
 								label="Количество картинок"
 								variant="standard"
 								type={'number'}
-								value={countOfPictures}
-								onChange={(e) => setCountOfPictures(+e.target.value)}
+								value={workState.countPictures}
+								onChange={(e) => changeField('countPictures', +e.target.value)}
 							/>
 							<TextField
 								fullWidth
@@ -468,15 +498,15 @@ function CreateMainComponent() {
 								label="Срочность"
 								variant="standard"
 								type={'number'}
-								value={urgency}
-								onChange={(e) => setUrgency(+e.target.value)}
+								value={workState.urgency}
+								onChange={(e) => changeField('urgency', +e.target.value)}
 							/>
 							<FormControl variant="standard" fullWidth>
 								<InputLabel id="departments">Работа в отдел</InputLabel>
 								<Select
-									value={department}
+									value={workState.currentDepartment}
 									onChange={(event) => {
-										setDepartment(event.target.value);
+										changeField('currentDepartment', event.target.value);
 									}}
 									sx={{ pl: '5px' }}
 									labelId="departments"
@@ -520,13 +550,13 @@ function CreateMainComponent() {
 									label={<Typography
 										sx={{
 											fontWeight: 'bold',
-											color: saveToStat ? 'green' : FALSE_COLOR,
+											color: workState.setToStat ? 'green' : FALSE_COLOR,
 										}}
 									>
-										{saveToStat ? 'Заносить в статистику' : 'Не заносить в статистику'}
+										{workState.setToStat ? 'Заносить в статистику' : 'Не заносить в статистику'}
 									</Typography>}
-									checked={saveToStat}
-									onChange={(_event, checked) => setSaveToStat(checked)}
+									checked={workState.setToStat}
+									onChange={(_event, checked) => changeField('setToStat', checked)}
 								/>
 							</FormGroup>
 						</td>
@@ -541,16 +571,28 @@ function CreateMainComponent() {
 						disabled={!canSave}
 						sx={{ borderRadius: '10px' }}
 						onClick={() => saveWork()}
+						color={id ? 'success' : 'primary'}
 					>
-
-						Создать новое задание / правку. разделить
+						{
+							id
+								? 'Сохранить правку'
+								: 'Создать новое задание'
+						}
 					</Button>
 					<Button
-						variant="contained"
+						variant="outlined"
 						size="small"
 						fullWidth
-						sx={{ borderRadius: '10px' }}>
-						Очистить все поля
+						sx={{ borderRadius: '10px' }}
+						onClick={() => clearFields()}
+						color={'warning'}
+					>
+
+						{
+							id
+								? 'Отменить правку'
+								: 'Сбросить форму'
+						}
 					</Button></Box>
 			</Box>
 		</Box>
