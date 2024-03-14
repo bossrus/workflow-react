@@ -12,7 +12,7 @@ const routes = [
 		Component: LoginComponent,
 	},
 	{
-		path: '/main/:path?',
+		path: '/main/:path?/:id?',
 		Component: MainComponent,
 	},
 	{

@@ -1,10 +1,9 @@
-import { Box, IconButton, Tooltip, Typography } from '@mui/material';
-import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
-import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
-import { tooltipProps } from '@/scss/tooltipsProps.ts';
+import { Box, Typography } from '@mui/material';
 import { IUser } from '@/interfaces/user.interface.ts';
 import { IDepartmentsObject } from '@/interfaces/department.interface.ts';
 import CheckedStringOneUserComponent from '@/components/settings/users/checkedString.oneUser.component.tsx';
+import DeleteButtonComponent from '@/components/_shared/deleteButton.component.tsx';
+import EditButtonComponent from '@/components/_shared/editButton.component.tsx';
 
 interface IOneUserProps {
 	changeEditedUser: (id: string) => void;
@@ -91,36 +90,8 @@ function OneUserComponent({
 			<Box display="flex" flexDirection="column" justifyContent="space-between"
 				// p={1}
 			>
-				<Tooltip
-					title={'Удалить'}
-					arrow
-					placement="right"
-					componentsProps={tooltipProps}
-				>
-					<IconButton
-						color="warning"
-						className={'up-shadow'}
-						onClick={() => deleteUser(_id)}
-						disabled={disabled}
-					>
-						<CancelOutlinedIcon />
-					</IconButton>
-				</Tooltip>
-				<Tooltip
-					title={'Редактировать'}
-					arrow
-					placement="right"
-					componentsProps={tooltipProps}
-				>
-					<IconButton
-						color="info"
-						className={'up-shadow'}
-						onClick={() => changeEditedUser(_id)}
-						disabled={disabled}
-					>
-						<EditNoteOutlinedIcon />
-					</IconButton>
-				</Tooltip>
+				<DeleteButtonComponent id={_id} dis={disabled} onClickHere={deleteUser} />
+				<EditButtonComponent id={_id} dis={disabled} onClickHere={changeEditedUser} />
 			</Box>
 		</Box>
 	);

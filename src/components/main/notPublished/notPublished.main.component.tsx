@@ -4,6 +4,7 @@ import EditButtonComponent from '@/components/_shared/editButton.component.tsx';
 import { useEffect, useState } from 'react';
 import Checkbox from '@mui/material/Checkbox';
 import axiosCreate from '@/_api/axiosCreate.ts';
+import { useNavigate } from 'react-router-dom';
 
 function NotPublishedMainComponent() {
 	const {
@@ -101,8 +102,9 @@ function NotPublishedMainComponent() {
 		setChecks(allChecks);
 		setAllTrue();
 	};
+	const navigate = useNavigate();
 	const editWorkflow = (id: string) => {
-		console.log(id);
+		navigate(`/main/create/${id}`);
 	};
 
 	function publishWorks() {

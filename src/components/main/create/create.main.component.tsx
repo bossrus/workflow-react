@@ -25,6 +25,7 @@ import { IWorkflowUpdate } from '@/interfaces/workflow.interface.ts';
 import { useDispatch } from 'react-redux';
 import { patchOne } from '@/store/_shared.thunks.ts';
 import { TAppDispatch } from '@/store/_store.ts';
+import { useParams } from 'react-router-dom';
 
 const FALSE_COLOR = '#92a38f';
 
@@ -34,9 +35,8 @@ const TEST_DATA1 = 'в этом текстовом боксе нужв этом 
 
 function CreateMainComponent() {
 	const {
-		departmentsArray, firmsArray, modificationsArray, typesOfWorkArray,
+		departmentsArray, firmsArray, modificationsArray, typesOfWorkArray, workflowsObject,
 	} = useReduxSelectors();
-
 
 	const [firm, setFirm] = useState('');
 	const [modification, setModification] = useState('');
@@ -56,26 +56,64 @@ function CreateMainComponent() {
 	const [canSave, setCanSave] = useState(false);
 	const [showAnotherName, setShowAnotherName] = useState(false);
 
+	const { id } = useParams();
+
+	console.log('в создании путь = ', id);
+
+	useEffect(() => {
+		if (!id) return;
+		const work = workflowsObject[id];
+		setFirm(work.firm);
+		setModification(work.modification);
+		setTitle(work.title);
+		setIdOriginal(work.mainId ? work.mainId : '');
+		setTypeOfWork(work.type);
+		setCountOfPages(work.countPages);
+		setCountOfPictures(work.countPictures);
+		setUrgency(work.urgency);
+		setDepartment(work.currentDepartment);
+		setSaveToStat(work.setToStat);
+		setDescription(work.description);
+
+	}, []);
+
 	const makeCanSave = (list: IWorkflowUpdate[] | null) => {
 		console.log('можно ли сохранять?');
 		console.log('namesToShortList = ', list);
-		const isCoincidence = list?.some(item => item.title?.toLowerCase() === title.toLowerCase());
-		const index = typesOfWorkArray.findIndex(obj => obj._id === typeOfWork);
-		const isNotNewOrder = index !== -1 && title.length > 0 && typesOfWorkArray[index].title !== 'Новый заказ';
-		const isFormFilled = firm !== '' &&
-			modification !== '' &&
-			title !== '' &&
-			typeOfWork !== '' &&
-			countOfPages !== 0 &&
-			countOfPictures !== 0 &&
-			department !== '' &&
-			description !== '';
-		console.log('\tisCoincidence = ', isCoincidence);
-		console.log('\tisNotNewOrder = ', isNotNewOrder);
-		console.log('\t(isFormFilled) = ', isFormFilled);
-		console.log('\tidOriginal =', idOriginal);
-		const result = (isNotNewOrder || !isCoincidence) && isFormFilled;
-		console.log('\t\tитого = ', result);
+		let result: boolean;
+		if (id) {
+			const work = workflowsObject[id];
+			const newType = getIDByTitle<ITypeOfWork>(typesOfWorkArray, 'Новый заказ');
+			result = firm != work.firm ||
+				modification != work.modification ||
+				title != work.title ||
+				(typeOfWork != newType ? idOriginal != work.mainId : false) ||
+				typeOfWork != work.type ||
+				countOfPages != work.countPages ||
+				countOfPictures != work.countPictures ||
+				urgency != work.urgency ||
+				department != work.currentDepartment ||
+				saveToStat != work.setToStat ||
+				description != work.description;
+		} else {
+			const isCoincidence = list?.some(item => item.title?.toLowerCase() === title.toLowerCase());
+			const index = typesOfWorkArray.findIndex(obj => obj._id === typeOfWork);
+			const isNotNewOrder = index !== -1 && title.length > 0 && typesOfWorkArray[index].title !== 'Новый заказ';
+			const isFormFilled = firm !== '' &&
+				modification !== '' &&
+				title !== '' &&
+				typeOfWork !== '' &&
+				countOfPages !== 0 &&
+				countOfPictures !== 0 &&
+				department !== '' &&
+				description !== '';
+			console.log('\tisCoincidence = ', isCoincidence);
+			console.log('\tisNotNewOrder = ', isNotNewOrder);
+			console.log('\t(isFormFilled) = ', isFormFilled);
+			console.log('\tidOriginal =', idOriginal);
+			result = (isNotNewOrder || !isCoincidence) && isFormFilled;
+			console.log('\t\tитого = ', result);
+		}
 		setCanSave(result);
 	};
 
@@ -173,20 +211,39 @@ function CreateMainComponent() {
 	const dispatch = useDispatch<TAppDispatch>();
 	const saveWork = async () => {
 		const index = typesOfWorkArray.findIndex(obj => obj._id === typeOfWork);
-
+		const work: IWorkflowUpdate = id ? workflowsObject[id] : {};
 		const data: IWorkflowUpdate = {};
-		data.firm = firm;
-		data.modification = modification;
-		data.title = title;
-		if (typesOfWorkArray[index].title != 'Новый заказ') data.mainId = idOriginal;
-		data.type = typeOfWork;
-		data.countPages = countOfPages;
-		data.countPictures = countOfPictures;
-		data.urgency = urgency;
-		data.currentDepartment = department;
-		data.setToStat = saveToStat;
-		data.description = description;
+		if (!id || work.firm != data.firm) data.firm = firm;
+		if (!id || work.modification != data.modification) data.modification = modification;
+		if (!id || work.title != data.title) data.title = title;
+		if (!id || work.mainId != data.mainId) if (typesOfWorkArray[index].title != 'Новый заказ') data.mainId = idOriginal;
+		if (!id || work.type != data.type) data.type = typeOfWork;
+		if (!id || work.countPages != data.countPages) data.countPages = countOfPages;
+		if (!id || work.countPictures != data.countPictures) data.countPictures = countOfPictures;
+		if (!id || work.urgency != data.urgency) data.urgency = urgency;
+		if (!id || work.currentDepartment != data.currentDepartment) data.currentDepartment = department;
+		if (!id || work.setToStat != data.setToStat) data.setToStat = saveToStat;
+		if (!id || work.description != data.description) data.description = description;
 		dispatch(patchOne({ url: 'workflows', data }));
+		clearFields();
+	};
+
+	const clearFields = () => {
+		setFirm('');
+		setModification('');
+		setTitle('');
+		setIdOriginal('');
+		setTypeOfWork('');
+		setCountOfPages(0);
+		setCountOfPictures(0);
+		setUrgency(50000);
+		setDepartment('');
+		setSaveToStat(true);
+		setDescription('');
+		setCanAutoConvert(false);
+		setNamesToShortList(null);
+		setCanSave(false);
+		setShowAnotherName(false);
 	};
 
 	useEffect(() => {

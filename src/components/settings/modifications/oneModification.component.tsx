@@ -1,8 +1,7 @@
-import { Box, IconButton, Tooltip, Typography } from '@mui/material';
-import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
-import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
-import { tooltipProps } from '@/scss/tooltipsProps.ts';
+import { Box, Typography } from '@mui/material';
 import { IModification } from '@/interfaces/modification.interface.ts';
+import DeleteButtonComponent from '@/components/_shared/deleteButton.component.tsx';
+import EditButtonComponent from '@/components/_shared/editButton.component.tsx';
 
 interface IOneModificationProps {
 	changeEditedModification: (id: string) => void;
@@ -38,36 +37,8 @@ function OneModificationComponent({
 			</Box>
 			<Box display="flex" flexDirection="column" justifyContent="space-between"
 			>
-				<Tooltip
-					title={'Удалить'}
-					arrow
-					placement="right"
-					componentsProps={tooltipProps}
-				>
-					<IconButton
-						color="warning"
-						className={'up-shadow'}
-						onClick={() => deleteModification(_id!)}
-						disabled={disabled}
-					>
-						<CancelOutlinedIcon />
-					</IconButton>
-				</Tooltip>
-				<Tooltip
-					title={'Редактировать'}
-					arrow
-					placement="right"
-					componentsProps={tooltipProps}
-				>
-					<IconButton
-						color="info"
-						className={'up-shadow'}
-						onClick={() => changeEditedModification(_id!)}
-						disabled={disabled}
-					>
-						<EditNoteOutlinedIcon />
-					</IconButton>
-				</Tooltip>
+				<DeleteButtonComponent id={_id} dis={disabled} onClickHere={deleteModification} />
+				<EditButtonComponent id={_id} dis={disabled} onClickHere={changeEditedModification} />
 			</Box>
 		</Box>
 	);
