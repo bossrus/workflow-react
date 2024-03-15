@@ -31,6 +31,8 @@ const tabs = [
 	},
 ];
 
+//TODO как дойдёт дело до ручного добалвения табуляций — вспомнить о бэджах и MAX_urgency
+
 function MainComponent() {
 	const { path } = useParams();
 	console.log('путь в мейне', path);

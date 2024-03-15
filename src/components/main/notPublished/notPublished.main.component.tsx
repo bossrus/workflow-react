@@ -63,45 +63,81 @@ function NotPublishedMainComponent() {
 			setAnyTrueChecks(anyTrue);
 		}, 0);
 	};
+	// const checkUncheckMyWorks = () => {
+	// 	console.log('входим в отметку');
+	//
+	// 	const allMyChecks: Record<string, boolean> = JSON.parse(JSON.stringify(myChecks));
+	// 	const allChecks: Record<string, boolean> = JSON.parse(JSON.stringify(checks));
+	// 	if (allMyTrueChecks) {
+	// 		for (let key in allMyChecks) {
+	// 			allMyChecks[key] = false;
+	// 			allChecks[key] = false;
+	// 		}
+	// 	} else {
+	// 		for (let key in allMyChecks) {
+	// 			allMyChecks[key] = true;
+	// 			allChecks[key] = true;
+	// 		}
+	// 	}
+	// 	setMyChecks(allMyChecks);
+	// 	setChecks(allChecks);
+	// 	setAllTrue();
+	// };
+	// const checkUncheckAllWorks = () => {
+	// 	console.log('входим в отметку');
+	// 	const allMyChecks: Record<string, boolean> = JSON.parse(JSON.stringify(myChecks));
+	// 	const allChecks: Record<string, boolean> = JSON.parse(JSON.stringify(checks));
+	// 	if (allTrueChecks) {
+	// 		for (let key in allChecks) {
+	// 			allChecks[key] = false;
+	// 			if (allMyChecks[key] !== undefined) allMyChecks[key] = false;
+	// 		}
+	// 	} else {
+	// 		for (let key in allChecks) {
+	// 			allChecks[key] = true;
+	// 			if (allMyChecks[key] !== undefined) allMyChecks[key] = true;
+	// 		}
+	// 	}
+	// 	setMyChecks(allMyChecks);
+	// 	setChecks(allChecks);
+	// 	setAllTrue();
+	// };
+
 	const checkUncheckMyWorks = () => {
 		console.log('входим в отметку');
 
-		const allMyChecks: Record<string, boolean> = JSON.parse(JSON.stringify(myChecks));
-		const allChecks: Record<string, boolean> = JSON.parse(JSON.stringify(checks));
-		if (allMyTrueChecks) {
-			for (let key in allMyChecks) {
-				allMyChecks[key] = false;
-				allChecks[key] = false;
-			}
-		} else {
-			for (let key in allMyChecks) {
-				allMyChecks[key] = true;
-				allChecks[key] = true;
-			}
-		}
+		const allMyChecks: Record<string, boolean> = Object.keys(myChecks).reduce((acc, key) => ({
+			...acc,
+			[key]: !allMyTrueChecks,
+		}), {});
+		const allChecks: Record<string, boolean> = Object.keys(checks).reduce((acc, key) => ({
+			...acc,
+			[key]: !allMyTrueChecks,
+		}), {});
+
 		setMyChecks(allMyChecks);
 		setChecks(allChecks);
 		setAllTrue();
 	};
+
 	const checkUncheckAllWorks = () => {
 		console.log('входим в отметку');
-		const allMyChecks: Record<string, boolean> = JSON.parse(JSON.stringify(myChecks));
-		const allChecks: Record<string, boolean> = JSON.parse(JSON.stringify(checks));
-		if (allTrueChecks) {
-			for (let key in allChecks) {
-				allChecks[key] = false;
-				if (allMyChecks[key] !== undefined) allMyChecks[key] = false;
-			}
-		} else {
-			for (let key in allChecks) {
-				allChecks[key] = true;
-				if (allMyChecks[key] !== undefined) allMyChecks[key] = true;
-			}
-		}
+
+		const allMyChecks: Record<string, boolean> = Object.keys(myChecks).reduce((acc, key) => ({
+			...acc,
+			[key]: !allTrueChecks,
+		}), {});
+		const allChecks: Record<string, boolean> = Object.keys(checks).reduce((acc, key) => ({
+			...acc,
+			[key]: !allTrueChecks,
+		}), {});
+
 		setMyChecks(allMyChecks);
 		setChecks(allChecks);
 		setAllTrue();
 	};
+
+
 	const navigate = useNavigate();
 	const editWorkflow = (id: string) => {
 		navigate(`/main/create/${id}`);

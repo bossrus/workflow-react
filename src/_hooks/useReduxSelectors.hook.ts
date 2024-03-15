@@ -57,22 +57,37 @@ export const useReduxSelectors = () => {
 	const typesOfWorkArray = useSelector<TAppState, ITypeOfWork[]>((state) => typesOfWork.selectors.selectAllArray(state));
 	const typesOfWorkError = useSelector<TAppState, IError | null | undefined>((state) => typesOfWork.selectors.selectError(state));
 
-	const workflowsObject = useSelector<TAppState, IWorkflowsObject>((state) => workflows.selectors.selectAllObject(state));
-	const workflowsArray = useSelector<TAppState, IWorkflow[]>((state) => workflows.selectors.selectAllArray(state));
+	const changeUrgency = (wrk: IWorkflow) => {
+		const workflow = { ...wrk };
+		workflow.urgency = workflow.urgency
+			+ firmsObject[workflow.firm].basicPriority
+			+ (workflow.isPublished ? Math.round((Date.now() - workflow.isPublished) / 1000) : 0);
+		return workflow;
+	};
+
+	const workflowsO = useSelector<TAppState, IWorkflowsObject>((state) => workflows.selectors.selectAllObject(state));
+	const workflowsObject = useMemo(() => {
+		if (Object.keys(workflowsO).length === 0 || Object.keys(firmsObject).length === 0) return {};
+		return Object.entries(workflowsO).reduce((acc, [key, workflowFromObj]) => {
+			acc[key] = changeUrgency(workflowFromObj);
+			return acc;
+		}, {} as IWorkflowsObject);
+	}, [workflowsO, firmsObject]);
+	// const workflowsArray = useSelector<TAppState, IWorkflow[]>((state) => workflows.selectors.selectAllArray(state));
 	const workflowsError = useSelector<TAppState, IError | null | undefined>((state) => workflows.selectors.selectError(state));
 	const workflowsPublishedObject = useMemo(() => {
-		return Object.entries(workflowsObject).reduce((acc, [key, workflow]) => {
-			if (workflow.isPublished) {
-				acc[key] = workflow;
+		return Object.entries(workflowsObject).reduce((acc, [key, workflowFromObj]) => {
+			if (workflowFromObj.isPublished) {
+				acc[key] = changeUrgency(workflowFromObj);
 			}
 			return acc;
 		}, {} as IWorkflowsObject);
 	}, [workflowsObject]);
 
 	const workflowsNotPublishedObject = useMemo(() => {
-		return Object.entries(workflowsObject).reduce((acc, [key, workflow]) => {
-			if (!workflow.isPublished) {
-				acc[key] = workflow;
+		return Object.entries(workflowsObject).reduce((acc, [key, workflowFromObj]) => {
+			if (!workflowFromObj.isPublished) {
+				acc[key] = changeUrgency(workflowFromObj);
 			}
 			return acc;
 		}, {} as IWorkflowsObject);
@@ -118,7 +133,7 @@ export const useReduxSelectors = () => {
 		workflowsObject,
 		workflowsPublishedObject,
 		workflowsNotPublishedObject,
-		workflowsArray,
+		// workflowsArray,
 		workflowsError,
 
 		flashMessages,
