@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { IWorkflow } from '@/interfaces/workflow.interface.ts';
 import ToWorkButtonComponent from '@/components/_shared/toWorkButton.component.tsx';
 import { assignColor } from '@/_constants/urgencyColors.ts';
+import EditButtonComponent from '@/components/_shared/editButton.component.tsx';
 
 function InMyDepartmentMainComponent() {
 	const {
@@ -27,7 +28,7 @@ function InMyDepartmentMainComponent() {
 		setChecks({});
 		setAnyChecked(false);
 		setCountChecked(0);
-		
+
 		const keys = Object.keys(workflowsObject);
 		if (keys.length <= 0) return;
 		const newWorkflows: IWorkflow[] = [];
@@ -92,6 +93,9 @@ function InMyDepartmentMainComponent() {
 	};
 
 	const navigate = useNavigate();
+	const editWorkflow = (id: string) => {
+		navigate(`/main/create/${id}`);
+	};
 
 	function takeWorks(id: string = '') {
 		const data: string[] = [];
@@ -108,6 +112,11 @@ function InMyDepartmentMainComponent() {
 		console.log('забрали в работу, вроде', result);
 		navigate('/main');
 	}
+
+	const [showDescription, setShowDescription] = useState<string>('');
+	const show = (id: string = '') => {
+		setShowDescription(id);
+	};
 
 	const selectWorkflowsByFirm = (firm: string) => {
 		const newChecks: Record<string, boolean> = { ...checks };
@@ -141,7 +150,7 @@ function InMyDepartmentMainComponent() {
 							<tbody>
 							<tr>
 								<td className={'align-top'}>
-									<Box flexGrow={1} p={2} display="flex" gap={2}
+									<Box flexGrow={1} p={1} display="flex" gap={2}
 										 overflow="auto"
 										 flexDirection="column"
 										 height={'100%'}
@@ -153,13 +162,15 @@ function InMyDepartmentMainComponent() {
 													 flexDirection="row"
 													 width={'100%'}
 													 boxShadow={2}
-													 p={2}
+													 p={1}
 													 bgcolor={colors[wrk._id!]}
 													 borderRadius={2}
 													 boxSizing={'border-box'}
 													 gap={1}
 													 alignItems={'center'}
 													 flexWrap={'wrap'}
+													 onMouseOver={() => show(wrk._id)}
+													 onMouseOut={() => show()}
 												>
 													<Box>
 														<Checkbox checked={checks[wrk._id!]}
@@ -180,19 +191,26 @@ function InMyDepartmentMainComponent() {
 														<Box>
 															<i>{typesOfWorkObject[wrk.type!].title}</i>
 														</Box>
-													</Box>
-													<Box flexGrow={1}>
 														<Box>
-															картинок — {wrk.countPictures} шт.
-														</Box>
-														<Box>
-															страниц — {wrk.countPages} шт.
+															{wrk.countPages} стр.,
+															{wrk.countPictures} tif
 														</Box>
 													</Box>
+													{me.canStartStopWorks &&
+														<Box>
+															<EditButtonComponent id={wrk._id!} dis={false}
+																				 onClickHere={() => editWorkflow(wrk._id!)} />
+														</Box>}
 													<Box>
 														<ToWorkButtonComponent id={wrk._id!} dis={false}
 																			   onClickHere={takeWorks} />
 													</Box>
+													{wrk._id === showDescription &&
+														<Box>
+															{wrk.description}
+														</Box>
+													}
+
 												</Box>
 
 											))

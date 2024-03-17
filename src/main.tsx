@@ -26,7 +26,6 @@ export const Root = ({ myStore }: { myStore: Store }) => (
 createRoot(rootElement!).render(<Root myStore={myStore} />);
 
 //TODO отображение заказов  сделать:
-//TODO		заказы все в фирме
 //TODO 		в работе
 //TODO приглашения присоединиться сделать {без стора ?? хз}
 //TODO флеш оповещения сделать {без стора ?? хз}

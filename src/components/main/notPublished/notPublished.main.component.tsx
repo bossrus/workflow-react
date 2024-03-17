@@ -154,6 +154,11 @@ function NotPublishedMainComponent() {
 		console.log('опубликовали, вроде', result);
 	}
 
+	const [showDescription, setShowDescription] = useState<string>('');
+	const show = (id: string = '') => {
+		setShowDescription(id);
+	};
+
 	return (
 		<>
 			{
@@ -175,7 +180,7 @@ function NotPublishedMainComponent() {
 							<tbody>
 							<tr>
 								<td className={'align-top'}>
-									<Box flexGrow={1} p={2} display="flex" gap={2}
+									<Box flexGrow={1} p={1} display="flex" gap={2}
 										 overflow="auto"
 										 flexDirection="column"
 										 height={'100%'}
@@ -187,13 +192,15 @@ function NotPublishedMainComponent() {
 													 flexDirection="row"
 													 width={'100%'}
 													 boxShadow={2}
-													 p={2}
+													 p={1}
 													 bgcolor={'white'}
 													 borderRadius={2}
 													 boxSizing={'border-box'}
 													 gap={2}
 													 alignItems={'center'}
 													 flexWrap={'wrap'}
+													 onMouseOver={() => show(key)}
+													 onMouseOut={() => show()}
 												>
 													<Box>
 														<Checkbox checked={checks[key]}
@@ -234,6 +241,11 @@ function NotPublishedMainComponent() {
 																			 dis={false}
 																			 onClickHere={editWorkflow} />
 													</Box>
+													{key === showDescription &&
+														<Box>
+															{workflowsNotPublishedObject[key].description}
+														</Box>
+													}
 												</Box>
 
 											))
