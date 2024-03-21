@@ -13,6 +13,7 @@ import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import AppHeaderComponent from '@/components/app/appHeader.component.tsx';
 import { clearMe } from '@/store/me.slice.ts';
 import { useErrors } from '@/_hooks/errors.hook.ts';
+import InvitesAppComponent from '@/components/app/invites.app.component.tsx';
 
 function App() {
 
@@ -30,6 +31,7 @@ function App() {
 		meError,
 		usersObject: users,
 		onlineUsers,
+		inviteToJoin,
 	} = useReduxSelectors();
 
 	const { anyError } = useErrors();
@@ -90,6 +92,8 @@ function App() {
 			dispatch(load({ url: 'users' }));
 			dispatch(load({ url: 'typesOfWork' }));
 			dispatch(load({ url: 'workflows' }));
+			dispatch(load({ url: 'invites' }));
+			dispatch(load({ url: 'flashes' }));
 		}
 	}, [dispatch, me]);
 
@@ -173,6 +177,9 @@ function App() {
 										\</>)
 								}
 							</Box>
+							{Object.keys(inviteToJoin).length > 0 &&
+								<InvitesAppComponent />
+							}
 						</Box>}
 				</>)
 				: (

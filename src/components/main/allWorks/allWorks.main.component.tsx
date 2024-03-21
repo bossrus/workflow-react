@@ -140,7 +140,13 @@ function AllWorksMainComponent() {
 														</Box>}
 													{wrk._id === showDescription &&
 														<Box>
-															{wrk.description}
+															<small>
+																<small>
+																<pre className={'warp-text'}>
+																	{wrk.description}
+																</pre>
+																</small>
+															</small>
 														</Box>
 													}
 												</Box>

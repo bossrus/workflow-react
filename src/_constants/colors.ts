@@ -1,0 +1,1 @@
+export const FALSE_COLOR = '#92a38f';

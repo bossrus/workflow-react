@@ -1,10 +1,8 @@
-import { Box, Button, FormControl, MenuItem, Select, TextareaAutosize, TextField } from '@mui/material';
+import { Box, Button, FormControl, MenuItem, Select } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { TAppDispatch } from '@/store/_store.ts';
-import { IDepartment } from '@/interfaces/department.interface.ts';
+import axiosCreate from '@/_api/axiosCreate.ts';
 
 interface IProps {
 	work_id: string;
@@ -29,7 +27,6 @@ function WorkMyMainComponent({ work_id }: IProps) {
 	} = useReduxSelectors();
 
 	const navigate = useNavigate();
-	const dispatch = useDispatch<TAppDispatch>();
 
 	useEffect(() => {
 
@@ -44,6 +41,8 @@ function WorkMyMainComponent({ work_id }: IProps) {
 
 	const [departmentsList, setDepartmentsList] = useState<IList[]>([]);
 	const [selectedDepartment, setSelectedDepartment] = useState<string>('');
+
+	const [description, setDescription] = useState<string>('');
 
 	useEffect(() => {
 		if (!me.currentDepartment || usersArray.length < 1) return;
@@ -67,14 +66,48 @@ function WorkMyMainComponent({ work_id }: IProps) {
 		if (me.canStartStopWorks) {
 			newDepartments.push({
 				title: 'Завершить заказ',
-				id: 'Завершить заказ',
+				id: 'closeWork',
 			});
 		}
 		const index = newDepartments.findIndex(department => department.id === me.currentDepartment);
-		setSelectedDepartment(newDepartments[index + 1].id);
 		setDepartmentsList(newDepartments);
-	}, [me.currentDepartment, departmentsInWorkflowArray]);
+		if (workflowsPublishedObject[work_id].executors!.length < 2) {
+			setSelectedDepartment(newDepartments[index + 1].id);
+		} else {
+			setSelectedDepartment('justClose');
+		}
+	}, [me.currentDepartment, departmentsInWorkflowArray, workflowsPublishedObject]);
 
+	const saveToDescription = () => {
+		if (!description) return;
+		(async () => {
+			await axiosCreate.patch('/workflows/description/' + work_id, {
+				text: description,
+			});
+		})();
+		setDescription('');
+	};
+
+	const inviteUser = () => {
+		(async () => {
+			await axiosCreate.post('/invites', {
+				from: me._id,
+				to: selectedUser,
+				workflow: work_id,
+			});
+		})();
+		setSelectedUser('');
+	};
+
+	const closeWorkflow = () => {
+		(async () => {
+			await axiosCreate.patch('/workflows/close/' + work_id, {
+				newDepartment: selectedDepartment,
+			});
+		})();
+		setDescription('');
+		navigate('/main');
+	};
 
 	return (
 		<>
@@ -126,6 +159,8 @@ function WorkMyMainComponent({ work_id }: IProps) {
 								 flexDirection={'column'}>
 								<textarea
 									className={'shadow-inner'}
+									value={description}
+									onChange={(e) => setDescription(e.target.value)}
 									style={{
 										height: '100%',
 										width: '100%',
@@ -144,8 +179,8 @@ function WorkMyMainComponent({ work_id }: IProps) {
 									fullWidth
 									color={'primary'}
 									className={'up-shadow'}
-									// disabled={!anyTrueChecks}
-									// onClick={publishWorks}
+									disabled={description.length < 1}
+									onClick={saveToDescription}
 								>
 									Добавить информацию в описание
 								</Button>
@@ -180,33 +215,39 @@ function WorkMyMainComponent({ work_id }: IProps) {
 									color={'success'}
 									className={'up-shadow'}
 									disabled={selectedUser == ''}
-									// onClick={publishWorks}
+									onClick={inviteUser}
 								>
 									Пригласить
 								</Button>
 							</Box>
 							<Box>
-								Передать работу в:<br />
-								<FormControl variant="standard" fullWidth>
-									<Select
-										value={selectedDepartment}
-										onChange={(event) => {
-											setSelectedDepartment(event.target.value);
-										}}
-									>
-										{departmentsList.length > 0 && (
-											departmentsList.map((item) => (
-												<MenuItem
-													key={item.id}
-													value={item.id}
+								{
+									workflowsPublishedObject[work_id].executors!.length < 2 && (
+										<>
+											Передать работу в:<br />
+											<FormControl variant="standard" fullWidth>
+												<Select
+													value={selectedDepartment}
+													onChange={(event) => {
+														setSelectedDepartment(event.target.value);
+													}}
 												>
-													{item.title}
-												</MenuItem>
-											))
-										)
-										}
-									</Select>
-								</FormControl>
+													{departmentsList.length > 0 && (
+														departmentsList.map((item) => (
+															<MenuItem
+																key={item.id}
+																value={item.id}
+															>
+																{item.title}
+															</MenuItem>
+														))
+													)
+													}
+												</Select>
+											</FormControl>
+										</>
+									)
+								}
 								<Button
 									variant="contained"
 									size="small"
@@ -214,8 +255,7 @@ function WorkMyMainComponent({ work_id }: IProps) {
 									fullWidth
 									color={'error'}
 									className={'up-shadow'}
-									// disabled={!anyTrueChecks}
-									// onClick={publishWorks}
+									onClick={closeWorkflow}
 								>
 									Завершить работу
 								</Button>

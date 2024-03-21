@@ -1,9 +1,6 @@
-import { Box, Button, FormControlLabel, FormGroup, TextField, Typography } from '@mui/material';
+import { Box, Button, TextField, Typography } from '@mui/material';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import OneDepartmentComponent from '@/components/settings/departments/oneDepartment.component.tsx';
-import { MaterialUISwitch, SwitchStyledIcon } from '@/scss/switchStyled.ts';
-import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { TAppDispatch } from '@/store/_store.ts';
@@ -11,8 +8,8 @@ import { setState } from '@/store/_currentStates.slice.ts';
 import { IDepartment, IDepartmentUpdate } from '@/interfaces/department.interface.ts';
 import { deleteOne, patchOne } from '@/store/_shared.thunks.ts';
 import makeSlug from '@/_services/makeSlug.ts';
+import SwitchComponent from '@/components/_shared/switch.component.tsx';
 
-const FALSE_COLOR = '#92a38f';
 
 function MainDepartmentsComponents() {
 	const { departmentsArray } = useReduxSelectors();
@@ -184,43 +181,8 @@ function MainDepartmentsComponents() {
 						value={title}
 						onChange={(e) => setTitle(e.target.value)}
 					/>
-					<FormGroup>
-						<FormControlLabel
-							control={
-								<MaterialUISwitch
-									sx={{ m: 1 }}
-									icon={
-										<SwitchStyledIcon
-											sx={{ backgroundColor: FALSE_COLOR }}
-										>
-											<CancelOutlinedIcon
-												sx={{ color: 'black' }}
-											/>
-										</SwitchStyledIcon>
-									}
-									checkedIcon={
-										<SwitchStyledIcon
-											sx={{ backgroundColor: 'green' }}
-										>
-											<CheckCircleOutlineIcon
-												sx={{ color: 'white' }}
-											/>
-										</SwitchStyledIcon>
-									}
-								/>
-							}
-							label={<Typography
-								sx={{
-									fontWeight: 'bold',
-									color: isUsedInWorkflow ? 'green' : FALSE_COLOR,
-								}}
-							>
-								{switchLabel}
-							</Typography>}
-							checked={isUsedInWorkflow}
-							onChange={(_event, checked) => setIsUsedInWorkflow(checked)}
-						/>
-					</FormGroup>
+					<SwitchComponent switchLabel={switchLabel} valueChecked={isUsedInWorkflow}
+									 changeChecked={setIsUsedInWorkflow} />
 					{isUsedInWorkflow &&
 						<TextField type={'number'}
 								   value={numberInWorkflow}

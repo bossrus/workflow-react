@@ -46,7 +46,12 @@ export function createEntitySlice<T>(entityNameString: string): {
 			deleteElement: (state, action: PayloadAction<string>) => {
 				delete state.data[action.payload];
 			},
-
+			clearAll: () => {
+				return initialState;
+			},
+			setError: (state, action: PayloadAction<IError>) => {
+				state.error = action.payload;
+			},
 		},
 		extraReducers: createExtraReducers<T>(entityName),
 	});

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import io, { Socket } from 'socket.io-client';
 import { useDispatch } from 'react-redux';
-import { loadById } from '@/store/_shared.thunks.ts';
+import { load, loadById } from '@/store/_shared.thunks.ts';
 import { DEFAULT_WEBSOCKET_URL } from '@/_constants/api.ts';
 import { IAuthInterface } from '@/interfaces/auth.interface.ts';
 import { IUserObject, IUserUpdate } from '@/interfaces/user.interface.ts';
@@ -60,10 +60,14 @@ export const useWebSocket = ({ auth, me, users }: IProps) => {
 						|| (bd == 'typesOfWork' && (!typesOfWorkObject[id] || typesOfWorkObject[id].version != version))
 						|| (bd == 'workflows' && (!workflowsObject[id] || workflowsObject[id].version != version))
 						|| (bd == 'users' && (!users[id] || users[id].version != version))
-						|| (bd == 'flashes' || bd == 'invites')
+						|| (bd == 'flashes')
 					) {
 						console.log('\twebsocket обновляет ', bd, ' №', id);
 						dispatch(loadById({ url: bd, id: id }));
+					}
+					if (bd == 'invites' && id == me._id) {
+						console.log('\twebsocket обновляет ', bd, ' для №', id);
+						dispatch(load({ url: bd }));
 					}
 					if (id == me._id && me.version !== version) {
 						console.log('\tнужно обновить самого себя');

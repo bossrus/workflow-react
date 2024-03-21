@@ -2,7 +2,7 @@ import { IError } from '@/interfaces/auth.interface.ts';
 
 export interface IInviteToJoin {
 	_id?: string;
-	from?: string;
+	from: string;
 	to: string;
 	workflow: string;
 	isDeleted?: number;
