@@ -5,10 +5,11 @@ import { useEffect, useState } from 'react';
 import Checkbox from '@mui/material/Checkbox';
 import axiosCreate from '@/_api/axiosCreate.ts';
 import { useNavigate } from 'react-router-dom';
+import useWorksSelectors from '@/_hooks/useWorksSelectors.hook.ts';
+import { assignColor } from '@/_constants/urgencyColors.ts';
 
 function NotPublishedMainComponent() {
 	const {
-		workflowsNotPublishedObject,
 		typesOfWorkObject,
 		departmentsObject,
 		firmsObject,
@@ -17,17 +18,23 @@ function NotPublishedMainComponent() {
 		me,
 	} = useReduxSelectors();
 
+	const { workflowsNotPublishedObject } = useWorksSelectors();
+
 	const [checks, setChecks] = useState<Record<string, boolean>>({});
 	const [myChecks, setMyChecks] = useState<Record<string, boolean>>({});
 
+	const [colors, setColors] = useState<Record<string, string>>({});
 	useEffect(() => {
+		if (!workflowsNotPublishedObject) return;
 		const keys = Object.keys(workflowsNotPublishedObject);
 		if (keys.length <= 0) return;
 		const allChecks: Record<string, boolean> = {};
 		const allMyChecks: Record<string, boolean> = {};
 		console.log('me = ', me, ':');
+		const newColors: Record<string, string> = {};
 		keys.map((key) => {
 			allChecks[key] = false;
+			newColors[key] = assignColor(workflowsNotPublishedObject[key].urgency);
 			console.log('\t', workflowsNotPublishedObject[key].whoAddThisWorkflow);
 			if (me._id === workflowsNotPublishedObject[key].whoAddThisWorkflow) {
 				console.log('присваиваем');
@@ -36,6 +43,7 @@ function NotPublishedMainComponent() {
 		});
 		setChecks(allChecks);
 		setMyChecks(allMyChecks);
+		setColors(newColors);
 	}, [workflowsNotPublishedObject]);
 
 	const changeChecked = (id: string) => {
@@ -63,45 +71,6 @@ function NotPublishedMainComponent() {
 			setAnyTrueChecks(anyTrue);
 		}, 0);
 	};
-	// const checkUncheckMyWorks = () => {
-	// 	console.log('входим в отметку');
-	//
-	// 	const allMyChecks: Record<string, boolean> = JSON.parse(JSON.stringify(myChecks));
-	// 	const allChecks: Record<string, boolean> = JSON.parse(JSON.stringify(checks));
-	// 	if (allMyTrueChecks) {
-	// 		for (let key in allMyChecks) {
-	// 			allMyChecks[key] = false;
-	// 			allChecks[key] = false;
-	// 		}
-	// 	} else {
-	// 		for (let key in allMyChecks) {
-	// 			allMyChecks[key] = true;
-	// 			allChecks[key] = true;
-	// 		}
-	// 	}
-	// 	setMyChecks(allMyChecks);
-	// 	setChecks(allChecks);
-	// 	setAllTrue();
-	// };
-	// const checkUncheckAllWorks = () => {
-	// 	console.log('входим в отметку');
-	// 	const allMyChecks: Record<string, boolean> = JSON.parse(JSON.stringify(myChecks));
-	// 	const allChecks: Record<string, boolean> = JSON.parse(JSON.stringify(checks));
-	// 	if (allTrueChecks) {
-	// 		for (let key in allChecks) {
-	// 			allChecks[key] = false;
-	// 			if (allMyChecks[key] !== undefined) allMyChecks[key] = false;
-	// 		}
-	// 	} else {
-	// 		for (let key in allChecks) {
-	// 			allChecks[key] = true;
-	// 			if (allMyChecks[key] !== undefined) allMyChecks[key] = true;
-	// 		}
-	// 	}
-	// 	setMyChecks(allMyChecks);
-	// 	setChecks(allChecks);
-	// 	setAllTrue();
-	// };
 
 	const checkUncheckMyWorks = () => {
 		console.log('входим в отметку');
@@ -162,6 +131,10 @@ function NotPublishedMainComponent() {
 	return (
 		<>
 			{
+				workflowsNotPublishedObject &&
+				firmsObject &&
+				usersObject &&
+				checks &&
 				Object.keys(workflowsNotPublishedObject).length > 0 &&
 				Object.keys(firmsObject).length > 0 &&
 				Object.keys(usersObject).length > 0 &&
@@ -189,57 +162,64 @@ function NotPublishedMainComponent() {
 											Object.keys(workflowsNotPublishedObject).length > 0 &&
 											Object.keys(workflowsNotPublishedObject).map((key) => (
 												<Box key={key} display="flex"
-													 flexDirection="row"
-													 width={'100%'}
-													 boxShadow={2}
-													 p={1}
-													 bgcolor={'white'}
+													 flexDirection="column"
 													 borderRadius={2}
-													 boxSizing={'border-box'}
-													 gap={2}
-													 alignItems={'center'}
-													 flexWrap={'wrap'}
-													 onMouseOver={() => show(key)}
-													 onMouseOut={() => show()}
+													 border={1}
+													 borderColor={'#cbcbcb'}
 												>
-													<Box>
-														<Checkbox checked={checks[key]}
-																  onChange={() => changeChecked(key)} />
-														{usersObject[workflowsNotPublishedObject[key].whoAddThisWorkflow] ? usersObject[workflowsNotPublishedObject[key].whoAddThisWorkflow].name : 'тютю'}
-													</Box>
-													<Box flexGrow={1}>
-														<strong>{workflowsNotPublishedObject[key].title}</strong>
-													</Box>
-													<Box flexGrow={1}>
+													<Box display="flex"
+														 flexDirection="row"
+														 width={'100%'}
+														 boxShadow={2}
+														 p={1}
+														 bgcolor={colors[key]}
+														 borderRadius={2}
+														 boxSizing={'border-box'}
+														 gap={2}
+														 alignItems={'center'}
+														 flexWrap={'wrap'}
+														 onMouseOver={() => show(key)}
+														 onMouseOut={() => show()}
+													>
 														<Box>
-															{firmsObject[workflowsNotPublishedObject[key].firm].title}
+															<Checkbox checked={checks[key]}
+																	  onChange={() => changeChecked(key)} />
+															{usersObject[workflowsNotPublishedObject[key].whoAddThisWorkflow] ? usersObject[workflowsNotPublishedObject[key].whoAddThisWorkflow].name : 'тютю'}
 														</Box>
-														<Box>
-															№ {modificationsObject[workflowsNotPublishedObject[key].modification].title}
+														<Box flexGrow={1}>
+															<strong>{workflowsNotPublishedObject[key].title}</strong>
 														</Box>
-													</Box>
-													<Box flexGrow={1}>
-														<Box>
-															<i>{typesOfWorkObject[workflowsNotPublishedObject[key].type].title}</i>
+														<Box flexGrow={1}>
+															<Box>
+																{firmsObject[workflowsNotPublishedObject[key].firm].title}
+															</Box>
+															<Box>
+																№ {modificationsObject[workflowsNotPublishedObject[key].modification].title}
+															</Box>
 														</Box>
-														<Box>
-															{departmentsObject[workflowsNotPublishedObject[key].currentDepartment].title}
+														<Box flexGrow={1}>
+															<Box>
+																<i>{typesOfWorkObject[workflowsNotPublishedObject[key].type].title}</i>
+															</Box>
+															<Box>
+																{departmentsObject[workflowsNotPublishedObject[key].currentDepartment].title}
+															</Box>
 														</Box>
-													</Box>
-													<Box flexGrow={1}>
-														<Box>
-															количество
-															картинок {workflowsNotPublishedObject[key].countPictures} шт.
+														<Box flexGrow={1}>
+															<Box>
+																количество
+																картинок {workflowsNotPublishedObject[key].countPictures} шт.
+															</Box>
+															<Box>
+																количество
+																страниц {workflowsNotPublishedObject[key].countPages} шт.
+															</Box>
 														</Box>
-														<Box>
-															количество
-															страниц {workflowsNotPublishedObject[key].countPages} шт.
+														<Box alignItems={'end'}>
+															<EditButtonComponent id={key}
+																				 dis={false}
+																				 onClickHere={editWorkflow} />
 														</Box>
-													</Box>
-													<Box alignItems={'end'}>
-														<EditButtonComponent id={key}
-																			 dis={false}
-																			 onClickHere={editWorkflow} />
 													</Box>
 													{key === showDescription &&
 														<Box>

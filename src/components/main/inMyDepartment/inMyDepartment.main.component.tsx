@@ -4,14 +4,13 @@ import { useEffect, useState } from 'react';
 import Checkbox from '@mui/material/Checkbox';
 import axiosCreate from '@/_api/axiosCreate.ts';
 import { useNavigate } from 'react-router-dom';
-import { IWorkflow } from '@/interfaces/workflow.interface.ts';
 import ToWorkButtonComponent from '@/components/_shared/toWorkButton.component.tsx';
 import { assignColor } from '@/_constants/urgencyColors.ts';
 import EditButtonComponent from '@/components/_shared/editButton.component.tsx';
+import useWorksSelectors from '@/_hooks/useWorksSelectors.hook.ts';
 
 function InMyDepartmentMainComponent() {
 	const {
-		workflowsObject,
 		typesOfWorkObject,
 		firmsObject,
 		modificationsObject,
@@ -19,7 +18,11 @@ function InMyDepartmentMainComponent() {
 		me,
 	} = useReduxSelectors();
 
-	const [workflows, setWorkflows] = useState<IWorkflow[]>([]);
+	const {
+		workflowsObject,
+		workflowsInMyDepartment: workflows,
+	} = useWorksSelectors();
+
 	const [listOfFirms, setListOfFirms] = useState<string[]>([]);
 	const [colors, setColors] = useState<Record<string, string>>({});
 
@@ -29,25 +32,12 @@ function InMyDepartmentMainComponent() {
 		setAnyChecked(false);
 		setCountChecked(0);
 
-		const keys = Object.keys(workflowsObject);
-		if (keys.length <= 0) return;
-		const newWorkflows: IWorkflow[] = [];
 		const newColors: Record<string, string> = {};
-		for (let key of keys) {
-			const work = workflowsObject[key];
-			if (
-				work.currentDepartment === me.currentDepartment
-				&& work.isPublished
-				&& (!work.executors || work.executors.length === 0)
-			) {
-				newWorkflows.push(workflowsObject[key]);
-			}
-			newColors[key] = assignColor(work.urgency);
+		for (let work of workflows) {
+			newColors[work._id!] = assignColor(work.urgency);
 		}
-		newWorkflows.sort((a, b) => b.urgency - a.urgency);
-		setWorkflows(newWorkflows);
 		setColors(newColors);
-	}, [workflowsObject]);
+	}, [workflows]);
 
 	const [checks, setChecks] = useState<Record<string, boolean>>({});
 	const [anyChecked, setAnyChecked] = useState(false);
@@ -159,60 +149,69 @@ function InMyDepartmentMainComponent() {
 											workflows.length > 0 &&
 											workflows.map((wrk) => (
 												<Box key={wrk._id} display="flex"
-													 flexDirection="row"
-													 width={'100%'}
-													 boxShadow={2}
-													 p={1}
-													 bgcolor={colors[wrk._id!]}
+													 flexDirection="column"
 													 borderRadius={2}
-													 boxSizing={'border-box'}
-													 gap={1}
-													 alignItems={'center'}
-													 flexWrap={'wrap'}
-													 onMouseOver={() => show(wrk._id)}
-													 onMouseOut={() => show()}
-												>
-													<Box>
-														<Checkbox checked={checks[wrk._id!]}
-																  onChange={() => changeChecked(wrk._id!)} />
-													</Box>
-													<Box flexGrow={1}>
-														<strong>{wrk.title}</strong>
-													</Box>
-													<Box flexGrow={1}>
+													 border={1}
+													 borderColor={'#cbcbcb'}>
+													<Box display="flex"
+														 flexDirection="row"
+														 width={'100%'}
+														 boxShadow={2}
+														 p={1}
+														 bgcolor={colors[wrk._id!]}
+														 borderRadius={2}
+														 boxSizing={'border-box'}
+														 gap={1}
+														 alignItems={'center'}
+														 flexWrap={'wrap'}
+														 onMouseOver={() => show(wrk._id)}
+														 onMouseOut={() => show()}
+													>
 														<Box>
-															{firmsObject[wrk.firm!].title}
+															<Checkbox checked={checks[wrk._id!]}
+																	  onChange={() => changeChecked(wrk._id!)} />
 														</Box>
-														<Box>
-															№ {modificationsObject[wrk.modification!].title}
+														<Box flexGrow={1}>
+															<strong>{wrk.title}</strong>
 														</Box>
-													</Box>
-													<Box flexGrow={1}>
-														<Box>
-															<i>{typesOfWorkObject[wrk.type!].title}</i>
+														<Box flexGrow={1} textAlign={'center'}>
+															<Box>
+																{firmsObject[wrk.firm!].title}
+															</Box>
+															<Box>
+																№ {modificationsObject[wrk.modification!].title}
+															</Box>
 														</Box>
-														<Box>
-															{wrk.countPages} стр.,
-															{wrk.countPictures} tif
+														<Box flexGrow={1} textAlign={'center'}>
+															<Box>
+																<i>{typesOfWorkObject[wrk.type!].title}</i>
+															</Box>
+															<Box>
+																{wrk.countPages} стр.,
+																{wrk.countPictures} tif
+															</Box>
 														</Box>
-													</Box>
-													{me.canStartStopWorks &&
+														{me.canStartStopWorks &&
+															<Box>
+																<EditButtonComponent id={wrk._id!} dis={false}
+																					 onClickHere={() => editWorkflow(wrk._id!)} />
+															</Box>}
 														<Box>
-															<EditButtonComponent id={wrk._id!} dis={false}
-																				 onClickHere={() => editWorkflow(wrk._id!)} />
-														</Box>}
-													<Box>
-														<ToWorkButtonComponent id={wrk._id!} dis={false}
-																			   onClickHere={takeWorks} />
+															<ToWorkButtonComponent id={wrk._id!} dis={false}
+																				   onClickHere={takeWorks} />
+														</Box>
 													</Box>
 													{wrk._id === showDescription &&
-														<Box>
+														<Box p={2} pt={'0!important'}>
+															<small>
+															<pre className={'warp-text'}>
 															{wrk.description}
+															</pre>
+															</small>
 														</Box>
 													}
 
 												</Box>
-
 											))
 										}
 									</Box>

@@ -3,12 +3,12 @@ import TabsLineComponent from '@/components/_shared/tabsLine.component.tsx';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { useEffect, useState } from 'react';
-import { IWorkflow } from '@/interfaces/workflow.interface.ts';
 import { useDispatch } from 'react-redux';
 import { TAppDispatch } from '@/store/_store.ts';
 import { IUserUpdate } from '@/interfaces/user.interface.ts';
 import { patchOne } from '@/store/_shared.thunks.ts';
 import WorkMyMainComponent from '@/components/main/my/work.my.main.component.tsx';
+import useWorksSelectors from '@/_hooks/useWorksSelectors.hook.ts';
 
 interface Itabs {
 	label: string;
@@ -23,34 +23,30 @@ function MyMainComponent() {
 	console.log('path в my.main.component >>>>', path);
 	console.log('id в my.main.component >>>>', params_id);
 
-	const { me, workflowsPublishedObject } = useReduxSelectors();
+	const { me } = useReduxSelectors();
+	const {
+		workflowsInMyProcess,
+	} = useWorksSelectors();
 
 	const navigate = useNavigate();
 	const dispatch = useDispatch<TAppDispatch>();
 
 	useEffect(() => {
 		if (!path && !params_id) return;
-		const works: IWorkflow[] = [];
-		for (const key in workflowsPublishedObject) {
-			if (workflowsPublishedObject[key].executors?.includes(me._id!))
-				works.push(workflowsPublishedObject[key]);
-		}
-		if (works.length === 0) {
+		if (workflowsInMyProcess.length === 0) {
 			navigate('/main');
 		}
-		if (works.length === 0) {
+		if (workflowsInMyProcess.length === 0) {
 			return;
 		}
-		console.log('длина ворков -= ', works.length);
-		changePage(works[0]._id!);
-		console.log('works = ', works);
-		setTabs(works.map((work) => {
+		changePage(workflowsInMyProcess[0]._id!);
+		setTabs(workflowsInMyProcess.map((work) => {
 			return {
 				label: work.title,
 				url: work._id!,
 			};
 		}));
-	}, [workflowsPublishedObject, me.currentWorkflowInWork, params_id]);
+	}, [workflowsInMyProcess, me.currentWorkflowInWork, params_id]);
 
 	const changeMeCurrent = (id: string) => {
 		const data: IUserUpdate = {

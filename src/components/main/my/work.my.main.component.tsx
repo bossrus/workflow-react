@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { useEffect, useState } from 'react';
 import axiosCreate from '@/_api/axiosCreate.ts';
+import useWorksSelectors from '@/_hooks/useWorksSelectors.hook.ts';
 
 interface IProps {
 	work_id: string;
@@ -17,7 +18,6 @@ function WorkMyMainComponent({ work_id }: IProps) {
 
 	const {
 		me,
-		workflowsPublishedObject,
 		typesOfWorkObject,
 		firmsObject,
 		modificationsObject,
@@ -26,15 +26,16 @@ function WorkMyMainComponent({ work_id }: IProps) {
 		usersArray,
 	} = useReduxSelectors();
 
+	const {
+		workflowsObject,
+	} = useWorksSelectors();
+
 	const navigate = useNavigate();
 
-	useEffect(() => {
 
-	}, [workflowsPublishedObject]);
-
-	const mag = firmsObject[workflowsPublishedObject[work_id].firm].title;
-	const mod = modificationsObject[workflowsPublishedObject[work_id].modification].title;
-	const type = typesOfWorkObject[workflowsPublishedObject[work_id].type].title;
+	const mag = firmsObject[workflowsObject[work_id].firm].title;
+	const mod = modificationsObject[workflowsObject[work_id].modification].title;
+	const type = typesOfWorkObject[workflowsObject[work_id].type].title;
 
 	const [usersList, setUsersList] = useState<IList[]>([]);
 	const [selectedUser, setSelectedUser] = useState<string>('');
@@ -71,12 +72,12 @@ function WorkMyMainComponent({ work_id }: IProps) {
 		}
 		const index = newDepartments.findIndex(department => department.id === me.currentDepartment);
 		setDepartmentsList(newDepartments);
-		if (workflowsPublishedObject[work_id].executors!.length < 2) {
+		if (workflowsObject[work_id].executors!.length < 2) {
 			setSelectedDepartment(newDepartments[index + 1].id);
 		} else {
 			setSelectedDepartment('justClose');
 		}
-	}, [me.currentDepartment, departmentsInWorkflowArray, workflowsPublishedObject]);
+	}, [me.currentDepartment, departmentsInWorkflowArray, workflowsObject]);
 
 	const saveToDescription = () => {
 		if (!description) return;
@@ -112,7 +113,7 @@ function WorkMyMainComponent({ work_id }: IProps) {
 	return (
 		<>
 			{
-				workflowsPublishedObject[work_id] &&
+				workflowsObject[work_id] &&
 				selectedDepartment !== '' &&
 				<Box display="flex" flexDirection="column" height="100%">
 					<Box
@@ -136,7 +137,7 @@ function WorkMyMainComponent({ work_id }: IProps) {
 						</Box>
 						<Box>
 							<strong>
-								{workflowsPublishedObject[work_id].title}
+								{workflowsObject[work_id].title}
 							</strong>,
 						</Box>
 						<Box>
@@ -150,7 +151,7 @@ function WorkMyMainComponent({ work_id }: IProps) {
 						 bgcolor={'white'} p={2} boxSizing={'border-box'}>
 						<Box flexGrow={1} pr={1}>
 							<pre className={'warp-text'}>
-							{workflowsPublishedObject[work_id].description}
+							{workflowsObject[work_id].description}
 							</pre>
 						</Box>
 						<Box minWidth={'300px'} height={'100%'} display={'flex'}
@@ -222,7 +223,7 @@ function WorkMyMainComponent({ work_id }: IProps) {
 							</Box>
 							<Box>
 								{
-									workflowsPublishedObject[work_id].executors!.length < 2 && (
+									workflowsObject[work_id].executors!.length < 2 && (
 										<>
 											Передать работу в:<br />
 											<FormControl variant="standard" fullWidth>
