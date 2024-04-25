@@ -7,7 +7,7 @@ import { TAppDispatch } from '@/store/_store.ts';
 import { setState } from '@/store/_currentStates.slice.ts';
 import { IUser, IUserObject, IUserUpdate } from '@/interfaces/user.interface.ts';
 import { deleteOne, patchOne } from '@/store/_shared.thunks.ts';
-import makeSlug from '@/_services/makeSlug.ts';
+import makeSlug from '@/_services/makeSlug.service.ts';
 import { loadUsers } from '@/components/settings/users/loadUsers.service.ts';
 import CheckListMainUserComponent from '@/components/settings/users/checkList.MainUser.component.tsx';
 import { IUserRight, USER_RIGHTS } from '@/_constants/userRights.ts';
@@ -27,7 +27,7 @@ function MainUsersComponents() {
 	const fillLocalUserList = (newUsersObject: IUserObject) => {
 		setUsersObject(newUsersObject);
 		setUsers(Object.values(newUsersObject));
-		console.log('переменные присвоены');
+		// console.log('переменные присвоены');
 	};
 
 	const [rights, setRights] = useState<string[]>([]);
@@ -105,7 +105,7 @@ function MainUsersComponents() {
 			}
 		}
 
-		console.log('canSave = ', canSave);
+		// console.log('canSave = ', canSave);
 		setStopSave(!canSave);
 
 
@@ -154,7 +154,7 @@ function MainUsersComponents() {
 		if (currentUser == undefined || name !== usersObject[currentUser].login) user.name = name;
 		if (currentUser == undefined || JSON.stringify(usersDepartments.sort()) !== JSON.stringify(usersObject[currentUser].departments.sort())) user.departments = usersDepartments;
 
-		console.log(user);
+		// console.log(user);
 
 		await dispatch(patchOne({ url: 'users', data: user }));
 
@@ -170,7 +170,7 @@ function MainUsersComponents() {
 	};
 
 	useEffect(() => {
-		console.log('usersDepartments = ', usersDepartments);
+		// console.log('usersDepartments = ', usersDepartments);
 	}, [usersDepartments]);
 
 	return (

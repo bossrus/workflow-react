@@ -20,9 +20,10 @@ function App() {
 	const navigate = useNavigate();
 
 	const location = useLocation().pathname;
-	console.log('location = ', location); // путь текущего маршрута
+	// console.log('location = ', location); // путь текущего маршрута
 
 	const [auth, setAuth] = useState<IAuthInterface | null>(null);
+	const [oldMeLength, setOldMeLength] = useState(0);
 
 
 	const {
@@ -44,15 +45,15 @@ function App() {
 		if (location != '/login')
 			(async () => {
 				const localAuth = await getAuth();
-				console.log('авторизация = ', localAuth);
+				// console.log('авторизация = ', localAuth);
 
 				setAuth(localAuth);
 				if (!localAuth)
 					navigate('/login');
 				else {
-					console.log('\tполучили какую-то авторизацию. моя длина = ', Object.keys(me).length);
+					// console.log('\tполучили какую-то авторизацию. моя длина = ', Object.keys(me).length);
 					if (Object.keys(me).length === 0) {
-						console.log('\tвключаем получение по танку');
+						// console.log('\tвключаем получение по танку');
 						dispatch(authLoad());
 					}
 				}
@@ -69,7 +70,7 @@ function App() {
 	}, [location]);
 
 	useEffect(() => {
-		console.log('ошибка в получении меня', meError);
+		// console.log('ошибка в получении меня', meError);
 		if (location != '/login')
 			if (meError)
 				navigate('/login');
@@ -84,7 +85,8 @@ function App() {
 	const routePage = useRoutes(routes);
 
 	useEffect(() => {
-		if (Object.keys(me).length > 0) {
+		if (Object.keys(me).length > 0 && oldMeLength === 0) {
+			setOldMeLength(Object.keys(me).length);
 			dispatch(load({ url: 'departments' }));
 			dispatch(load({ url: 'firms' }));
 			dispatch(load({ url: 'modifications' }));
@@ -97,7 +99,7 @@ function App() {
 		}
 	}, [dispatch, me]);
 
-	const { isConnected, socket } = useWebSocket({ auth, me, users });
+	const { isConnected, socket } = useWebSocket({ oldMeLength, auth, me, users });
 
 	const connectToWebsocket = () => {
 		console.log('мы коннект к вебсокету');
@@ -171,10 +173,10 @@ function App() {
 									(<>
 										\ <Link to={'/settings'}>Настройки</Link> \
 										\ <Link to={'/main/create'}> Создать новый заказ</Link> \
-										\ <Link to={'/main/my-department'}> Элемент в моём отделе </Link> \
+										\ <Link to={'/main/'}> main </Link> \
+										\ <Link to={'/stat/'}> Статистика </Link> \
 
-										\ Статистика
-										\</>)
+									</>)
 								}
 							</Box>
 							{Object.keys(inviteToJoin).length > 0 &&

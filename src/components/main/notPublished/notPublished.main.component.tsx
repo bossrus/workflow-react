@@ -1,12 +1,11 @@
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { Box, Button } from '@mui/material';
-import EditButtonComponent from '@/components/_shared/editButton.component.tsx';
 import { useEffect, useState } from 'react';
-import Checkbox from '@mui/material/Checkbox';
 import axiosCreate from '@/_api/axiosCreate.ts';
 import { useNavigate } from 'react-router-dom';
 import useWorksSelectors from '@/_hooks/useWorksSelectors.hook.ts';
 import { assignColor } from '@/_constants/urgencyColors.ts';
+import WorkInfoComponent from '@/components/_shared/workInfo.component.tsx';
 
 function NotPublishedMainComponent() {
 	const {
@@ -30,14 +29,14 @@ function NotPublishedMainComponent() {
 		if (keys.length <= 0) return;
 		const allChecks: Record<string, boolean> = {};
 		const allMyChecks: Record<string, boolean> = {};
-		console.log('me = ', me, ':');
+		// console.log('me = ', me, ':');
 		const newColors: Record<string, string> = {};
 		keys.map((key) => {
 			allChecks[key] = false;
 			newColors[key] = assignColor(workflowsNotPublishedObject[key].urgency);
-			console.log('\t', workflowsNotPublishedObject[key].whoAddThisWorkflow);
+			// console.log('\t', workflowsNotPublishedObject[key].whoAddThisWorkflow);
 			if (me._id === workflowsNotPublishedObject[key].whoAddThisWorkflow) {
-				console.log('присваиваем');
+				// console.log('присваиваем');
 				allMyChecks[key] = false;
 			}
 		});
@@ -61,36 +60,35 @@ function NotPublishedMainComponent() {
 		setAllTrue();
 	}, [checks, myChecks]);
 	const setAllTrue = () => {
-		setTimeout(() => {
-			const myTrue = Object.values(myChecks).every(value => value);
-			const allTrue = Object.values(checks).every(value => value);
-			const anyTrue = Object.values(checks).some(value => value);
-			console.log('myTrue = «', myTrue, '» \tallTrue = «', allTrue, '»');
-			setAllMyTrueChecks(myTrue);
-			setAllTrueChecks(allTrue);
-			setAnyTrueChecks(anyTrue);
-		}, 0);
+		const myTrue = !!Object.values(myChecks).length && Object.values(myChecks).every(value => value);
+		// console.log('\t\t', myTrue);
+		const allTrue = !!Object.values(checks).length && Object.values(checks).every(value => value);
+		const anyTrue = !!Object.values(checks).length && Object.values(checks).some(value => value);
+		// console.log('myTrue = «', myTrue, '» \tallTrue = «', allTrue, '»');
+		setAllMyTrueChecks(myTrue);
+		setAllTrueChecks(allTrue);
+		setAnyTrueChecks(anyTrue);
 	};
 
 	const checkUncheckMyWorks = () => {
-		console.log('входим в отметку');
 
-		const allMyChecks: Record<string, boolean> = Object.keys(myChecks).reduce((acc, key) => ({
-			...acc,
-			[key]: !allMyTrueChecks,
-		}), {});
-		const allChecks: Record<string, boolean> = Object.keys(checks).reduce((acc, key) => ({
-			...acc,
-			[key]: !allMyTrueChecks,
-		}), {});
+		const allMyChecks: Record<string, boolean> = {};
+		// console.log('БЕРЁМ', allTrueChecks);
+		const allChecks: Record<string, boolean> = JSON.parse(JSON.stringify(checks));
+		// console.log('\tполучаем', allChecks);
+		Object.keys(myChecks).map((key) => {
+			allMyChecks[key] = !allMyTrueChecks;
+			allChecks[key] = !allMyTrueChecks;
+		}, {});
 
+		// console.log('проверяем трушность ', allMyChecks);
 		setMyChecks(allMyChecks);
+		// console.log('\t а это все ', allChecks);
 		setChecks(allChecks);
-		setAllTrue();
 	};
 
 	const checkUncheckAllWorks = () => {
-		console.log('входим в отметку');
+		// console.log('входим в отметку');
 
 		const allMyChecks: Record<string, boolean> = Object.keys(myChecks).reduce((acc, key) => ({
 			...acc,
@@ -108,25 +106,18 @@ function NotPublishedMainComponent() {
 
 
 	const navigate = useNavigate();
-	const editWorkflow = (id: string) => {
-		navigate(`/main/create/${id}`);
-	};
 
-	function publishWorks() {
+	async function publishWorks() {
 		const data: string[] = [];
 		for (let key in checks) {
 			if (checks[key]) {
 				data.push(key);
 			}
 		}
-		const result = axiosCreate.patch('/workflows/publish', { ids: data });
+		const result = await axiosCreate.patch('/workflows/publish', { ids: data });
 		console.log('опубликовали, вроде', result);
+		navigate(`/main/`);
 	}
-
-	const [showDescription, setShowDescription] = useState<string>('');
-	const show = (id: string = '') => {
-		setShowDescription(id);
-	};
 
 	return (
 		<>
@@ -153,7 +144,7 @@ function NotPublishedMainComponent() {
 							<tbody>
 							<tr>
 								<td className={'align-top'}>
-									<Box flexGrow={1} p={1} display="flex" gap={2}
+									<Box flexGrow={1} p={1} display="flex" gap={1}
 										 overflow="auto"
 										 flexDirection="column"
 										 height={'100%'}
@@ -161,73 +152,22 @@ function NotPublishedMainComponent() {
 										{
 											Object.keys(workflowsNotPublishedObject).length > 0 &&
 											Object.keys(workflowsNotPublishedObject).map((key) => (
-												<Box key={key} display="flex"
-													 flexDirection="column"
-													 borderRadius={2}
-													 border={1}
-													 borderColor={'#cbcbcb'}
-												>
-													<Box display="flex"
-														 flexDirection="row"
-														 width={'100%'}
-														 boxShadow={2}
-														 p={1}
-														 bgcolor={colors[key]}
-														 borderRadius={2}
-														 boxSizing={'border-box'}
-														 gap={2}
-														 alignItems={'center'}
-														 flexWrap={'wrap'}
-														 onMouseOver={() => show(key)}
-														 onMouseOut={() => show()}
-													>
-														<Box>
-															<Checkbox checked={checks[key]}
-																	  onChange={() => changeChecked(key)} />
-															{usersObject[workflowsNotPublishedObject[key].whoAddThisWorkflow] ? usersObject[workflowsNotPublishedObject[key].whoAddThisWorkflow].name : 'тютю'}
-														</Box>
-														<Box flexGrow={1}>
-															<strong>{workflowsNotPublishedObject[key].title}</strong>
-														</Box>
-														<Box flexGrow={1}>
-															<Box>
-																{firmsObject[workflowsNotPublishedObject[key].firm].title}
-															</Box>
-															<Box>
-																№ {modificationsObject[workflowsNotPublishedObject[key].modification].title}
-															</Box>
-														</Box>
-														<Box flexGrow={1}>
-															<Box>
-																<i>{typesOfWorkObject[workflowsNotPublishedObject[key].type].title}</i>
-															</Box>
-															<Box>
-																{departmentsObject[workflowsNotPublishedObject[key].currentDepartment].title}
-															</Box>
-														</Box>
-														<Box flexGrow={1}>
-															<Box>
-																количество
-																картинок {workflowsNotPublishedObject[key].countPictures} шт.
-															</Box>
-															<Box>
-																количество
-																страниц {workflowsNotPublishedObject[key].countPages} шт.
-															</Box>
-														</Box>
-														<Box alignItems={'end'}>
-															<EditButtonComponent id={key}
-																				 dis={false}
-																				 onClickHere={editWorkflow} />
-														</Box>
-													</Box>
-													{key === showDescription &&
-														<Box>
-															{workflowsNotPublishedObject[key].description}
-														</Box>
-													}
-												</Box>
-
+												<WorkInfoComponent
+													key={key}
+													idProps={key}
+													colorProps={colors[key]}
+													checkedProps={checks[key]}
+													workflowTitle={workflowsNotPublishedObject[key].title}
+													workflowFirmTitle={firmsObject[workflowsNotPublishedObject[key].firm].title}
+													workflowModificationTitle={modificationsObject[workflowsNotPublishedObject[key].modification].title}
+													workflowTypeTitle={typesOfWorkObject[workflowsNotPublishedObject[key].type].title}
+													workflowDepartmentTitle={departmentsObject[workflowsNotPublishedObject[key].currentDepartment].title}
+													workflowCountPictures={workflowsNotPublishedObject[key].countPictures}
+													workflowCountPages={workflowsNotPublishedObject[key].countPages}
+													workflowDescription={workflowsNotPublishedObject[key].description}
+													changeChecked={() => changeChecked(key)}
+													creator={usersObject[workflowsNotPublishedObject[key].whoAddThisWorkflow] ? usersObject[workflowsNotPublishedObject[key].whoAddThisWorkflow].name : 'тютю'}
+												/>
 											))
 										}
 									</Box>
@@ -253,16 +193,19 @@ function NotPublishedMainComponent() {
 							>
 								{allTrueChecks ? 'Снять выделение со всех работ' : 'Выделить все работы'}
 							</Button>
-							<Button
-								variant="outlined"
-								size="small"
-								sx={{ mt: 2, borderRadius: '10px', flexGrow: 1 }}
-								color={'inherit'}
-								className={'up-shadow'}
-								onClick={checkUncheckMyWorks}
-							>
-								{allMyTrueChecks ? 'Снять выделение со всех ваших работ' : 'Выделить все ваши работы'}
-							</Button>
+							{
+								Object.keys(myChecks).length > 0 &&
+								<Button
+									variant="outlined"
+									size="small"
+									sx={{ mt: 2, borderRadius: '10px', flexGrow: 1 }}
+									color={'inherit'}
+									className={'up-shadow'}
+									onClick={checkUncheckMyWorks}
+								>
+									{allMyTrueChecks ? 'Снять выделение со всех ваших работ' : 'Выделить все ваши работы'}
+								</Button>
+							}
 							<Button
 								variant="contained"
 								size="small"

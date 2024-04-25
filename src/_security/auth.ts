@@ -15,7 +15,7 @@ export async function setAuth(auth_login: string, auth_token: string): Promise<v
 		auth_login,
 		auth_token,
 	});
-	console.log('set auth = ', auth);
+	// console.log('set auth = ', auth);
 	localStorage.setItem('workflow-auth', auth);
 }
 

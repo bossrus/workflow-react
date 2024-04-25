@@ -15,7 +15,7 @@ import { MaterialUISwitch, SwitchStyledIcon } from '@/scss/switchStyled.ts';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useEffect, useState } from 'react';
-import { getIDByTitle } from '@/_services/getIDByTitle.ts';
+import { getIDByTitle } from '@/_services/getIDByTitle.service.ts';
 import { IDepartment } from '@/interfaces/department.interface.ts';
 import { ITypeOfWork } from '@/interfaces/worktype.interface.ts';
 import { IModification } from '@/interfaces/modification.interface.ts';
@@ -26,32 +26,40 @@ import { useDispatch } from 'react-redux';
 import { patchOne } from '@/store/_shared.thunks.ts';
 import { TAppDispatch } from '@/store/_store.ts';
 import { useNavigate, useParams } from 'react-router-dom';
+import useWorksSelectors from '@/_hooks/useWorksSelectors.hook.ts';
 
 const FALSE_COLOR = '#92a38f';
 
 
 // const TEST_DATA1 = 'в этом текстовом боксе нужно сделать «Выделить всё», скопировать в память, и целиком вставить в поле «Описание работы:» на сайте www.work-flow.site. Далее на сайте кликнуть по строке «Распознать текст» под полем «Описание работы».      [<NM>]Destinations D_ZP[<NM>][<SRCHNST>]50000[<SRCHNST>][<TP>]Досыл TIFF[<TP>][<TOSTAT>]on[<TOSTAT>][<FRM>]АЭРОФЛОТ[<FRM>][<DPRT>]Ретушь[<DPRT>][<CNTPGS>]2[<CNTPGS>][<MDFCTR>]0523[<MDFCTR>][<CNTPCTRS>]1[<CNTPCTRS>][<DSCRPTN>]название вёрстки «Destinations D_ZP.indd» количество картинок на обработку ≈ 1 название PDF с комментариями «Destinations D_ZP_comment_Mon_Mar_27_2023_15-21-10.pdf»  ------------ 1294910638-265_1.tif обрабатывать прям в цмике. не переделять ------------ 1294910638-265_1.tif шар вытравить на слой, потом только стёклам сделать прозрачность 70%[<DSCRPTN>]';
 // const TEST_DATA1 = 'в этом текстовом боксе нужно сделать «Выделить всё», скопировать в память, и целиком вставить в поле «Описание работы:» на сайте www.work-flow.site. Далее на сайте кликнуть по строке «Распознать текст» под полем «Описание работы».      [<NM>]++obektiv_APR[<NM>][<SRCHNST>]50000[<SRCHNST>][<TP>]Новый заказ[<TP>][<TOSTAT>]on[<TOSTAT>][<FRM>]журнал S7[<FRM>][<DPRT>]Ретушь[<DPRT>][<CNTPGS>]2[<CNTPGS>][<MDFCTR>]0423[<MDFCTR>][<CNTPCTRS>]1[<CNTPCTRS>][<DSCRPTN>]количество картинок на обработку ≈ 1 название PDF с комментариями «++obektiv_APR_comment_Tue_Mar_14_2023_10-09-13.pdf» [<DSCRPTN>]';
-const TEST_DATA1 = 'в этом текстовом боксе нужв этом текстовом боксе нужно сделать «Выделить всё», скопировать в память, и целиком вставить в поле «Описание работы:» на сайте www.work-flow.site. Далее на сайте кликнуть по строке «Распознать текст» под полем «Описание работы».      [<NM>]ap04_Select_Techno_1pic[<NM>][<SRCHNST>]50000[<SRCHNST>][<TP>]Правка[<TP>][<TOSTAT>]on[<TOSTAT>][<FRM>]аэроПРЕМИУМ[<FRM>][<DPRT>]Ретушь[<DPRT>][<CNTPGS>]1[<CNTPGS>][<MDFCTR>]0423[<MDFCTR>][<CNTPCTRS>]undefined[<CNTPCTRS>][<DSCRPTN>]название вёрстки «ap04_Select_Techno_1pic.indd» название PDF с комментариями «ap04_Select_Techno_1pic_comment_Wed_Mar_01_2023_14-53-51.pdf»  ------------ Monolith right.tif убрать выбеливание фона, потом изначальный фон слегка уплотнить[<DSCRPTN>]';
+// const TEST_DATA1 = 'в этом текстовом боксе нужв этом текстовом боксе нужно сделать «Выделить всё», скопировать в память, и целиком вставить в поле «Описание работы:» на сайте www.work-flow.site. Далее на сайте кликнуть по строке «Распознать текст» под полем «Описание работы».      [<NM>]ap04_Select_Techno_1pic[<NM>][<SRCHNST>]50000[<SRCHNST>][<TP>]Правка[<TP>][<TOSTAT>]on[<TOSTAT>][<FRM>]аэроПРЕМИУМ[<FRM>][<DPRT>]Ретушь[<DPRT>][<CNTPGS>]1[<CNTPGS>][<MDFCTR>]0423[<MDFCTR>][<CNTPCTRS>]undefined[<CNTPCTRS>][<DSCRPTN>]название вёрстки «ap04_Select_Techno_1pic.indd» название PDF с комментариями «ap04_Select_Techno_1pic_comment_Wed_Mar_01_2023_14-53-51.pdf»  ------------ Monolith right.tif убрать выбеливание фона, потом изначальный фон слегка уплотнить[<DSCRPTN>]';
 
 function CreateMainComponent() {
 	const {
-		departmentsArray, firmsArray, modificationsArray, typesOfWorkArray, workflowsObject,
+		departmentsArray, firmsArray, modificationsArray, typesOfWorkArray,
 	} = useReduxSelectors();
+
+	const { workflowsObject } = useWorksSelectors();
 
 	const [workState, setWorkState] = useState<IWorkflowUpdate>({
 		firm: '',
 		modification: '',
 		title: '',
 		mainId: '',
-		type: '',
-		countPages: 0,
-		countPictures: 0,
+		type: getIDByTitle(typesOfWorkArray, 'Новый заказ'),
+		countPages: 1,
+		countPictures: 1,
 		urgency: 50000,
 		currentDepartment: '',
 		setToStat: true,
-		description: TEST_DATA1, //TODO сменитиь на ''
+		description: '',
 	});
+
+	useEffect(() => {
+		if (!departmentsArray || departmentsArray.length === 0) return;
+		changeField('currentDepartment', departmentsArray[0]._id);
+	}, [departmentsArray]);
 
 	const [canAutoConvert, setCanAutoConvert] = useState(false);
 	const [namesToShortList, setNamesToShortList] = useState<IWorkflowUpdate[] | null>(null);
@@ -62,7 +70,7 @@ function CreateMainComponent() {
 
 	const { id } = useParams();
 
-	console.log('в создании путь = ', id);
+	// console.log('в создании путь = ', id);
 
 	useEffect(() => {
 		if (!id || Object.keys(workflowsObject).length <= 0) return;
@@ -181,8 +189,9 @@ function CreateMainComponent() {
 		return count;
 	};
 
-	const setShortList = (data: IWorkflowUpdate[]) => {
-		if (workState.firm == '' || workState.modification == '' || workState.title == '') return;
+	const setShortList = (data: IWorkflowUpdate[], currentType: string) => {
+		// console.log('зашли во впиндюриваение списка', workState, 'data.length = ', data.length);
+		if (workState.firm == '' || workState.modification == '') return;
 		if (data.length > 0) {
 			for (const element of data) {
 				//в данном случае urgency используется как степень совпадения.
@@ -191,18 +200,27 @@ function CreateMainComponent() {
 			}
 			data.sort((a, b) => b.urgency! - a.urgency!);
 		}
-		setNamesToShortList(data.length > 0 ? data : null);
+		const newList = data.length > 0 ? data : null;
+		// console.log('\t\tпиндюрим в шортлист', newList);
+		setNamesToShortList(newList);
 		const firstItem = data.length > 0 ? data[0]._id! : '';
+		const newOrderId = getIDByTitle<ITypeOfWork>(typesOfWorkArray, 'Новый заказ');
 		const newState: IWorkflowUpdate = {
 			...workState,
 			mainId: firstItem,
 		};
+		if (!newList && workState.type != newOrderId) {
+			newState.type = newOrderId;
+		}
 		setWorkState(newState);
+		setShowAnotherNameHandler(currentType);
 	};
 
 	useEffect(() => {
+		// console.log('зашли в смену списка');
 		if (workState.firm !== '' &&
 			workState.modification !== '') {
+			let currentType = workState.type as string;
 			(async () => {
 				const result = await axiosCreate.post('workflows/in_this_modification',
 					{
@@ -210,45 +228,63 @@ function CreateMainComponent() {
 						modification: workState.modification,
 					},
 				);
+				// console.log('\tполучили дату:', result.data);
 				if (result.data == null || result.data.length === 0) {
-					const newState = { ...workState, type: getIDByTitle<ITypeOfWork>(typesOfWorkArray, 'Новый заказ') };
+					// console.log('\tзашли менять тип? с', workState.type);
+					currentType = getIDByTitle<ITypeOfWork>(typesOfWorkArray, 'Новый заказ');
+					const newState = { ...workState, type: currentType };
+					// console.log('\tсменили на ', currentType);
 					setWorkState(newState);
 				}
-				setShortList(result.data);
-				setTimeout(() => {
-					setShowAnotherNameHandler();
-					makeCanSave(result.data);
-				}, 0);
+				// console.log('\tфигачим список');
+				setShortList(result.data, currentType);
+				makeCanSave(result.data);
 			})();
 		}
 	}, [workState.firm,
-		workState.modification,
-		workState.type]);
+		workState.modification]);
 
 	useEffect(() => {
+		// console.log('шортлист = ', namesToShortList);
+		let currentType = workState.type as string;
+		if (!namesToShortList || namesToShortList.length === 0) {
+			currentType = getIDByTitle<ITypeOfWork>(typesOfWorkArray, 'Новый заказ');
+			const newState = { ...workState, type: currentType };
+			// console.log('\tсменили на ', newState.type);
+			setWorkState(newState);
+		}
+		setShowAnotherNameHandler(currentType);
+	}, [workState.type]);
+
+	useEffect(() => {
+		// console.log('вроде как поменялось название?');
 		if (workState.firm !== '' && workState.modification !== '' && namesToShortList && namesToShortList.length > 0) {
-			setShortList(namesToShortList);
+			setShortList(namesToShortList, workState.type as string);
 		}
 	}, [workState.title]);
 
-	const setShowAnotherNameHandler = () => {
-		const index = typesOfWorkArray.findIndex(obj => obj._id === workState.type);
+	const setShowAnotherNameHandler = (currentType: string) => {
+		// console.log('меняем видимость', currentType);
+
+		const index = typesOfWorkArray.findIndex(obj => obj._id === currentType);
 		if (index !== -1) {
-			setShowAnotherName(workState.title!.length > 0 && typesOfWorkArray[index].title != 'Новый заказ');
+			setShowAnotherName(typesOfWorkArray[index].title != 'Новый заказ');
 		}
 	};
 
 	const dispatch = useDispatch<TAppDispatch>();
 	const saveWork = async () => {
-		console.log('enter to save, id = ', id);
+		// console.log('enter to save, id = ', id);
 		if (id && Object.keys(workflowsObject).length <= 0) return;
-		const index = typesOfWorkArray.findIndex(obj => obj._id === workState.type);
+		const currentTypeIndex = typesOfWorkArray.findIndex(obj => obj._id === workState.type);
+		const IdOfNewOrderType = getIDByTitle<ITypeOfWork>(typesOfWorkArray, 'Новый заказ');
 		const work: IWorkflowUpdate = id ? workflowsObject[id] : {};
 		const data: IWorkflowUpdate = id ? { _id: id } : {};
 		if (!id || work.firm != workState.firm) data.firm = workState.firm;
 		if (!id || work.modification != workState.modification) data.modification = workState.modification;
 		if (!id || work.title != workState.title) data.title = workState.title;
-		if (!id || work.mainId != workState.mainId) if (typesOfWorkArray[index].title != 'Новый заказ') data.mainId = workState.mainId;
+		if (!id || work.mainId != workState.mainId) if (typesOfWorkArray[currentTypeIndex].title != 'Новый заказ') data.mainId = workState.mainId;
+		if (!id && workState.type != IdOfNewOrderType) data.title = workflowsObject[workState.mainId!].title;
 		if (!id || work.type != workState.type) data.type = workState.type;
 		if (!id || work.countPages != workState.countPages) data.countPages = workState.countPages;
 		if (!id || work.countPictures != workState.countPictures) data.countPictures = workState.countPictures;
@@ -256,7 +292,7 @@ function CreateMainComponent() {
 		if (!id || work.currentDepartment != workState.currentDepartment) data.currentDepartment = workState.currentDepartment;
 		if (!id || work.setToStat != workState.setToStat) data.setToStat = workState.setToStat;
 		if (!id || work.description != workState.description) data.description = workState.description;
-		console.log('\tsave data:', data);
+		// console.log('\tsave data:', data);
 		dispatch(patchOne({ url: 'workflows', data }));
 		clearFields();
 	};
@@ -269,8 +305,8 @@ function CreateMainComponent() {
 			title: '',
 			mainId: '',
 			type: '',
-			countPages: 0,
-			countPictures: 0,
+			countPages: 1,
+			countPictures: 1,
 			urgency: 50000,
 			currentDepartment: '',
 			setToStat: true,
@@ -284,7 +320,7 @@ function CreateMainComponent() {
 	};
 
 	useEffect(() => {
-		setShowAnotherNameHandler();
+		setShowAnotherNameHandler(workState.type as string);
 	}, [workState.type]);
 
 	const canConvertDescription = (allDescription: string | undefined) => {
@@ -435,7 +471,14 @@ function CreateMainComponent() {
 								onChange={(e) => changeField('title', e.target.value)}
 								className={`${showAnotherName ? 'inactive' : ''}`}
 							/>
-							{namesToShortList && namesToShortList.length > 0 && typesOfWorkArray && typesOfWorkArray.length > 0 && workState.title && workState.title.length > 0 &&
+							{
+								showAnotherName &&
+								namesToShortList &&
+								namesToShortList.length > 0 &&
+								typesOfWorkArray &&
+								typesOfWorkArray.length > 0 &&
+								workState.title &&
+								workState.title.length > 0 &&
 								<FormControl variant="standard" fullWidth>
 									<Select
 										className={`${showAnotherName ? '' : 'inactive'}`}

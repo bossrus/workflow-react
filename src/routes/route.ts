@@ -1,6 +1,7 @@
 import LoginComponent from '@/components/login/login.component.tsx';
 import settingsComponent from '@/components/settings/settings.component.tsx';
 import MainComponent from '@/components/main/main.component.tsx';
+import StatComponent from '@/stat/stat.component.tsx';
 
 const routes = [
 	{
@@ -14,6 +15,10 @@ const routes = [
 	{
 		path: '/main/:path?/:id?',
 		Component: MainComponent,
+	},
+	{
+		path: '/stat/:id?',
+		Component: StatComponent,
 	},
 	{
 		path: '/',

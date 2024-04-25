@@ -1,13 +1,12 @@
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { Box, Button } from '@mui/material';
 import { useEffect, useState } from 'react';
-import Checkbox from '@mui/material/Checkbox';
 import axiosCreate from '@/_api/axiosCreate.ts';
 import { useNavigate } from 'react-router-dom';
 import ToWorkButtonComponent from '@/components/_shared/toWorkButton.component.tsx';
 import { assignColor } from '@/_constants/urgencyColors.ts';
-import EditButtonComponent from '@/components/_shared/editButton.component.tsx';
 import useWorksSelectors from '@/_hooks/useWorksSelectors.hook.ts';
+import WorkInfoComponent from '@/components/_shared/workInfo.component.tsx';
 
 function InMyDepartmentMainComponent() {
 	const {
@@ -15,7 +14,6 @@ function InMyDepartmentMainComponent() {
 		firmsObject,
 		modificationsObject,
 		usersObject,
-		me,
 	} = useReduxSelectors();
 
 	const {
@@ -83,11 +81,8 @@ function InMyDepartmentMainComponent() {
 	};
 
 	const navigate = useNavigate();
-	const editWorkflow = (id: string) => {
-		navigate(`/main/create/${id}`);
-	};
 
-	function takeWorks(id: string = '') {
+	async function takeWorks(id: string = '') {
 		const data: string[] = [];
 		if (id === '') {
 			for (let key in checks) {
@@ -98,15 +93,10 @@ function InMyDepartmentMainComponent() {
 		} else {
 			data.push(id);
 		}
-		const result = axiosCreate.patch('/workflows/take', { ids: data });
+		const result = await axiosCreate.patch('/workflows/take', { ids: data });
 		console.log('забрали в работу, вроде', result);
-		navigate('/main');
+		navigate('/main/');
 	}
-
-	const [showDescription, setShowDescription] = useState<string>('');
-	const show = (id: string = '') => {
-		setShowDescription(id);
-	};
 
 	const selectWorkflowsByFirm = (firm: string) => {
 		const newChecks: Record<string, boolean> = { ...checks };
@@ -140,7 +130,7 @@ function InMyDepartmentMainComponent() {
 							<tbody>
 							<tr>
 								<td className={'align-top'}>
-									<Box flexGrow={1} p={1} display="flex" gap={2}
+									<Box flexGrow={1} p={1} display="flex" gap={1}
 										 overflow="auto"
 										 flexDirection="column"
 										 height={'100%'}
@@ -148,70 +138,24 @@ function InMyDepartmentMainComponent() {
 										{
 											workflows.length > 0 &&
 											workflows.map((wrk) => (
-												<Box key={wrk._id} display="flex"
-													 flexDirection="column"
-													 borderRadius={2}
-													 border={1}
-													 borderColor={'#cbcbcb'}>
-													<Box display="flex"
-														 flexDirection="row"
-														 width={'100%'}
-														 boxShadow={2}
-														 p={1}
-														 bgcolor={colors[wrk._id!]}
-														 borderRadius={2}
-														 boxSizing={'border-box'}
-														 gap={1}
-														 alignItems={'center'}
-														 flexWrap={'wrap'}
-														 onMouseOver={() => show(wrk._id)}
-														 onMouseOut={() => show()}
-													>
-														<Box>
-															<Checkbox checked={checks[wrk._id!]}
-																	  onChange={() => changeChecked(wrk._id!)} />
-														</Box>
-														<Box flexGrow={1}>
-															<strong>{wrk.title}</strong>
-														</Box>
-														<Box flexGrow={1} textAlign={'center'}>
-															<Box>
-																{firmsObject[wrk.firm!].title}
-															</Box>
-															<Box>
-																№ {modificationsObject[wrk.modification!].title}
-															</Box>
-														</Box>
-														<Box flexGrow={1} textAlign={'center'}>
-															<Box>
-																<i>{typesOfWorkObject[wrk.type!].title}</i>
-															</Box>
-															<Box>
-																{wrk.countPages} стр.,
-																{wrk.countPictures} tif
-															</Box>
-														</Box>
-														{me.canStartStopWorks &&
-															<Box>
-																<EditButtonComponent id={wrk._id!} dis={false}
-																					 onClickHere={() => editWorkflow(wrk._id!)} />
-															</Box>}
-														<Box>
-															<ToWorkButtonComponent id={wrk._id!} dis={false}
-																				   onClickHere={takeWorks} />
-														</Box>
-													</Box>
-													{wrk._id === showDescription &&
-														<Box p={2} pt={'0!important'}>
-															<small>
-															<pre className={'warp-text'}>
-															{wrk.description}
-															</pre>
-															</small>
-														</Box>
-													}
-
-												</Box>
+												<WorkInfoComponent
+													key={wrk._id}
+													idProps={wrk._id!}
+													colorProps={colors[wrk._id!]}
+													workflowTitle={wrk.title}
+													workflowFirmTitle={firmsObject[wrk.firm!].title}
+													workflowModificationTitle={modificationsObject[wrk.modification!].title}
+													workflowTypeTitle={typesOfWorkObject[wrk.type!].title}
+													workflowCountPages={wrk.countPages}
+													workflowCountPictures={wrk.countPictures}
+													workflowDescription={wrk.description}
+													changeChecked={() => changeChecked(wrk._id!)}
+													checkedProps={checks[wrk._id!]}
+													workflowShowDepartment={false}
+												>
+													<ToWorkButtonComponent id={wrk._id!} dis={false}
+																		   onClickHere={takeWorks} />
+												</WorkInfoComponent>
 											))
 										}
 									</Box>

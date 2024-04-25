@@ -22,9 +22,10 @@ interface IProps {
 	auth: IAuthInterface | null;
 	users: IUserObject;
 	me: IUserUpdate;
+	oldMeLength: number;
 }
 
-export const useWebSocket = ({ auth, me, users }: IProps) => {
+export const useWebSocket = ({ oldMeLength, auth, me, users }: IProps) => {
 	const [isConnected, setIsConnected] = useState(false);
 	const dispatch = useDispatch<TAppDispatch>();
 
@@ -33,7 +34,7 @@ export const useWebSocket = ({ auth, me, users }: IProps) => {
 		firmsObject,
 		typesOfWorkObject,
 		departmentsObject,
-		workflowsObject,
+		workflowsAll: workflowsObject,
 	} = useReduxSelectors();
 
 	const deletes = {
@@ -50,6 +51,7 @@ export const useWebSocket = ({ auth, me, users }: IProps) => {
 
 	const websocketReaction = ({ bd, operation, id, version }: IWebsocket) => {
 		if (bd == 'websocket') {
+			console.log('обновляем вебсокет:', JSON.parse(id));
 			dispatch(setOnline(JSON.parse(id)));
 		} else {
 			switch (operation) {
@@ -85,7 +87,9 @@ export const useWebSocket = ({ auth, me, users }: IProps) => {
 	};
 
 	useEffect(() => {
-		if (auth && Object.keys(me).length > 0) {
+		console.log('смена oldMeLength', oldMeLength);
+		if (oldMeLength !== 0) {
+			console.log('сменился me или auth');
 			socket = io(DEFAULT_WEBSOCKET_URL, {
 				query: {
 					login: auth?.auth_login,
@@ -108,7 +112,7 @@ export const useWebSocket = ({ auth, me, users }: IProps) => {
 
 			socket.on('disconnect', () => {
 				dispatch(setOnline([]));
-				setIsConnected(true);
+				setIsConnected(false);
 				console.log('Соединение разорвано');
 			});
 
@@ -117,10 +121,15 @@ export const useWebSocket = ({ auth, me, users }: IProps) => {
 			});
 		}
 		return () => {
-			if (socket && auth && Object.keys(me).length > 0)
-				socket.disconnect();
+			if (oldMeLength !== 0) {
+				console.log('useWebsocket is closed');
+				if (socket && auth && Object.keys(me).length > 0) {
+					setIsConnected(false);
+					socket.disconnect();
+				}
+			}
 		};
-	}, [me, auth]);
+	}, [oldMeLength]);
 
 	return { isConnected, socket };
 };

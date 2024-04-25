@@ -7,7 +7,7 @@ import { TAppDispatch } from '@/store/_store.ts';
 import { setState } from '@/store/_currentStates.slice.ts';
 import { IFirmUpdate } from '@/interfaces/firm.interface.ts';
 import { deleteOne, patchOne } from '@/store/_shared.thunks.ts';
-import makeSlug from '@/_services/makeSlug.ts';
+import makeSlug from '@/_services/makeSlug.service.ts';
 
 function MainFirmsComponents() {
 	const { firmsArray: firms } = useReduxSelectors();
@@ -41,7 +41,7 @@ function MainFirmsComponents() {
 			}
 		}
 
-		console.log('canSave = ', canSave);
+		// console.log('canSave = ', canSave);
 		setStopSave(!canSave);
 
 

@@ -104,8 +104,32 @@ body {
   overflow: auto;
 }
 
+.date-picker {
+  border-left: 0;
+  border-top: 0;
+  border-right: 0;
+  padding-left: 5px;
+  margin-left: 5px;
+  font-size: small;
+  background: white;
+}
+
+.date-picker:focus {
+  border-left: 0;
+  border-top: 0;
+  border-right: 0;
+  outline: none;
+  background: #eef5fd;
+}
+
+
 .table-container {
   @include table-container;
+}
+
+.just-table-container {
+  @include table-container;
+  padding-bottom: 0 !important;
 }
 
 .table-container-pb10 {

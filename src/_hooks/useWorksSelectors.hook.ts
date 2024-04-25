@@ -11,6 +11,7 @@ const useWorksSelectors = () => {
 	} = useReduxSelectors();
 
 	const changeUrgency = (wrk: IWorkflow) => {
+		if (!firmsObject || Object.keys(firmsObject).length === 0) return wrk;
 		const workflow = { ...wrk };
 		workflow.urgency = workflow.urgency
 			+ (firmsObject[workflow.firm].basicPriority ? firmsObject[workflow.firm].basicPriority : 0)

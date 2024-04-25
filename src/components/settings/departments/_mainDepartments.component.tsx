@@ -7,7 +7,7 @@ import { TAppDispatch } from '@/store/_store.ts';
 import { setState } from '@/store/_currentStates.slice.ts';
 import { IDepartment, IDepartmentUpdate } from '@/interfaces/department.interface.ts';
 import { deleteOne, patchOne } from '@/store/_shared.thunks.ts';
-import makeSlug from '@/_services/makeSlug.ts';
+import makeSlug from '@/_services/makeSlug.service.ts';
 import SwitchComponent from '@/components/_shared/switch.component.tsx';
 
 
@@ -30,7 +30,7 @@ function MainDepartmentsComponents() {
 			const numB = isNaN(Number(b.numberInWorkflow)) ? Infinity : +b.numberInWorkflow;
 			return numA - numB;
 		});
-		console.log('после сортировки newDepartments = ', newDepartments);
+		// console.log('после сортировки newDepartments = ', newDepartments);
 		setDepartments(newDepartments);
 	}, [departmentsArray]);
 
@@ -61,7 +61,7 @@ function MainDepartmentsComponents() {
 			}
 		}
 
-		console.log('canSave = ', canSave);
+		// console.log('canSave = ', canSave);
 		setStopSave(!canSave);
 
 
@@ -106,7 +106,7 @@ function MainDepartmentsComponents() {
 		} else {
 			department.title = title;
 			department.isUsedInWorkflow = isUsedInWorkflow;
-			console.log('isUsedInWorkflow = ', isUsedInWorkflow);
+			// console.log('isUsedInWorkflow = ', isUsedInWorkflow);
 			department.numberInWorkflow = isUsedInWorkflow ? numberInWorkflow : 'notUsedInWorkflow';
 		}
 		dispatch(patchOne({ url: 'departments', data: department }));

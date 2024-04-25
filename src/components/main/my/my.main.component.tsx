@@ -19,65 +19,71 @@ function MyMainComponent() {
 
 	const [tabs, setTabs] = useState<Itabs[]>([]);
 
-	const { path, id: params_id } = useParams();
-	console.log('path в my.main.component >>>>', path);
-	console.log('id в my.main.component >>>>', params_id);
+	const { id: paramsId } = useParams();
+	// console.log('paramsPath в my.main.component >>>>', paramsPath);
+	// console.log('id в my.main.component >>>>', paramsId);
 
 	const { me } = useReduxSelectors();
 	const {
+		workflowsObject,
 		workflowsInMyProcess,
 	} = useWorksSelectors();
 
 	const navigate = useNavigate();
 	const dispatch = useDispatch<TAppDispatch>();
 
-	useEffect(() => {
-		if (!path && !params_id) return;
-		if (workflowsInMyProcess.length === 0) {
-			navigate('/main');
-		}
-		if (workflowsInMyProcess.length === 0) {
-			return;
-		}
-		changePage(workflowsInMyProcess[0]._id!);
-		setTabs(workflowsInMyProcess.map((work) => {
-			return {
-				label: work.title,
-				url: work._id!,
-			};
-		}));
-	}, [workflowsInMyProcess, me.currentWorkflowInWork, params_id]);
 
 	const changeMeCurrent = (id: string) => {
+		if (id === me.currentWorkflowInWork) return;
 		const data: IUserUpdate = {
 			_id: me._id,
 			currentWorkflowInWork: id,
 		};
-		console.log('диспатчим');
+		// console.log('диспатчим');
 		dispatch(patchOne({
 			url: 'users/me',
 			data: data,
 		}));
 	};
 
-	const changePage = (id: string) => {
-		if (!me.currentWorkflowInWork) {
-			changeMeCurrent(id);
-		} else {
-			if (!params_id) {
-				console.log('перенавигейчиваем');
-				navigate('/main/my/' + me.currentWorkflowInWork);
-			} else if (params_id !== me.currentWorkflowInWork) {
-				changeMeCurrent(params_id);
+	useEffect(() => {
+		console.log('зашли в юзефект');
+		if (workflowsInMyProcess.length < 1) return;
+		console.log('проверка на длину миновала');
+		if (!paramsId
+			|| !workflowsObject[paramsId]
+			|| !workflowsObject[paramsId].executors
+			|| !workflowsObject[paramsId].executors!.includes(me._id!)) {
+			console.log('внутри уcловий');
+			if (workflowsInMyProcess.length > 0) {
+				console.log('переход на актив!');
+				navigate('/main/my/' + workflowsInMyProcess[0]._id);
+			} else {
+				console.log('неча утут делать');
+				navigate('/main');
 			}
 		}
-	};
+		if (me.currentWorkflowInWork != paramsId) {
+			changeMeCurrent(paramsId!);
+		}
+	}, [paramsId, workflowsInMyProcess]);
+
+	useEffect(() => {
+		console.log('меняем табс при ', workflowsInMyProcess.length);
+		setTabs(workflowsInMyProcess.map((work) => {
+			return {
+				label: work.title,
+				url: work._id!,
+			};
+		}));
+	}, [workflowsInMyProcess]);
 
 	return (
 		<>
-			{tabs.length > 0 &&
-				path &&
-				params_id &&
+			{
+				workflowsInMyProcess.length > 0 &&
+				tabs.length > 0 &&
+				paramsId &&
 				<Box height={'100%'} pt={2} boxSizing={'border-box'} width={'100%'} display="flex"
 					 flexDirection="column">
 					<Box
@@ -89,10 +95,10 @@ function MyMainComponent() {
 						boxSizing={'border-box'}
 					>
 						<Box justifyContent="center" id={'test'} display={'flex'}>
-							<TabsLineComponent tabs={tabs} chapter={params_id!} section={'main/my'} />
+							<TabsLineComponent tabs={tabs} chapter={paramsId!} section={'main/my'} />
 						</Box>
 						<Box flexGrow={1} p={2}>
-							<WorkMyMainComponent work_id={params_id!} />
+							<WorkMyMainComponent work_id={paramsId!} />
 						</Box>
 					</Box>
 				</Box>

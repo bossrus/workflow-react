@@ -29,9 +29,9 @@ export const useErrors = () => {
 
 	useEffect(() => {
 		const messages = errors.filter(Boolean).map(error => {
-			console.log('проверяем статус ошибки:', (error as IError).status);
+			// console.log('проверяем статус ошибки:', (error as IError).status);
 			if ((error as IError).status === 403) {
-				console.log('найдена ошибка 403');
+				// console.log('найдена ошибка 403');
 				hasForbiddenError = true;
 				dispatch(clearMe());
 			}
@@ -47,7 +47,7 @@ export const useErrors = () => {
 		setAnyError(messages.join('\n'));
 
 		if (hasForbiddenError) {
-			console.log('перехожу?');
+			// console.log('перехожу?');
 			navigate('/login');
 		}
 
@@ -57,12 +57,12 @@ export const useErrors = () => {
 };
 
 export const clearErrors = (dispatch: TAppDispatch) => {
-	console.log('запускаем очистку ошибок');
+	// console.log('запускаем очистку ошибок');
 	dispatch(departments.actions.clearErrors());
 	dispatch(users.actions.clearErrors());
 	dispatch(typesOfWork.actions.clearErrors());
 	dispatch(modifications.actions.clearErrors());
 	dispatch(firms.actions.clearErrors());
 	dispatch(workflows.actions.clearErrors());
-	console.log('очистили');
+	// console.log('очистили');
 };

@@ -2,9 +2,8 @@ import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { Box } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { assignColor } from '@/_constants/urgencyColors.ts';
-import EditButtonComponent from '@/components/_shared/editButton.component.tsx';
-import { useNavigate } from 'react-router-dom';
 import useWorksSelectors from '@/_hooks/useWorksSelectors.hook.ts';
+import WorkInfoComponent from '@/components/_shared/workInfo.component.tsx';
 
 function AllWorksMainComponent() {
 	const {
@@ -12,7 +11,6 @@ function AllWorksMainComponent() {
 		firmsObject,
 		modificationsObject,
 		usersObject,
-		me,
 		departmentsObject,
 	} = useReduxSelectors();
 
@@ -30,16 +28,6 @@ function AllWorksMainComponent() {
 		}
 		setColors(newColors);
 	}, [workflowsPublishedArray]);
-
-	const [showDescription, setShowDescription] = useState<string>('');
-	const show = (id: string = '') => {
-		setShowDescription(id);
-	};
-
-	const navigate = useNavigate();
-	const editWorkflow = (id: string) => {
-		navigate(`/main/create/${id}`);
-	};
 
 	return (
 		<>
@@ -62,7 +50,7 @@ function AllWorksMainComponent() {
 							<tbody>
 							<tr>
 								<td className={'align-top'}>
-									<Box flexGrow={1} p={1} display="flex" gap={2}
+									<Box flexGrow={1} p={1} display="flex" gap={1}
 										 overflow="auto"
 										 flexDirection="column"
 										 height={'100%'}
@@ -70,80 +58,24 @@ function AllWorksMainComponent() {
 										{
 											workflowsPublishedArray.length > 0 &&
 											workflowsPublishedArray.map((wrk) => (
-												<Box key={wrk._id} display="flex"
-													 flexDirection="column"
-													 borderRadius={2}
-													 border={1}
-													 borderColor={'#cbcbcb'}
-												>
-													<Box display="flex"
-														 flexDirection="row"
-														 width={'100%'}
-														 boxShadow={2}
-														 p={1}
-														 bgcolor={colors[wrk._id!]}
-														 borderRadius={2}
-														 boxSizing={'border-box'}
-														 gap={1}
-														 alignItems={'center'}
-														 flexWrap={'wrap'}
-														 onMouseOver={() => show(wrk._id)}
-														 onMouseOut={() => show()}
-													>
-														<Box flexGrow={1}>
-															<strong>{wrk.title}</strong>
-														</Box>
-														<Box flexGrow={1} textAlign={'center'}>
-															<Box>
-																{firmsObject[wrk.firm!].title}
-															</Box>
-															<Box>
-																№ {modificationsObject[wrk.modification!].title}
-															</Box>
-														</Box>
-														<Box flexGrow={1} textAlign={'center'}>
-															<Box>
-																<i>{typesOfWorkObject[wrk.type!].title}</i>
-															</Box>
-															<Box>
-																{wrk.countPictures} tif, {wrk.countPages} стр.
-															</Box>
-														</Box>
-														<Box flexGrow={1} display={'flex'} flexDirection={'column'}
-															 textAlign={'center'}>
-															{wrk.executors && wrk.executors?.length > 0
-																? <> <Box>
-																	в работе у
-																</Box>
-																	<Box>
-																		{wrk.executors.map(_id => usersObject[_id].name).join(', ')}
-																	</Box></>
-																: <Box>
-																	заказ в очереди.
-																</Box>
-															}
-															<Box>
-																<i>отдел
-																	«{departmentsObject[wrk.currentDepartment].title}»</i>
-															</Box>
-														</Box>
-														{me.canStartStopWorks &&
-															<Box>
-																<EditButtonComponent id={wrk._id!} dis={false}
-																					 onClickHere={() => editWorkflow(wrk._id!)} />
-															</Box>
-														}
-													</Box>
-													{wrk._id === showDescription &&
-														<Box p={2} pt={'0!important'}>
-															<small>
-																<pre className={'warp-text'}>
-																	{wrk.description}
-																</pre>
-															</small>
-														</Box>
+												<WorkInfoComponent
+													key={wrk._id}
+													idProps={wrk._id!}
+													colorProps={colors[wrk._id!]}
+													workflowTitle={wrk.title}
+													workflowFirmTitle={firmsObject[wrk.firm!].title}
+													workflowModificationTitle={modificationsObject[wrk.modification!].title}
+													workflowTypeTitle={typesOfWorkObject[wrk.type!].title}
+													workflowDepartmentTitle={departmentsObject[wrk.currentDepartment].title}
+													workflowCountPictures={wrk.countPictures}
+													workflowCountPages={wrk.countPages}
+													workflowDescription={wrk.description}
+													workflowAdditionalInformationToDepartment={
+														wrk.executors && wrk.executors?.length > 0
+															? `над заказом работа${wrk.executors.length > 1 ? 'ют:' : 'ет'} ${wrk.executors.map(_id => usersObject[_id].name).join(', ')}`
+															: 'заказ в очереди.'
 													}
-												</Box>
+												/>
 											))
 										}
 									</Box>

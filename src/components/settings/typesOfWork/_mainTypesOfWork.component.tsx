@@ -7,7 +7,7 @@ import { TAppDispatch } from '@/store/_store.ts';
 import { setState } from '@/store/_currentStates.slice.ts';
 import { ITypeOfWorkUpdate } from '@/interfaces/worktype.interface.ts';
 import { deleteOne, patchOne } from '@/store/_shared.thunks.ts';
-import makeSlug from '@/_services/makeSlug.ts';
+import makeSlug from '@/_services/makeSlug.service.ts';
 
 function MainTypesOfWorkComponents() {
 	const { typesOfWorkArray: typesOfWork } = useReduxSelectors();
@@ -29,7 +29,7 @@ function MainTypesOfWorkComponents() {
 
 		const canSave = (title !== '' && !typesOfWork.some(typeOfWork => makeSlug(typeOfWork.title) === titleSlug));
 
-		console.log('canSave = ', canSave);
+		// console.log('canSave = ', canSave);
 		setStopSave(!canSave);
 
 

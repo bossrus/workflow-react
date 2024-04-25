@@ -49,7 +49,7 @@ const InvitesAppComponent = () => {
 			Object.keys(typesOfWorkObject).length <= 0) return;
 		const newOrders: IOrders = {};
 		const newChecks: Record<string, boolean> = {};
-		console.log(inviteToJoin);
+		// console.log(inviteToJoin);
 		for (const order of Object.values(inviteToJoin)) {
 			if (newOrders[order.workflow] === undefined) {
 				newChecks[order.workflow] = true;

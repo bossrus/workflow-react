@@ -150,118 +150,142 @@ function WorkMyMainComponent({ work_id }: IProps) {
 					<Box display="flex" flexDirection="row" height="100%" boxShadow={3} borderRadius={2}
 						 bgcolor={'white'} p={2} boxSizing={'border-box'}>
 						<Box flexGrow={1} pr={1}>
-							<pre className={'warp-text'}>
+							<table className={'table-container'}>
+								<tbody>
+								<tr>
+									<td className={'align-top'}>
+							<pre className={'warp-text table-container'}
+								 style={{ boxSizing: 'border-box', marginTop: 0 }}>
 							{workflowsObject[work_id].description}
 							</pre>
+									</td>
+								</tr>
+								</tbody>
+							</table>
 						</Box>
 						<Box minWidth={'300px'} height={'100%'} display={'flex'}
-							 flexDirection={'column'} gap={6}>
-							<Box flexGrow={1} display={'flex'}
-								 flexDirection={'column'}>
-								<textarea
-									className={'shadow-inner'}
-									value={description}
-									onChange={(e) => setDescription(e.target.value)}
-									style={{
-										height: '100%',
-										width: '100%',
-										border: 'none',
-										borderRadius: '10px',
-										padding: '10px',
-										resize: 'none',
-										boxSizing: 'border-box',
-										outline: 'none',
-									}}
-								/>
-								<Button
-									variant="contained"
-									size="small"
-									sx={{ mt: 2, borderRadius: '10px' }}
-									fullWidth
-									color={'primary'}
-									className={'up-shadow'}
-									disabled={description.length < 1}
-									onClick={saveToDescription}
-								>
-									Добавить информацию в описание
-								</Button>
-							</Box>
-							<Box>
-								Пригласить присоединиться к работе<br />
-								<FormControl variant="standard" fullWidth>
-									<Select
-										value={selectedUser}
-										onChange={(event) => {
-											setSelectedUser(event.target.value);
-										}}
-									>
-										{usersList.length > 0 && (
-											usersList.map((item) => (
-												<MenuItem
-													key={item.id}
-													value={item.id}
-												>
-													{item.title}
-												</MenuItem>
-											))
-										)
-										}
-									</Select>
-								</FormControl>
-								<Button
-									variant="contained"
-									size="small"
-									sx={{ mt: 2, borderRadius: '10px' }}
-									fullWidth
-									color={'success'}
-									className={'up-shadow'}
-									disabled={selectedUser == ''}
-									onClick={inviteUser}
-								>
-									Пригласить
-								</Button>
-							</Box>
-							<Box>
-								{
-									workflowsObject[work_id].executors!.length < 2 && (
-										<>
-											Передать работу в:<br />
-											<FormControl variant="standard" fullWidth>
-												<Select
-													value={selectedDepartment}
-													onChange={(event) => {
-														setSelectedDepartment(event.target.value);
-													}}
-												>
-													{departmentsList.length > 0 && (
-														departmentsList.map((item) => (
-															<MenuItem
-																key={item.id}
-																value={item.id}
-															>
-																{item.title}
-															</MenuItem>
-														))
-													)
-													}
-												</Select>
-											</FormControl>
-										</>
-									)
-								}
-								<Button
-									variant="contained"
-									size="small"
-									sx={{ mt: 2, borderRadius: '10px' }}
-									fullWidth
-									color={'error'}
-									className={'up-shadow'}
-									onClick={closeWorkflow}
-								>
-									Завершить работу
-								</Button>
-							</Box>
+							 flexDirection={'column'}>
+							<table className={'just-table-container'}>
+								<tbody>
+								<tr>
+									<td className={'align-top'}>
 
+										<Box
+											height={'100%'}
+											display={'flex'}
+											flexDirection={'column'}
+											gap={3}
+										>
+											<Box
+												flexGrow={1} display={'flex'}
+												flexDirection={'column'}>
+											<textarea
+												className={'shadow-inner'}
+												value={description}
+												onChange={(e) => setDescription(e.target.value)}
+												style={{
+													height: '100%',
+													width: '100%',
+													border: 'none',
+													borderRadius: '10px',
+													padding: '10px',
+													resize: 'none',
+													boxSizing: 'border-box',
+													outline: 'none',
+												}}
+											/>
+												<Button
+													variant="contained"
+													size="small"
+													sx={{ mt: 2, borderRadius: '10px' }}
+													fullWidth
+													color={'primary'}
+													className={'up-shadow'}
+													disabled={description.length < 1}
+													onClick={saveToDescription}
+												>
+													Добавить информацию в описание
+												</Button>
+											</Box>
+											<Box className={'shadow'} p={2} bgcolor={'#fafafa'} borderRadius={2}>
+												Пригласить присоединиться к работе<br />
+												<FormControl variant="standard" fullWidth>
+													<Select
+														value={selectedUser}
+														onChange={(event) => {
+															setSelectedUser(event.target.value);
+														}}
+													>
+														{usersList.length > 0 && (
+															usersList.map((item) => (
+																<MenuItem
+																	key={item.id}
+																	value={item.id}
+																>
+																	{item.title}
+																</MenuItem>
+															))
+														)
+														}
+													</Select>
+												</FormControl>
+												<Button
+													variant="contained"
+													size="small"
+													sx={{ mt: 2, borderRadius: '10px' }}
+													fullWidth
+													color={'success'}
+													className={'up-shadow'}
+													disabled={selectedUser == ''}
+													onClick={inviteUser}
+												>
+													Пригласить
+												</Button>
+											</Box>
+											<Box>
+												{
+													workflowsObject[work_id].executors!.length < 2 && (
+														<>
+															Передать работу в:<br />
+															<FormControl variant="standard" fullWidth>
+																<Select
+																	value={selectedDepartment}
+																	onChange={(event) => {
+																		setSelectedDepartment(event.target.value);
+																	}}
+																>
+																	{departmentsList.length > 0 && (
+																		departmentsList.map((item) => (
+																			<MenuItem
+																				key={item.id}
+																				value={item.id}
+																			>
+																				{item.title}
+																			</MenuItem>
+																		))
+																	)
+																	}
+																</Select>
+															</FormControl>
+														</>
+													)
+												}
+												<Button
+													variant="contained"
+													size="small"
+													sx={{ mt: 2, borderRadius: '10px' }}
+													fullWidth
+													color={'error'}
+													className={'up-shadow'}
+													onClick={closeWorkflow}
+												>
+													Завершить работу
+												</Button>
+											</Box></Box>
+									</td>
+								</tr>
+								</tbody>
+							</table>
 						</Box>
 					</Box>
 				</Box>

@@ -33,7 +33,7 @@ export const createExtraReducers = <T>(storeName: string) => (builder: ActionRed
 					return action.type === deleteOne.fulfilled.type && action.store === storeName;
 				},
 				(state, action: PayloadAction<string>) => {
-					console.log('отловили deleteOne = ', action.payload);
+					// console.log('отловили deleteOne = ', action.payload);
 					delete state.data[action.payload];
 					state.error = undefined;
 				})
@@ -60,12 +60,13 @@ export const createExtraReducers = <T>(storeName: string) => (builder: ActionRed
 				(action) => {
 					return action.type === loadById.rejected.type && action.payload.store === storeName;
 				},
-				(state, action: PayloadAction<IError | undefined | null | null>) => {
-					if (action.payload)
+				(state, action: PayloadAction<IError | undefined | null>) => {
+					if (action.payload) {
 						state.error = {
 							status: action.payload.status,
 							message: action.payload.message,
 						};
+					}
 				})
 			.addMatcher(
 				(action) => {
@@ -92,23 +93,23 @@ export const createExtraReducers = <T>(storeName: string) => (builder: ActionRed
 					return action.type === patchOne.fulfilled.type && action.store === storeName;
 				},
 				(state, action: PayloadAction<TWithId<T>>) => {
-					console.log('отловили patch');
-					console.log('\taction.payload = ', action.payload);
-					console.log('\t\taction.payload._id = ', action.payload._id);
+					// console.log('отловили patch');
+					// console.log('\taction.payload = ', action.payload);
+					// console.log('\t\taction.payload._id = ', action.payload._id);
 					state.data[action.payload._id!] = {
 						...state.data[action.payload._id!],
 						...action.payload,
 					} as Draft<TWithId<T>>;
 					state.error = undefined;
-					// console.log('юзверь по итогу', state.data[action.payload._id!])
+					// // console.log('юзверь по итогу', state.data[action.payload._id!])
 				})
 			.addMatcher(
 				(action) => {
 					return action.type === patchOne.rejected.type && action.payload?.store === storeName;
 				},
 				(state, action: PayloadAction<IError | undefined | null>) => {
-					console.log('отловили patch error');
-					console.log('\taction.payload = ', action.payload);
+					// console.log('отловили patch error');
+					// console.log('\taction.payload = ', action.payload);
 					if (action.payload)
 						state.error = {
 							status: action.payload.status,
