@@ -71,6 +71,7 @@ function MainFirmsComponents() {
 	};
 
 	const saveFirm = () => {
+		if (stopSave) return;
 		const firm: IFirmUpdate = {};
 		if (currentFirm !== undefined) {
 			firm._id = currentFirm;
@@ -144,6 +145,11 @@ function MainFirmsComponents() {
 						variant="standard"
 						value={title}
 						onChange={(e) => setTitle(e.target.value)}
+						onKeyDown={(e) => {
+							if (e.key === 'Enter') {
+								saveFirm();
+							}
+						}}
 					/>
 					<TextField type={'number'}
 							   value={basicPriority}
@@ -151,7 +157,13 @@ function MainFirmsComponents() {
 							   fullWidth
 							   id="number-in-line"
 							   label="Базовый приоритет клиента"
-							   variant="standard" />
+							   variant="standard"
+							   onKeyDown={(e) => {
+								   if (e.key === 'Enter') {
+									   saveFirm();
+								   }
+							   }}
+					/>
 					<Button
 						variant="contained"
 						size="small"

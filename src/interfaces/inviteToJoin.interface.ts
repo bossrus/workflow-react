@@ -5,6 +5,7 @@ export interface IInviteToJoin {
 	from: string;
 	to: string;
 	workflow: string;
+	department: string;
 	isDeleted?: number;
 }
 

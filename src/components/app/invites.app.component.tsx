@@ -1,13 +1,13 @@
-import { Box, Button, styled } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import SwitchComponent from '@/components/_shared/switch.component.tsx';
 import { useEffect, useState } from 'react';
 import ModalAppComponent from '@/components/app/modal.app.component.tsx';
-import { Simulate } from 'react-dom/test-utils';
-import keyDown = Simulate.keyDown;
 import axiosCreate from '@/_api/axiosCreate.ts';
 import { useDispatch } from 'react-redux';
-import { invites, TAppDispatch } from '@/store/_store.ts';
+import { invites, TAppDispatch, workflows } from '@/store/_store.ts';
+import useWorksSelectors from '@/_hooks/useWorksSelectors.hook.ts';
+import axios from 'axios';
 
 
 interface IOrderElement {
@@ -24,12 +24,17 @@ const InvitesAppComponent = () => {
 
 	const {
 		inviteToJoin,
-		workflowsObject,
 		usersObject,
 		firmsObject,
 		typesOfWorkObject,
 		modificationsObject,
+		departmentsObject,
 	} = useReduxSelectors();
+
+	const {
+		workflowsObject,
+	} = useWorksSelectors();
+
 	const [checks, setChecks] = useState<Record<string, boolean>>({});
 
 	const [orders, setOrders] = useState<IOrders>({});
@@ -51,13 +56,15 @@ const InvitesAppComponent = () => {
 		const newChecks: Record<string, boolean> = {};
 		// console.log(inviteToJoin);
 		for (const order of Object.values(inviteToJoin)) {
-			if (newOrders[order.workflow] === undefined) {
+			if (newOrders[order.workflow] === undefined && order.department === workflowsObject[order.workflow].currentDepartment) {
 				newChecks[order.workflow] = true;
 				const description = firmsObject[workflowsObject[order.workflow].firm].title
 					+ ' №'
 					+ modificationsObject[workflowsObject[order.workflow].modification].title
 					+ ', '
-					+ typesOfWorkObject[workflowsObject[order.workflow].type].title;
+					+ typesOfWorkObject[workflowsObject[order.workflow].type].title
+					+ ', '
+					+ departmentsObject[order.department].title;
 
 				newOrders[order.workflow] = {
 					idWorkflow: order.workflow,
@@ -84,7 +91,14 @@ const InvitesAppComponent = () => {
 					await axiosCreate.patch('/workflows/take', { ids: data });
 				}
 			} catch (error) {
-				dispatch(workflows.actions.setError(error.response.data));
+				if (axios.isAxiosError(error)) {
+					// Now TypeScript knows error is an AxiosError, allowing access to error.response
+					const errorMessage = error.response?.data;
+					dispatch(workflows.actions.setError(errorMessage));
+				} else {
+					// Handle non-Axios errors or provide a generic error message
+					dispatch(workflows.actions.setError('An unexpected error occurred'));
+				}
 			}
 			await axiosCreate.delete('/invites', {});
 		})();

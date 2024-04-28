@@ -59,6 +59,7 @@ function MainModificationsComponents() {
 	};
 
 	const saveModification = () => {
+		if (stopSave) return;
 		const modification: IModificationUpdate = {
 			title: title,
 		};
@@ -128,6 +129,11 @@ function MainModificationsComponents() {
 						variant="standard"
 						value={title}
 						onChange={(e) => setTitle(e.target.value)}
+						onKeyDown={(e) => {
+							if (e.key === 'Enter') {
+								saveModification();
+							}
+						}}
 					/>
 					<Button
 						variant="contained"

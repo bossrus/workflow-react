@@ -58,6 +58,7 @@ function MainTypesOfWorkComponents() {
 	};
 
 	const saveTypeOfWork = () => {
+		if (stopSave) return;
 		const typeOfWork: ITypeOfWorkUpdate = {};
 		typeOfWork.title = title;
 		if (currentTypeOfWork !== undefined) {
@@ -126,6 +127,11 @@ function MainTypesOfWorkComponents() {
 						variant="standard"
 						value={title}
 						onChange={(e) => setTitle(e.target.value)}
+						onKeyDown={(e) => {
+							if (e.key === 'Enter') {
+								saveTypeOfWork();
+							}
+						}}
 					/>
 					<Button
 						variant="contained"

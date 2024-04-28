@@ -92,6 +92,7 @@ function MainDepartmentsComponents() {
 	};
 
 	const saveDepartment = () => {
+		if (stopSave) return;
 		const department: IDepartmentUpdate = {};
 		if (currentDepartment !== undefined) {
 			department._id = departmentsObject[currentDepartment]._id;
@@ -180,6 +181,11 @@ function MainDepartmentsComponents() {
 						variant="standard"
 						value={title}
 						onChange={(e) => setTitle(e.target.value)}
+						onKeyDown={(e) => {
+							if (e.key === 'Enter') {
+								saveDepartment();
+							}
+						}}
 					/>
 					<SwitchComponent switchLabel={switchLabel} valueChecked={isUsedInWorkflow}
 									 changeChecked={setIsUsedInWorkflow} />
@@ -190,7 +196,13 @@ function MainDepartmentsComponents() {
 								   fullWidth
 								   id="number-in-line"
 								   label="Номер отдела в технологической цепочке"
-								   variant="standard" />}
+								   variant="standard"
+								   onKeyDown={(e) => {
+									   if (e.key === 'Enter') {
+										   saveDepartment();
+									   }
+								   }}
+						/>}
 					<Button
 						variant="contained"
 						size="small"

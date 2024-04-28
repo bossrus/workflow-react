@@ -142,6 +142,7 @@ function MainUsersComponents() {
 	};
 
 	const saveUser = async () => {
+		if (stopSave) return;
 		const user: IUserUpdate = {};
 		if (currentUser !== undefined) user._id = usersObject[currentUser]._id;
 		if (currentUser == undefined || usersObject[currentUser].canMakeModification !== rights.includes('create')) user.canMakeModification = rights.includes('create');
@@ -246,6 +247,11 @@ function MainUsersComponents() {
 								value={name}
 								onChange={(e) => setName(e.target.value)}
 								sx={{ pb: 1 }}
+								onKeyDown={(e) => {
+									if (e.key === 'Enter') {
+										saveUser();
+									}
+								}}
 							/>
 							<TextField
 								fullWidth
@@ -255,6 +261,11 @@ function MainUsersComponents() {
 								value={login}
 								onChange={(e) => setLogin(e.target.value)}
 								sx={{ pb: 1 }}
+								onKeyDown={(e) => {
+									if (e.key === 'Enter') {
+										saveUser();
+									}
+								}}
 							/>
 							<TextField
 								fullWidth
@@ -263,6 +274,11 @@ function MainUsersComponents() {
 								variant="standard"
 								value={password}
 								onChange={(e) => setPassword(e.target.value)}
+								onKeyDown={(e) => {
+									if (e.key === 'Enter') {
+										saveUser();
+									}
+								}}
 							/>
 						</Box>
 						<Box display={'flex'} flexDirection={'column'}>
