@@ -33,7 +33,10 @@ export const useReduxSelectors = () => {
 	const states = useSelector<TAppState, ICurrentStates>((state) => selectCurrentStates(state));
 
 	const departmentsObject = useSelector<TAppState, IDepartmentsObject>((state) => departments.selectors.selectAllObject(state));
-	const departmentsArray = useSelector<TAppState, IDepartment[]>((state) => departments.selectors.selectAllArray(state));
+	const departmentsArrayUnsorted = useSelector<TAppState, IDepartment[]>((state) => departments.selectors.selectAllArray(state));
+	const departmentsArray = useMemo(() => {
+		return [...departmentsArrayUnsorted].sort((a, b) => +a.numberInWorkflow - +b.numberInWorkflow);
+	}, [departmentsArrayUnsorted]);
 	const departmentsInWorkflowArray = useMemo(() => {
 		const depsOptimizer: IDepartment[] = [];
 		for (const key of Object.keys(departmentsObject)) {
@@ -83,7 +86,7 @@ export const useReduxSelectors = () => {
 		states,
 
 		departmentsObject,
-		departmentsArray: [...departmentsArray].sort((a, b) => +a.numberInWorkflow - +b.numberInWorkflow),
+		departmentsArray, //: [...departmentsArray].sort((a, b) => +a.numberInWorkflow - +b.numberInWorkflow),
 		departmentsInWorkflowArray,
 		departmentsError,
 

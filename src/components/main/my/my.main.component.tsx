@@ -53,7 +53,9 @@ function MyMainComponent() {
 		if (!paramsId
 			|| !workflowsObject[paramsId]
 			|| !workflowsObject[paramsId].executors
-			|| !workflowsObject[paramsId].executors!.includes(me._id!)) {
+			|| !workflowsObject[paramsId].executors!.includes(me._id!)
+			|| workflowsObject[paramsId].currentDepartment !== me.currentDepartment
+		) {
 			console.log('внутри уcловий');
 			if (workflowsInMyProcess.length > 0) {
 				console.log('переход на актив!');
@@ -77,6 +79,16 @@ function MyMainComponent() {
 			};
 		}));
 	}, [workflowsInMyProcess]);
+
+	// useEffect(() => {
+	// 	console.log('табы пустые. пошли отседа');
+	// 	// if (tabs.length < 1) navigate('/main');
+	//
+	// 	console.log('workflowsInMyProcess.length > 0 =', workflowsInMyProcess.length > 0);
+	// 	console.log('tabs.length > 0 =', tabs.length > 0);
+	// 	console.log('paramsId =', paramsId);
+	//
+	// }, [tabs]);
 
 	return (
 		<>

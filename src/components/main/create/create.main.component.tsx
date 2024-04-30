@@ -58,6 +58,7 @@ function CreateMainComponent() {
 
 	useEffect(() => {
 		if (!departmentsArray || departmentsArray.length === 0) return;
+		console.log('изменение  юзефект списка отделоВ');
 		changeField('currentDepartment', departmentsArray[0]._id);
 	}, [departmentsArray]);
 
@@ -73,24 +74,8 @@ function CreateMainComponent() {
 	// console.log('в создании путь = ', id);
 
 	useEffect(() => {
-		if (!id || Object.keys(workflowsObject).length <= 0) return;
-		const work = workflowsObject[id];
-		if (!work) return;
-		const newState: IWorkflowUpdate = {
-			firm: work.firm,
-			modification: work.modification,
-			title: work.title,
-			mainId: work.mainId ? work.mainId : '',
-			type: work.type,
-			countPages: work.countPages,
-			countPictures: work.countPictures,
-			urgency: work.urgency,
-			currentDepartment: work.currentDepartment,
-			setToStat: work.setToStat,
-			description: work.description,
-		};
-		setWorkState(newState);
-	}, [workflowsObject]);
+		console.log('сменился workState = ', workState);
+	}, [workState]);
 
 	const makeCanSave = (list: IWorkflowUpdate[] | null) => {
 		let result: boolean = false;
@@ -168,6 +153,7 @@ function CreateMainComponent() {
 				return null;
 			}
 		}
+		console.log('сменили workstate');
 		setWorkState(newState);
 	};
 
@@ -176,12 +162,12 @@ function CreateMainComponent() {
 		let count = 0;
 		for (let len = 1; len <= original.length; len++) {
 			for (let i = 0; i <= original.length - len; i++) {
-				const X = original.substring(i, i + len);
-				if (newStr.toLowerCase().includes(X.toLowerCase())) {
-					const occurrences = newStr.split(X).length - 1;
-					count += Math.pow(occurrences, X.length);
+				const searchString = original.substring(i, i + len);
+				if (newStr.toLowerCase().includes(searchString.toLowerCase())) {
+					const occurrences = newStr.split(searchString).length - 1;
+					count += Math.pow(occurrences, searchString.length);
 				}
-				if (X.length > newStr.length) {
+				if (searchString.length > newStr.length) {
 					return count;
 				}
 			}
@@ -212,6 +198,7 @@ function CreateMainComponent() {
 		if (!newList && workState.type != newOrderId) {
 			newState.type = newOrderId;
 		}
+		console.log('сменили workstate');
 		setWorkState(newState);
 		setShowAnotherNameHandler(currentType);
 	};
@@ -234,6 +221,7 @@ function CreateMainComponent() {
 					currentType = getIDByTitle<ITypeOfWork>(typesOfWorkArray, 'Новый заказ');
 					const newState = { ...workState, type: currentType };
 					// console.log('\tсменили на ', currentType);
+					console.log('сменили workstate');
 					setWorkState(newState);
 				}
 				// console.log('\tфигачим список');
@@ -251,6 +239,7 @@ function CreateMainComponent() {
 			currentType = getIDByTitle<ITypeOfWork>(typesOfWorkArray, 'Новый заказ');
 			const newState = { ...workState, type: currentType };
 			// console.log('\tсменили на ', newState.type);
+			console.log('сменили workstate');
 			setWorkState(newState);
 		}
 		setShowAnotherNameHandler(currentType);
@@ -294,11 +283,13 @@ function CreateMainComponent() {
 		if (!id || work.description != workState.description) data.description = workState.description;
 		// console.log('\tsave data:', data);
 		dispatch(patchOne({ url: 'workflows', data }));
+		console.log('clear fields');
 		clearFields();
 	};
 
 	const navigate = useNavigate();
 	const clearFields = () => {
+		console.log('сменили workstate');
 		setWorkState({
 			firm: '',
 			modification: '',
@@ -336,12 +327,36 @@ function CreateMainComponent() {
 	};
 
 	const changeField = (name: IWorkflowsKeys, value: string | number | boolean) => {
+		console.log('сменили workstate из ', name);
 		setWorkState({ ...workState, [name]: value });
 	};
 
 	useEffect(() => {
 		setCanAutoConvert(canConvertDescription(workState.description));
 	}, [workState.description]);
+
+	useEffect(() => {
+		console.log('мы сюда зашли. и i = ', id, ' Object.keys(workflowsObject).length = ', Object.keys(workflowsObject).length);
+		if (!id || Object.keys(workflowsObject).length <= 0) return;
+		const work = workflowsObject[id];
+		console.log('\t work = ', work);
+		if (!work) return;
+		const newState: IWorkflowUpdate = {
+			firm: work.firm,
+			modification: work.modification,
+			title: work.title,
+			mainId: work.mainId ? work.mainId : '',
+			type: work.type,
+			countPages: work.countPages,
+			countPictures: work.countPictures,
+			urgency: work.urgency,
+			currentDepartment: work.currentDepartment,
+			setToStat: work.setToStat,
+			description: work.description,
+		};
+		console.log('\t newState = ', newState);
+		setWorkState(newState);
+	}, [workflowsObject]);
 
 	return (
 		<Box display="flex" py={2} height="100%" boxSizing={'border-box'} gap={2}>

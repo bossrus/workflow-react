@@ -32,11 +32,6 @@ function WorkMyMainComponent({ work_id }: IProps) {
 
 	const navigate = useNavigate();
 
-
-	const mag = firmsObject[workflowsObject[work_id].firm].title;
-	const mod = modificationsObject[workflowsObject[work_id].modification].title;
-	const type = typesOfWorkObject[workflowsObject[work_id].type].title;
-
 	const [usersList, setUsersList] = useState<IList[]>([]);
 	const [selectedUser, setSelectedUser] = useState<string>('');
 
@@ -59,7 +54,7 @@ function WorkMyMainComponent({ work_id }: IProps) {
 	}, [usersArray, me.currentDepartment]);
 
 	useEffect(() => {
-		if (!me.currentDepartment || departmentsInWorkflowArray.length < 1) return;
+		if (!me.currentDepartment || departmentsInWorkflowArray.length < 1 || !workflowsObject[work_id]) return;
 		const newDepartments: IList[] = departmentsInWorkflowArray.map(({ _id, title }) => ({
 			id: _id,
 			title,
@@ -116,6 +111,9 @@ function WorkMyMainComponent({ work_id }: IProps) {
 		<>
 			{
 				workflowsObject[work_id] &&
+				firmsObject &&
+				modificationsObject &&
+				typesOfWorkObject &&
 				selectedDepartment !== '' &&
 				<Box display="flex" flexDirection="column" height="100%">
 					<Box
@@ -132,10 +130,10 @@ function WorkMyMainComponent({ work_id }: IProps) {
 						gap={1}
 					>
 						<Box>
-							{mag}
+							{firmsObject[workflowsObject[work_id].firm].title}
 						</Box>
 						<Box>
-							№{mod},
+							№{modificationsObject[workflowsObject[work_id].modification].title},
 						</Box>
 						<Box>
 							<strong>
@@ -144,7 +142,7 @@ function WorkMyMainComponent({ work_id }: IProps) {
 						</Box>
 						<Box>
 							<i>
-								{type}
+								{typesOfWorkObject[workflowsObject[work_id].type].title}
 							</i>
 						</Box>
 

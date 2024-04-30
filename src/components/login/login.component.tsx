@@ -33,6 +33,7 @@ function LoginComponent() {
 	const dispatch = useDispatch<TAppDispatch>();
 
 	async function clickLoginButton() {
+		if (login == '' || password == '') return;
 		setWasTry(true);
 		dispatch(createOne({
 			url: 'users/login', data: {
@@ -82,6 +83,11 @@ function LoginComponent() {
 						fullWidth
 						value={login}
 						onChange={(e) => setLogin(e.target.value)}
+						onKeyDown={(e) => {
+							if (e.key === 'Enter') {
+								clickLoginButton();
+							}
+						}}
 					/>
 					<TextField
 						label="Пароль"
@@ -104,9 +110,20 @@ function LoginComponent() {
 						}}
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
+						onKeyDown={(e) => {
+							if (e.key === 'Enter') {
+								clickLoginButton();
+							}
+						}}
 					/>
-					<Button variant="contained" color="primary" sx={{ mt: '2em' }} fullWidth
-							onClick={clickLoginButton}>
+					<Button
+						variant="contained"
+						color="primary"
+						sx={{ mt: '2em' }}
+						fullWidth
+						onClick={clickLoginButton}
+						disabled={login == '' || password == ''}
+					>
 						Войти
 					</Button>
 				</CardContent>

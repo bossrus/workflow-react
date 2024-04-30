@@ -90,13 +90,13 @@ const useWorksSelectors = () => {
 		if (!workflowsAll) return [];
 		return Object.entries(workflowsAll)
 			.reduce((acc, [_, workflowFromObj]) => {
-				if (workflowFromObj.isPublished && workflowFromObj.executors?.includes(me._id!)) {
+				if (workflowFromObj.isPublished && workflowFromObj.executors?.includes(me._id!) && workflowFromObj.currentDepartment === me.currentDepartment) {
 					acc.push(changeUrgency(workflowFromObj));
 				}
 				return acc;
 			}, [] as IWorkflow[])
 			.sort((a, b) => b.urgency - a.urgency);
-	}, [workflowsAll]);
+	}, [workflowsAll, me.currentDepartment]);
 
 
 	return {

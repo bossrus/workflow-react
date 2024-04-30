@@ -9,12 +9,7 @@ import AllWorksMainComponent from '@/components/main/allWorks/allWorks.main.comp
 import MyMainComponent from '@/components/main/my/my.main.component.tsx';
 import { useEffect, useState } from 'react';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
-import {
-	getWorkflowsInMyDepartment,
-	getWorkflowsInMyProcess,
-	getWorkflowsNotPublished,
-	getWorkflowsPublished,
-} from '@/_services/useWorksSelectors.service.ts';
+import useWorksSelectors from '@/_hooks/useWorksSelectors.hook.ts';
 
 interface ITabs {
 	label: string,
@@ -25,7 +20,16 @@ interface ITabs {
 
 
 function MainComponent() {
-	const { me, workflowsAll, firmsObject } = useReduxSelectors();
+	const {
+		me,
+		workflowsAll,
+	} = useReduxSelectors();
+	const {
+		workflowsInMyProcess,
+		workflowsNotPublishedArray,
+		workflowsPublishedArray,
+		workflowsInMyDepartment,
+	} = useWorksSelectors();
 	const { path } = useParams();
 	// console.log('путь в main.component >> ', path);
 
@@ -49,67 +53,62 @@ function MainComponent() {
 			navigate('/main');
 			return;
 		}
-		const localeWorkflowsNotPublishedArray = getWorkflowsNotPublished(workflowsAll, firmsObject, me);
-		const localeWorkflowsInMyProcess = getWorkflowsInMyProcess(workflowsAll, firmsObject, me);
-		const localeWorkflowsInMyDepartment = getWorkflowsInMyDepartment(workflowsAll, firmsObject, me);
-		const localeWorkflowsPublishedArray = getWorkflowsPublished(workflowsAll, firmsObject, me);
-
 
 		const newTabs: ITabs[] = [];
-		if (me.canStartStopWorks && localeWorkflowsNotPublishedArray.length > 0) {
+		if (me.canStartStopWorks && workflowsNotPublishedArray.length > 0) {
 			newTabs.push({
 				label: 'Публикация компонентов',
 				url: 'publish',
-				badge: localeWorkflowsNotPublishedArray[0].urgency,
-				count: localeWorkflowsNotPublishedArray.length,
+				badge: workflowsNotPublishedArray[0].urgency,
+				count: workflowsNotPublishedArray.length,
 			});
 		}
-		if (localeWorkflowsInMyProcess.length > 0) {
+		if (workflowsInMyProcess.length > 0) {
 			newTabs.push({
 				label: 'Очередь заказов у меня в работе',
 				url: 'my',
-				badge: localeWorkflowsInMyProcess[0].urgency,
-				count: localeWorkflowsInMyProcess.length,
+				badge: workflowsInMyProcess[0].urgency,
+				count: workflowsInMyProcess.length,
 			});
 		}
-		if (localeWorkflowsInMyDepartment.length > 0) {
+		if (workflowsInMyDepartment.length > 0) {
 			newTabs.push({
 				label: 'Очередь заказов в моём отделе',
 				url: 'my-department',
-				badge: localeWorkflowsInMyDepartment[0].urgency,
-				count: localeWorkflowsInMyDepartment.length,
+				badge: workflowsInMyDepartment[0].urgency,
+				count: workflowsInMyDepartment.length,
 			});
 		}
-		if (localeWorkflowsPublishedArray.length > 0) {
+		if (workflowsPublishedArray.length > 0) {
 			newTabs.push({
 				label: 'Очередь общая очередь заказов',
 				url: 'all-works',
-				badge: localeWorkflowsPublishedArray[0].urgency,
-				count: localeWorkflowsPublishedArray.length,
+				badge: workflowsPublishedArray[0].urgency,
+				count: workflowsPublishedArray.length,
 			});
 		}
 		setTabs(newTabs);
 		if (path === 'all-works') {
 
-			if (publishBefore == 0 && localeWorkflowsNotPublishedArray.length != 0) {
-				setBefore(localeWorkflowsInMyProcess.length, localeWorkflowsInMyDepartment.length, localeWorkflowsPublishedArray.length);
+			if (publishBefore == 0 && workflowsNotPublishedArray.length != 0) {
+				setBefore(workflowsInMyProcess.length, workflowsInMyDepartment.length, workflowsPublishedArray.length);
 				navigate('/main/publish');
 			}
-			if (myBefore == 0 && localeWorkflowsInMyProcess.length != 0) {
-				setBefore(localeWorkflowsInMyProcess.length, localeWorkflowsInMyDepartment.length, localeWorkflowsPublishedArray.length);
+			if (myBefore == 0 && workflowsInMyProcess.length != 0) {
+				setBefore(workflowsInMyProcess.length, workflowsInMyDepartment.length, workflowsPublishedArray.length);
 				navigate('/main/my');
 			}
-			if (departmentBefore == 0 && localeWorkflowsInMyDepartment.length != 0) {
-				setBefore(localeWorkflowsInMyProcess.length, localeWorkflowsInMyDepartment.length, localeWorkflowsPublishedArray.length);
+			if (departmentBefore == 0 && workflowsInMyDepartment.length != 0) {
+				setBefore(workflowsInMyProcess.length, workflowsInMyDepartment.length, workflowsPublishedArray.length);
 				navigate('/main/my-department');
 			}
 		}
 
-		setBefore(localeWorkflowsInMyProcess.length, localeWorkflowsInMyDepartment.length, localeWorkflowsPublishedArray.length);
+		setBefore(workflowsInMyProcess.length, workflowsInMyDepartment.length, workflowsPublishedArray.length);
 		if (
-			(path === 'publish' && localeWorkflowsNotPublishedArray.length === 0) ||
-			(path === 'my-department' && localeWorkflowsInMyDepartment.length === 0) ||
-			(path === 'my' && localeWorkflowsInMyProcess.length === 0) ||
+			(path === 'publish' && workflowsNotPublishedArray.length === 0) ||
+			(path === 'my-department' && workflowsInMyDepartment.length === 0) ||
+			(path === 'my' && workflowsInMyProcess.length === 0) ||
 			(newTabs.length > 0 && !path)
 		) {
 			navigate('/main/' + newTabs[0].url);
