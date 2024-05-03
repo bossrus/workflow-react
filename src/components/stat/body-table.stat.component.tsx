@@ -1,29 +1,25 @@
 import * as React from 'react';
-import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
-import DeleteIcon from '@mui/icons-material/Delete';
-import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import { IWorkflow } from '@/interfaces/workflow.interface.ts';
+import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
+import { IOrder } from '@/interfaces/databases.interface.ts';
 
 interface IBodyTableProps {
 	rows: IWorkflow[];
+	showSpecificWorkflows: (id: string) => void;
+	setSortByField: (field: keyof IWorkflow) => void,
+	setSortDirection: (field: IOrder) => void,
+	sortByField: keyof IWorkflow,
+	sortDirection: IOrder
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -40,10 +36,8 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
 	return 0;
 }
 
-type Order = 'asc' | 'desc';
-
 function getComparator<Key extends keyof IWorkflow>(
-	order: Order,
+	order: IOrder,
 	orderBy: Key,
 ): (a: IWorkflow, b: IWorkflow) => number {
 	return order === 'desc'
@@ -66,53 +60,37 @@ function stableSort<T>(array: T[], comparator: (a: T, b: T) => number): T[] {
 }
 
 interface HeadCell {
-	disablePadding: boolean;
 	id: keyof IWorkflow;
 	label: string;
-	numeric: boolean;
 }
 
 const headCells: readonly HeadCell[] = [
 	{
 		id: 'firm',
-		numeric: false,
-		disablePadding: true,
 		label: 'Журнал',
 	},
 	{
 		id: 'modification',
-		numeric: true,
-		disablePadding: false,
 		label: '№',
 	},
 	{
 		id: 'title',
-		numeric: true,
-		disablePadding: false,
-		label: 'Название материала',
+		label: 'Название',
 	},
 	{
 		id: 'countPages',
-		numeric: true,
-		disablePadding: false,
-		label: 'Количество полос',
+		label: 'Полос',
 	},
 	{
 		id: 'isPublished',
-		numeric: true,
-		disablePadding: false,
-		label: 'Дата создания',
+		label: 'Дата',
 	},
 	{
 		id: 'whoAddThisWorkflow',
-		numeric: true,
-		disablePadding: false,
 		label: 'Создатель',
 	},
 	{
 		id: 'type',
-		numeric: true,
-		disablePadding: false,
 		label: 'Описание',
 	},
 ];
@@ -122,7 +100,7 @@ interface EnhancedTableProps {
 	numSelected: number;
 	onRequestSort: (event: React.MouseEvent<unknown>, property: keyof IWorkflow) => void;
 	onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-	order: Order;
+	order: IOrder;
 	orderBy: keyof IWorkflow;
 	rowCount: number;
 }
@@ -152,9 +130,15 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 				{headCells.map((headCell) => (
 					<TableCell
 						key={(headCell.id).toString()}
-						align={headCell.numeric ? 'right' : 'left'}
-						padding={headCell.disablePadding ? 'none' : 'normal'}
+						align={'left'}
 						sortDirection={orderBy === headCell.id ? order : false}
+						sx={{
+							padding: '0 0 0 10px !important',
+							paddingLeft: '10px',
+							paddingRight: 'none',
+							width: 'auto',
+							marginRight: '0 !important',
+						}}
 					>
 						<TableSortLabel
 							active={orderBy === headCell.id}
@@ -163,7 +147,8 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 						>
 							{headCell.label}
 							{orderBy === headCell.id ? (
-								<Box component="span" sx={visuallyHidden}>
+								<Box component="span"
+									 sx={{ ...visuallyHidden }}>
 									{order === 'desc' ? 'sorted descending' : 'sorted ascending'}
 								</Box>
 							) : null}
@@ -175,75 +160,25 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 	);
 }
 
-interface EnhancedTableToolbarProps {
-	numSelected: number;
-}
-
-function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-	const { numSelected } = props;
-
-	return (
-		<Toolbar
-			sx={{
-				pl: { sm: 2 },
-				pr: { xs: 1, sm: 1 },
-				...(numSelected > 0 && {
-					bgcolor: (theme) =>
-						alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-				}),
-			}}
-		>
-			{numSelected > 0 ? (
-				<Typography
-					sx={{ flex: '1 1 100%' }}
-					color="inherit"
-					variant="subtitle1"
-					component="div"
-				>
-					{numSelected} selected
-				</Typography>
-			) : (
-				<Typography
-					sx={{ flex: '1 1 100%' }}
-					variant="h6"
-					id="tableTitle"
-					component="div"
-				>
-					Nutrition
-				</Typography>
-			)}
-			{numSelected > 0 ? (
-				<Tooltip title="Delete">
-					<IconButton>
-						<DeleteIcon />
-					</IconButton>
-				</Tooltip>
-			) : (
-				<Tooltip title="Filter list">
-					<IconButton>
-						<FilterListIcon />
-					</IconButton>
-				</Tooltip>
-			)}
-		</Toolbar>
-	);
-}
-
-export default function BodyTableStatComponent({ rows }: IBodyTableProps) {
-	const [order, setOrder] = React.useState<Order>('asc');
-	const [orderBy, setOrderBy] = React.useState<keyof IWorkflow>('isPublished');
+export default function BodyTableStatComponent({
+												   rows,
+												   showSpecificWorkflows,
+												   sortByField,
+												   setSortByField,
+												   sortDirection,
+												   setSortDirection,
+											   }: IBodyTableProps) {
 	const [selected, setSelected] = React.useState<readonly string[]>([]);
-	const [page, setPage] = React.useState(0);
-	const [dense, setDense] = React.useState(false);
-	const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+	const { usersObject, modificationsObject, firmsObject, typesOfWorkObject } = useReduxSelectors();
 
 	const handleRequestSort = (
 		_event: React.MouseEvent<unknown>,
 		property: keyof IWorkflow | string | number | symbol,
 	) => {
-		const isAsc = orderBy === property && order === 'asc';
-		setOrder(isAsc ? 'desc' : 'asc');
-		setOrderBy(property as keyof IWorkflow);
+		const isAsc = sortByField === property && sortDirection === 'asc';
+		setSortDirection(isAsc ? 'desc' : 'asc');
+		setSortByField(property as keyof IWorkflow);
 	};
 
 	const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -274,48 +209,34 @@ export default function BodyTableStatComponent({ rows }: IBodyTableProps) {
 		setSelected(newSelected);
 	};
 
-	const handleChangePage = (_event: unknown, newPage: number) => {
-		setPage(newPage);
-	};
-
-	const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-		setRowsPerPage(parseInt(event.target.value, 10));
-		setPage(0);
-	};
-
-	const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
-		setDense(event.target.checked);
-	};
-
 	const isSelected = (_id: string) => selected.indexOf(_id) !== -1;
-
-	// Avoid a layout jump when reaching the last page with empty rows.
-	const emptyRows =
-		page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
 	const visibleRows = React.useMemo(
 		() =>
-			stableSort(rows, getComparator(order, orderBy as keyof IWorkflow)).slice(
-				page * rowsPerPage,
-				page * rowsPerPage + rowsPerPage,
-			),
-		[order, orderBy, page, rowsPerPage],
+			stableSort(rows, getComparator(sortDirection, sortByField as keyof IWorkflow)),
+		[sortDirection, sortByField, rows],
 	);
 
 	return (
-		<Box sx={{ width: '100%' }}>
-			<Paper sx={{ width: '100%', mb: 2 }}>
-				<EnhancedTableToolbar numSelected={selected.length} />
+		<Box sx={{ width: '100%', height: '100%' }}>
+			{
+				visibleRows.length > 0 &&
+				Object.keys(firmsObject).length > 0 &&
+				Object.keys(usersObject).length > 0 &&
+				Object.keys(modificationsObject).length > 0 &&
+				Object.keys(typesOfWorkObject).length > 0 &&
+				// <Paper sx={{ width: '100%', height: '100%' }}>
 				<TableContainer>
 					<Table
-						sx={{ minWidth: 750 }}
 						aria-labelledby="tableTitle"
-						size={dense ? 'small' : 'medium'}
+						className={'table-container'}
+						sx={{ maxHeight: '100% !important' }}
+						// border={1}
 					>
 						<EnhancedTableHead
 							numSelected={selected.length}
-							order={order}
-							orderBy={orderBy}
+							order={sortDirection}
+							orderBy={sortByField}
 							onSelectAllClick={handleSelectAllClick}
 							onRequestSort={handleRequestSort}
 							rowCount={rows.length}
@@ -328,13 +249,14 @@ export default function BodyTableStatComponent({ rows }: IBodyTableProps) {
 								return (
 									<TableRow
 										hover
-										onClick={(event) => handleClick(event, row._id as string)}
 										role="checkbox"
 										aria-checked={isItemSelected}
 										tabIndex={-1}
 										key={row._id}
 										selected={isItemSelected}
 										sx={{ cursor: 'pointer' }}
+										onClick={(event) => handleClick(event, row._id as string)}
+
 									>
 										<TableCell padding="checkbox">
 											<Checkbox
@@ -346,49 +268,64 @@ export default function BodyTableStatComponent({ rows }: IBodyTableProps) {
 											/>
 										</TableCell>
 										<TableCell
-											component="th"
-											id={labelId}
-											scope="row"
-											padding="none"
+											align="left"
+											sx={{ padding: '0 0 0 10px !important' }}
 										>
-											{row.title}
+											{firmsObject[row.firm].title}
 										</TableCell>
-										<TableCell align="right">{row.firm}</TableCell>
-										<TableCell align="right">{row.modification}</TableCell>
-										<TableCell align="right">{row.title}</TableCell>
-										<TableCell align="right">{row.countPages}</TableCell>
-										<TableCell align="right">{row.isPublished}</TableCell>
-										<TableCell align="right">{row.whoAddThisWorkflow}</TableCell>
-										<TableCell align="right">{row.type}</TableCell>
+										<TableCell
+											align="left"
+											sx={{ padding: '0 0 0 10px !important' }}
+										>
+											{modificationsObject[row.modification].title}
+										</TableCell>
+										<TableCell
+											align="left"
+											sx={{ padding: '0 0 0 10px !important' }}
+										>
+											<span className={'fake-link'}
+												  onClick={() => showSpecificWorkflows(row.mainId as string)}>
+												{row.title}
+											</span>
+										</TableCell>
+										<TableCell
+											align="left"
+											sx={{ padding: '0 0 0 10px !important' }}
+										>
+											{row.countPages}
+										</TableCell>
+										<TableCell
+											align="left"
+											sx={{ padding: '0 0 0 10px !important' }}
+										>
+											{new Date(row.isPublished as number).toLocaleString('ru-RU', {
+												day: '2-digit',
+												month: '2-digit',
+												year: 'numeric',
+												hour: '2-digit',
+												minute: '2-digit',
+											})}
+										</TableCell>
+										<TableCell
+											align="left"
+											sx={{ padding: '0 0 0 10px !important' }}
+										>
+											{usersObject[row.whoAddThisWorkflow].name}
+										</TableCell>
+										<TableCell
+											align="left"
+											sx={{ padding: '0 0 0 10px !important' }}
+										>
+											{typesOfWorkObject[row.type].title}
+										</TableCell>
 									</TableRow>
 								);
 							})}
-							{emptyRows > 0 && (
-								<TableRow
-									style={{
-										height: (dense ? 33 : 53) * emptyRows,
-									}}
-								>
-									<TableCell colSpan={6} />
-								</TableRow>
-							)}
 						</TableBody>
 					</Table>
 				</TableContainer>
-				<TablePagination
-					rowsPerPageOptions={[5, 10, 25]}
-					component="div"
-					count={rows.length}
-					rowsPerPage={rowsPerPage}
-					page={page}
-					onPageChange={handleChangePage}
-					onRowsPerPageChange={handleChangeRowsPerPage}
-				/>
-			</Paper>
-			<FormControlLabel
-				control={<Switch checked={dense} onChange={handleChangeDense} />}
-				label="Dense padding"
-			/>
+				// </Paper>
+			}
 		</Box>
 	);
 }
