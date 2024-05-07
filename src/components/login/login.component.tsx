@@ -32,7 +32,7 @@ function LoginComponent() {
 
 	const dispatch = useDispatch<TAppDispatch>();
 
-	async function clickLoginButton() {
+	function clickLoginButton() {
 		if (login == '' || password == '') return;
 		setWasTry(true);
 		dispatch(createOne({
@@ -46,9 +46,7 @@ function LoginComponent() {
 	const navigate = useNavigate();
 	useEffect(() => {
 		if (Object.keys(loginData).length > 0) {
-			(async () => {
-				await setAuth(loginData._id!, loginData.loginToken as string);
-			})();
+			setAuth(loginData._id as string, loginData.loginToken as string);
 			navigate('/');
 		}
 	}, [loginData]);

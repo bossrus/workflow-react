@@ -128,14 +128,14 @@ body {
 
 .table-container {
   width: 100% !important;
-  max-height: 100% !important;
+  height: 100% !important;
   padding-bottom: 30px;
   overflow: auto;
 }
 
 .just-table-container {
   width: 100% !important;
-  max-height: 100% !important;
+  height: 100% !important;
   padding-bottom: 30px;
   overflow: auto;
   padding-bottom: 0 !important;
@@ -143,7 +143,7 @@ body {
 
 .table-container-pb10 {
   width: 100% !important;
-  max-height: 100% !important;
+  height: 100% !important;
   padding-bottom: 30px;
   overflow: auto;
   padding-bottom: 10px;
@@ -186,6 +186,14 @@ body {
 
 .inactive {
   opacity: 30%;
+}
+
+.red-text {
+  color: red;
+}
+
+.green-text {
+  color: green;
 }
 
 /*# sourceMappingURL=main.css.map */

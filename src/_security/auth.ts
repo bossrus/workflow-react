@@ -1,6 +1,6 @@
 import { IAuthInterface } from '@/interfaces/auth.interface.ts';
 
-export async function getAuth(): Promise<IAuthInterface | null> {
+export function getAuth(): IAuthInterface | null {
 	let auth: IAuthInterface | null = null;
 	try {
 		auth = JSON.parse(localStorage.getItem('workflow-auth') as string);
@@ -10,7 +10,7 @@ export async function getAuth(): Promise<IAuthInterface | null> {
 	return auth;
 }
 
-export async function setAuth(auth_login: string, auth_token: string): Promise<void> {
+export function setAuth(auth_login: string, auth_token: string): void {
 	const auth: string = JSON.stringify({
 		auth_login,
 		auth_token,
@@ -22,3 +22,26 @@ export async function setAuth(auth_login: string, auth_token: string): Promise<v
 export async function clearAuth() {
 	localStorage.removeItem('workflow-auth');
 }
+
+// export const useStorageListener = (): IAuthInterface | null => {
+// 	console.log('запускаем useStorageListener');
+// 	const [auhStorage, setAuhStorage] = useState<IAuthInterface | null>(getAuth());
+//
+// 	useEffect(() => {
+// 		const handleStorageChange = (event: StorageEvent) => {
+// 			console.log('пришло событие storage > event.key = ', event.key, 'event.newValue = ', event.newValue, 'event.oldValue = ', event.oldValue);
+// 			if (event.key === 'workflow-auth') {
+// 				const newAuthValue: IAuthInterface | null = event.newValue ? JSON.parse(event.newValue) : null;
+// 				setAuhStorage(newAuthValue);
+// 			}
+// 		};
+//
+// 		window.addEventListener('storage', handleStorageChange);
+//
+// 		return () => {
+// 			window.removeEventListener('storage', handleStorageChange);
+// 		};
+// 	}, []);
+//
+// 	return auhStorage;
+// };

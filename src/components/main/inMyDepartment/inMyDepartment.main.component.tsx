@@ -94,7 +94,7 @@ function InMyDepartmentMainComponent() {
 			data.push(id);
 		}
 		const result = await axiosCreate.patch('/workflows/take', { ids: data });
-		console.log('забрали в работу, вроде', result);
+		// console.log('забрали в работу, вроде', result);
 		navigate('/main/');
 	}
 

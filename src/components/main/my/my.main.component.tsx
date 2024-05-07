@@ -47,21 +47,21 @@ function MyMainComponent() {
 	};
 
 	useEffect(() => {
-		console.log('зашли в юзефект');
+		// console.log('зашли в юзефект');
 		if (workflowsInMyProcess.length < 1) return;
-		console.log('проверка на длину миновала');
+		// console.log('проверка на длину миновала');
 		if (!paramsId
 			|| !workflowsObject[paramsId]
 			|| !workflowsObject[paramsId].executors
 			|| !workflowsObject[paramsId].executors!.includes(me._id!)
 			|| workflowsObject[paramsId].currentDepartment !== me.currentDepartment
 		) {
-			console.log('внутри уcловий');
+			// console.log('внутри уcловий');
 			if (workflowsInMyProcess.length > 0) {
-				console.log('переход на актив!');
+				// console.log('переход на актив!');
 				navigate('/main/my/' + workflowsInMyProcess[0]._id);
 			} else {
-				console.log('неча утут делать');
+				// console.log('неча утут делать');
 				navigate('/main');
 			}
 		}
@@ -71,7 +71,7 @@ function MyMainComponent() {
 	}, [paramsId, workflowsInMyProcess]);
 
 	useEffect(() => {
-		console.log('меняем табс при ', workflowsInMyProcess.length);
+		// console.log('меняем табс при ', workflowsInMyProcess.length);
 		setTabs(workflowsInMyProcess.map((work) => {
 			return {
 				label: work.title,
@@ -81,12 +81,12 @@ function MyMainComponent() {
 	}, [workflowsInMyProcess]);
 
 	// useEffect(() => {
-	// 	console.log('табы пустые. пошли отседа');
+	// 	// console.log('табы пустые. пошли отседа');
 	// 	// if (tabs.length < 1) navigate('/main');
 	//
-	// 	console.log('workflowsInMyProcess.length > 0 =', workflowsInMyProcess.length > 0);
-	// 	console.log('tabs.length > 0 =', tabs.length > 0);
-	// 	console.log('paramsId =', paramsId);
+	// 	// console.log('workflowsInMyProcess.length > 0 =', workflowsInMyProcess.length > 0);
+	// 	// console.log('tabs.length > 0 =', tabs.length > 0);
+	// 	// console.log('paramsId =', paramsId);
 	//
 	// }, [tabs]);
 

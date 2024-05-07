@@ -8,7 +8,7 @@ function StatComponent() {
 	const { id: paramsId } = useParams();
 
 
-	console.log(paramsId);
+	// console.log(paramsId);
 	return (
 		<>
 			{

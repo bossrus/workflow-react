@@ -115,7 +115,7 @@ function NotPublishedMainComponent() {
 			}
 		}
 		const result = await axiosCreate.patch('/workflows/publish', { ids: data });
-		console.log('опубликовали, вроде', result);
+		// console.log('опубликовали, вроде', result);
 		navigate(`/main/`);
 	}
 

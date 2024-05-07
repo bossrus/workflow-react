@@ -68,10 +68,10 @@ function WorkMyMainComponent({ work_id }: IProps) {
 		const index = newDepartments.findIndex(department => department.id === me.currentDepartment);
 		setDepartmentsList(newDepartments);
 		if (workflowsObject[work_id].executors!.length < 2) {
-			console.log('а екзекуторов тута', workflowsObject[work_id].executors!.length);
+			// console.log('а екзекуторов тута', workflowsObject[work_id].executors!.length);
 			setSelectedDepartment(newDepartments[index + 1].id);
 		} else {
-			console.log('а тут вовсе даже совместное творчество');
+			// console.log('а тут вовсе даже совместное творчество');
 			setSelectedDepartment('justClose');
 		}
 	}, [me.currentDepartment, departmentsInWorkflowArray, workflowsObject, me.currentWorkflowInWork]);

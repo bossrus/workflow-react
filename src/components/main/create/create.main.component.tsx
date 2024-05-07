@@ -58,7 +58,7 @@ function CreateMainComponent() {
 
 	useEffect(() => {
 		if (!departmentsArray || departmentsArray.length === 0) return;
-		console.log('изменение  юзефект списка отделоВ');
+		// console.log('изменение  юзефект списка отделоВ');
 		changeField('currentDepartment', departmentsArray[0]._id);
 	}, [departmentsArray]);
 
@@ -74,7 +74,7 @@ function CreateMainComponent() {
 	// console.log('в создании путь = ', id);
 
 	useEffect(() => {
-		console.log('сменился workState = ', workState);
+		// console.log('сменился workState = ', workState);
 	}, [workState]);
 
 	const makeCanSave = (list: IWorkflowUpdate[] | null) => {
@@ -153,7 +153,7 @@ function CreateMainComponent() {
 				return null;
 			}
 		}
-		console.log('сменили workstate');
+		// console.log('сменили workstate');
 		setWorkState(newState);
 	};
 
@@ -198,7 +198,7 @@ function CreateMainComponent() {
 		if (!newList && workState.type != newOrderId) {
 			newState.type = newOrderId;
 		}
-		console.log('сменили workstate');
+		// console.log('сменили workstate');
 		setWorkState(newState);
 		setShowAnotherNameHandler(currentType);
 	};
@@ -221,7 +221,7 @@ function CreateMainComponent() {
 					currentType = getIDByTitle<ITypeOfWork>(typesOfWorkArray, 'Новый заказ');
 					const newState = { ...workState, type: currentType };
 					// console.log('\tсменили на ', currentType);
-					console.log('сменили workstate');
+					// console.log('сменили workstate');
 					setWorkState(newState);
 				}
 				// console.log('\tфигачим список');
@@ -239,7 +239,7 @@ function CreateMainComponent() {
 			currentType = getIDByTitle<ITypeOfWork>(typesOfWorkArray, 'Новый заказ');
 			const newState = { ...workState, type: currentType };
 			// console.log('\tсменили на ', newState.type);
-			console.log('сменили workstate');
+			// console.log('сменили workstate');
 			setWorkState(newState);
 		}
 		setShowAnotherNameHandler(currentType);
@@ -283,13 +283,13 @@ function CreateMainComponent() {
 		if (!id || work.description != workState.description) data.description = workState.description;
 		// console.log('\tsave data:', data);
 		dispatch(patchOne({ url: 'workflows', data }));
-		console.log('clear fields');
+		// console.log('clear fields');
 		clearFields();
 	};
 
 	const navigate = useNavigate();
 	const clearFields = () => {
-		console.log('сменили workstate');
+		// console.log('сменили workstate');
 		setWorkState({
 			firm: '',
 			modification: '',
@@ -327,7 +327,7 @@ function CreateMainComponent() {
 	};
 
 	const changeField = (name: IWorkflowsKeys, value: string | number | boolean) => {
-		console.log('сменили workstate из ', name);
+		// console.log('сменили workstate из ', name);
 		setWorkState({ ...workState, [name]: value });
 	};
 
@@ -336,10 +336,10 @@ function CreateMainComponent() {
 	}, [workState.description]);
 
 	useEffect(() => {
-		console.log('мы сюда зашли. и i = ', id, ' Object.keys(workflowsObject).length = ', Object.keys(workflowsObject).length);
+		// console.log('мы сюда зашли. и i = ', id, ' Object.keys(workflowsObject).length = ', Object.keys(workflowsObject).length);
 		if (!id || Object.keys(workflowsObject).length <= 0) return;
 		const work = workflowsObject[id];
-		console.log('\t work = ', work);
+		// console.log('\t work = ', work);
 		if (!work) return;
 		const newState: IWorkflowUpdate = {
 			firm: work.firm,
@@ -354,7 +354,7 @@ function CreateMainComponent() {
 			setToStat: work.setToStat,
 			description: work.description,
 		};
-		console.log('\t newState = ', newState);
+		// console.log('\t newState = ', newState);
 		setWorkState(newState);
 	}, [workflowsObject]);
 
@@ -487,7 +487,7 @@ function CreateMainComponent() {
 								className={`${showAnotherName ? 'inactive' : ''}`}
 							/>
 							{
-								showAnotherName &&
+								// showAnotherName &&
 								namesToShortList &&
 								namesToShortList.length > 0 &&
 								typesOfWorkArray &&

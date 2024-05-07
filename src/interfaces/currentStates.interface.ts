@@ -25,6 +25,7 @@ interface ICurrentStatesLocal {
 		sortByField: keyof IWorkflow,
 		sortDirection: IOrder,
 	};
+	flashMessage: string;
 }
 
 export type ICurrentStates = Partial<ICurrentStatesLocal>;

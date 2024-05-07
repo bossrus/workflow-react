@@ -101,7 +101,7 @@ export const createExtraReducers = <T>(storeName: string) => (builder: ActionRed
 						...action.payload,
 					} as Draft<TWithId<T>>;
 					state.error = undefined;
-					// // console.log('юзверь по итогу', state.data[action.payload._id!])
+					// console.log('юзверь по итогу', state.data[action.payload._id!])
 				})
 			.addMatcher(
 				(action) => {

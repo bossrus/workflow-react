@@ -95,9 +95,7 @@ export const deleteOne = createAsyncThunk<any, { url: IUrls, id: string }, { rej
 	'api/deleteOne',
 	async ({ url, id }: { url: IUrls, id: string }, { dispatch, rejectWithValue }) => {
 		try {
-			//TODO убрать response
-			const response = await axiosCreate.delete(url + '/' + id);
-			console.log('   >>>  delete', response.data);
+			await axiosCreate.delete(url + '/' + id);
 			dispatch({ type: deleteOne.fulfilled.type, payload: id, store: url });
 		} catch (e) {
 			const err = e as AxiosError;

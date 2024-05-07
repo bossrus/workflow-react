@@ -1,7 +1,7 @@
 import { Box, Button } from '@mui/material';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import SwitchComponent from '@/components/_shared/switch.component.tsx';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ModalAppComponent from '@/components/app/modal.app.component.tsx';
 import axiosCreate from '@/_api/axiosCreate.ts';
 import { useDispatch } from 'react-redux';
@@ -77,14 +77,24 @@ const InvitesAppComponent = () => {
 		setChecks(newChecks);
 	}, [inviteToJoin]);
 
+	const checksRef = useRef(checks);
+	useEffect(() => {
+		checksRef.current = checks;
+	}, [checks]);
+
 	const dispatch = useDispatch<TAppDispatch>();
-	const takeWorks = () => {
+	const takeWorks = (mode: 'all' | 'nothing' | 'byChecks' = 'byChecks') => {
+		console.log('взяли', mode);
+		console.log('\tchecks = ', checksRef.current);
 		const data: string[] = [];
-		for (let key in checks) {
-			if (checks[key]) {
-				data.push(key);
+		if (mode === 'byChecks' || mode === 'all') {
+			for (let key in checksRef.current) {
+				if (checksRef.current[key] || mode === 'all') {
+					data.push(key);
+				}
 			}
 		}
+		console.log('bnjuj data = ', data);
 		(async () => {
 			try {
 				if (data.length > 0) {
@@ -106,6 +116,21 @@ const InvitesAppComponent = () => {
 		setChecks({});
 		setOrders({});
 	};
+
+	useEffect(() => {
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === 'Enter') {
+				takeWorks('all');
+			}
+			if (event.key === 'Escape') {
+				takeWorks('nothing');
+			}
+		};
+		document.addEventListener('keydown', handleKeyDown);
+		return () => {
+			document.removeEventListener('keydown', handleKeyDown);
+		};
+	}, []);
 
 	return (
 		<>
@@ -132,15 +157,13 @@ const InvitesAppComponent = () => {
 									alignItems={'center'}
 								>
 									<Box>
-										<small>
-											<strong>{value.title}</strong>
-										</small>
+										<strong>{value.title}</strong>
 									</Box>
 									<Box flexGrow={1}>
 										<small>
-											<small>(<i>
-												{value.description}
-											</i>)</small>
+											(<i>
+											{value.description}
+										</i>)
 										</small>
 									</Box>
 									<Box className={'scale'} sx={{ mr: '-30px' }}>
@@ -160,10 +183,32 @@ const InvitesAppComponent = () => {
 						sx={{ mt: 2, borderRadius: '10px' }}
 						color={'success'}
 						className={'up-shadow'}
-						onClick={takeWorks}
+						onClick={() => takeWorks('byChecks')}
 					>
 						Ок
 					</Button>
+					<small>
+						<strong>
+							[ENTER]
+						</strong>
+						{' — '}
+						<i>
+						<span className={'green-text'}>
+							одобрить
+						</span> присоединение ко всем заказам, вне зависимости от переключателей
+						</i>
+						<br />
+						<strong>
+							[ESC]
+						</strong>
+						{' — '}
+						<i>
+							<span className={'red-text'}>
+								отменить
+							</span> присоединение ко всем заказам, вне зависимости от
+							переключателей
+						</i>
+					</small>
 				</ModalAppComponent>
 			}
 		</>

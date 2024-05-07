@@ -139,11 +139,11 @@ function AllWorkflowsStatComponent() {
 		}
 		try {
 			const res = await axiosCreate.post('workflows/stat', data);
-			console.log('\nрезультат запроса:\n', res.data);
+			// console.log('\nрезультат запроса:\n', res.data);
 			// needUpdate = true;
 			setStatisticData(res.data);
 		} catch (e) {
-			console.log('неудачный запрос', e);
+			// console.log('неудачный запрос', e);
 		}
 		setCanUpdate(false);
 	};
@@ -162,7 +162,7 @@ function AllWorkflowsStatComponent() {
 
 
 	useEffect(() => {
-		console.log('заходим в проверку стейта статистики', states.statState);
+		// console.log('заходим в проверку стейта статистики', states.statState);
 		if (states.statState !== undefined) {
 			setFirm(states.statState.firm);
 			setUseFirm(states.statState.useFirm);
@@ -188,7 +188,7 @@ function AllWorkflowsStatComponent() {
 	useEffect(() => {
 		if (!firstEnter) return;
 		setFirstEnter(false);
-		console.log('запускаем loadData при', useDate);
+		// console.log('запускаем loadData при', useDate);
 		loadData();
 	}, [firm,
 		useFirm,
@@ -207,7 +207,7 @@ function AllWorkflowsStatComponent() {
 
 	const navigate = useNavigate();
 	const showSpecificWorkflows = (id: string) => {
-		console.log('сохраняем стейт при ', sortByField, ' > ', sortDirection);
+		// console.log('сохраняем стейт при ', sortByField, ' > ', sortDirection);
 		const statState = {
 			firm,
 			useFirm,

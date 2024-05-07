@@ -2,7 +2,7 @@ import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Typography 
 import { useEffect, useState } from 'react';
 import axiosCreate from '@/_api/axiosCreate.ts';
 import { IWorkflow } from '@/interfaces/workflow.interface.ts';
-import { ILogObject } from '@/interfaces/log.interface.ts';
+import { ILog, ILogObject } from '@/interfaces/log.interface.ts';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { useNavigate } from 'react-router-dom';
@@ -30,20 +30,34 @@ function specificWorkflowStatComponent({
 		loadData();
 	}, []);
 
+	const makeLoglist = (idsList: string[], originalList: ILogObject) => {
+		const newList: ILogObject = {};
+		idsList.map((id) => {
+			const tempElement: ILog[] = [];
+			originalList[id].map((logItem) => {
+				if (['close', 'take', 'publish'].includes(logItem.operation)) {
+					tempElement.push(logItem);
+				}
+			});
+			newList[id] = tempElement;
+		});
+		setLoglist(newList);
+	};
+
 	const loadData = async () => {
 		try {
 			const res = await axiosCreate.post('workflows/stat/' + propsId, {});
-			console.log('\nрезультат запроса:\n', res.data);
+			// console.log('\nрезультат запроса:\n', res.data);
 			const dataArray: string[] = [];
 			setWorkflowsList(res.data as IWorkflow[]);
 			(res.data as IWorkflow[]).forEach((item) => {
 				dataArray.push(item._id as string);
 			});
 			const result = await axiosCreate.post('/log', { ids: dataArray });
-			console.log(result.data);
-			setLoglist(result.data as ILogObject);
+			// console.log(result.data);
+			makeLoglist(dataArray, result.data as ILogObject);
 		} catch (e) {
-			console.log('неудачный запрос', e);
+			// console.log('неудачный запрос', e);
 		}
 		setIsLoading(false);
 	};
@@ -178,45 +192,48 @@ function specificWorkflowStatComponent({
 																		>
 																			{
 																				loglist[workflow._id as string] &&
-																				loglist[workflow._id as string].map((logItem) => {
-																					if (['close', 'take', 'publish'].includes(logItem.operation)) {
-																						return (
-																							<Box
-																								key={logItem._id} // Assuming logItem has a unique identifier _id
-																								// flexGrow={1}
-																								display="flex"
-																								gap={2}
-																								flexDirection="row"
-																							>
-																								<Box width={'20%'}>
-																									{new Date(logItem.date as number).toLocaleString('ru-RU', {
-																										day: '2-digit',
-																										month: '2-digit',
-																										year: 'numeric',
-																										hour: '2-digit',
-																										minute: '2-digit',
-																									})}
-																								</Box>
-																								<Box width={'10%'}>
-																									{usersObject[logItem.idWorker].name}
-																								</Box>
-																								<Box flexGrow={1}>
-																									{
-																										logItem.operation === 'publish' &&
-																										'Создание заказа'
-																									}
-																									{
-																										logItem.operation === 'take' &&
-																										'Заказ взят в работу'
-																									}
-																									{
-																										logItem.operation === 'close' &&
-																										logItem.description
-																									}
-																								</Box>
+																				loglist[workflow._id as string].map((logItem, index) => {
+																					return (
+																						<Box
+																							key={logItem._id} // Assuming logItem has a unique identifier _id
+																							// flexGrow={1}
+																							display="flex"
+																							gap={2}
+																							flexDirection="row"
+																							bgcolor={
+																								index % 2 === 0
+																									? '#f1f1f1'
+																									: 'white'
+																							}
+																						>
+																							<Box width={'20%'}>
+																								{new Date(logItem.date as number).toLocaleString('ru-RU', {
+																									day: '2-digit',
+																									month: '2-digit',
+																									year: 'numeric',
+																									hour: '2-digit',
+																									minute: '2-digit',
+																								})}
 																							</Box>
-																						);
-																					}
+																							<Box width={'10%'}>
+																								{usersObject[logItem.idWorker].name}
+																							</Box>
+																							<Box flexGrow={1}>
+																								{
+																									logItem.operation === 'publish' &&
+																									'Создание заказа'
+																								}
+																								{
+																									logItem.operation === 'take' &&
+																									'Заказ взят в работу'
+																								}
+																								{
+																									logItem.operation === 'close' &&
+																									logItem.description
+																								}
+																							</Box>
+																						</Box>
+																					);
 																					return null;
 																				})
 																			}

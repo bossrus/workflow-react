@@ -3,7 +3,6 @@ import io, { Socket } from 'socket.io-client';
 import { useDispatch } from 'react-redux';
 import { load, loadById } from '@/store/_shared.thunks.ts';
 import { DEFAULT_WEBSOCKET_URL } from '@/_constants/api.ts';
-import { IAuthInterface } from '@/interfaces/auth.interface.ts';
 import { IUserObject, IUserUpdate } from '@/interfaces/user.interface.ts';
 import {
 	departments,
@@ -17,15 +16,15 @@ import {
 import { setOnline } from '@/store/usersOnline.slice.ts';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { IWebsocket } from '@/interfaces/websocket.interface.ts';
+import { getAuth } from '@/_security/auth.ts';
 
 interface IProps {
-	auth: IAuthInterface | null;
 	users: IUserObject;
 	me: IUserUpdate;
 	oldMeLength: number;
 }
 
-export const useWebSocket = ({ oldMeLength, auth, me, users }: IProps) => {
+export const useWebSocket = ({ oldMeLength, me, users }: IProps) => {
 	const [isConnected, setIsConnected] = useState(false);
 	const dispatch = useDispatch<TAppDispatch>();
 
@@ -47,11 +46,11 @@ export const useWebSocket = ({ oldMeLength, auth, me, users }: IProps) => {
 	};
 
 
-	let socket: Socket | null = null;
+	const [socket, setSocket] = useState<Socket>();
 
 	const websocketReaction = ({ bd, operation, id, version }: IWebsocket) => {
 		if (bd == 'websocket') {
-			console.log('обновляем вебсокет:', JSON.parse(id));
+			// console.log('обновляем вебсокет:', JSON.parse(id));
 			dispatch(setOnline(JSON.parse(id)));
 		} else {
 			switch (operation) {
@@ -64,20 +63,20 @@ export const useWebSocket = ({ oldMeLength, auth, me, users }: IProps) => {
 						|| (bd == 'users' && (!users[id] || users[id].version != version))
 						|| (bd == 'flashes')
 					) {
-						console.log('\twebsocket обновляет ', bd, ' №', id);
+						// console.log('\twebsocket обновляет ', bd, ' №', id);
 						dispatch(loadById({ url: bd, id: id }));
 					}
 					if (bd == 'invites' && id == me._id) {
-						console.log('\twebsocket обновляет ', bd, ' для №', id);
+						// console.log('\twebsocket обновляет ', bd, ' для №', id);
 						dispatch(load({ url: bd }));
 					}
 					if (id == me._id && me.version !== version) {
-						console.log('\tнужно обновить самого себя');
+						// console.log('\tнужно обновить самого себя');
 						dispatch(loadById({ url: 'users/me', id }));
 					}
 					break;
 				case 'delete':
-					console.log('\twebsocket удаляет ', bd, ' №', id);
+					// console.log('\twebsocket удаляет ', bd, ' №', id);
 					if (bd !== 'invites' && bd !== 'flashes') {
 						dispatch(deletes[bd](id));
 					}
@@ -87,10 +86,15 @@ export const useWebSocket = ({ oldMeLength, auth, me, users }: IProps) => {
 	};
 
 	useEffect(() => {
+		//TODO реешить проблему получения auth токена
 		console.log('смена oldMeLength', oldMeLength);
+		const auth = getAuth();
+		if (!auth) {
+			console.log('отмена запуска вебсокета. нет авторизации', auth);
+		}
 		if (oldMeLength !== 0) {
 			console.log('сменился me или auth');
-			socket = io(DEFAULT_WEBSOCKET_URL, {
+			const newSocket = io(DEFAULT_WEBSOCKET_URL, {
 				query: {
 					login: auth?.auth_login,
 					loginToken: auth?.auth_token,
@@ -99,30 +103,32 @@ export const useWebSocket = ({ oldMeLength, auth, me, users }: IProps) => {
 				reconnectionAttempts: 2,
 			});
 
-			socket.on('connect', () => {
+			setSocket(newSocket);
+
+			newSocket.on('connect', () => {
 				setIsConnected(true);
-				if (socket)
-					socket.send('Соединение установлено');
+				if (newSocket)
+					newSocket.send('Соединение установлено');
 			});
 
-			socket.on('servermessage', (message) => {
+			newSocket.on('servermessage', (message) => {
 				console.log('Сообщение от сервера: ', message);
 				websocketReaction(message);
 			});
 
-			socket.on('disconnect', () => {
+			newSocket.on('disconnect', () => {
 				dispatch(setOnline([]));
 				setIsConnected(false);
 				console.log('Соединение разорвано');
 			});
 
-			socket.on('reconnect_attempt', (attemptNumber) => {
+			newSocket.on('reconnect_attempt', (attemptNumber) => {
 				console.log('Попытка переподключения номер ', attemptNumber);
 			});
 		}
 		return () => {
 			if (oldMeLength !== 0) {
-				console.log('useWebsocket is closed');
+				// console.log('useWebsocket is closed');
 				if (socket && auth && Object.keys(me).length > 0) {
 					setIsConnected(false);
 					socket.disconnect();

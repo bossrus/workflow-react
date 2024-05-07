@@ -67,7 +67,7 @@ function WorkInfoComponent({
 	};
 
 	const setShowDescr = (show: boolean) => {
-		console.log('типа вошли в проверку отображения');
+		// console.log('типа вошли в проверку отображения');
 		setShowDescription(show);
 	};
 
