@@ -84,8 +84,8 @@ const InvitesAppComponent = () => {
 
 	const dispatch = useDispatch<TAppDispatch>();
 	const takeWorks = (mode: 'all' | 'nothing' | 'byChecks' = 'byChecks') => {
-		console.log('взяли', mode);
-		console.log('\tchecks = ', checksRef.current);
+		// console.log('взяли', mode);
+		// console.log('\tchecks = ', checksRef.current);
 		const data: string[] = [];
 		if (mode === 'byChecks' || mode === 'all') {
 			for (let key in checksRef.current) {
@@ -94,7 +94,7 @@ const InvitesAppComponent = () => {
 				}
 			}
 		}
-		console.log('bnjuj data = ', data);
+		// console.log('bnjuj data = ', data);
 		(async () => {
 			try {
 				if (data.length > 0) {

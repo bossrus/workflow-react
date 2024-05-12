@@ -25,5 +25,3 @@ export const Root = ({ myStore }: { myStore: Store }) => (
 
 createRoot(rootElement!).render(<Root myStore={myStore} />);
 
-
-//TODO на инвайтах сделать проверку — а нет ли этого работника в списке тех, кто делает этот заказ?

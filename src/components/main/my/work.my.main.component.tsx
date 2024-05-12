@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, MenuItem, Select } from '@mui/material';
+import { Box, Button, FormControl, MenuItem, Select, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { useEffect, useState } from 'react';
@@ -24,6 +24,7 @@ function WorkMyMainComponent({ work_id }: IProps) {
 
 		departmentsInWorkflowArray,
 		usersArray,
+		usersObject,
 	} = useReduxSelectors();
 
 	const {
@@ -44,14 +45,14 @@ function WorkMyMainComponent({ work_id }: IProps) {
 		if (!me.currentDepartment || usersArray.length < 1) return;
 		const newUsers: IList[] = [];
 		for (const user of usersArray) {
-			if (user._id !== me._id && user.departments.includes(me.currentDepartment))
+			if (user._id !== me._id && user.departments.includes(me.currentDepartment) && !workflowsObject[work_id].executors!.includes(user._id))
 				newUsers.push({
 					title: user.name,
 					id: user._id,
 				});
 		}
 		setUsersList(newUsers);
-	}, [usersArray, me.currentDepartment]);
+	}, [usersArray, me.currentDepartment, workflowsObject]);
 
 	useEffect(() => {
 		if (!me.currentDepartment || departmentsInWorkflowArray.length < 1 || !workflowsObject[work_id]) return;
@@ -244,8 +245,8 @@ function WorkMyMainComponent({ work_id }: IProps) {
 											</Box>
 											<Box>
 												{
-													selectedDepartment != 'justClose' && (
-														<>
+													selectedDepartment != 'justClose'
+														? (<>
 															Передать работу в:<br />
 															<FormControl variant="standard" fullWidth>
 																<Select
@@ -267,8 +268,27 @@ function WorkMyMainComponent({ work_id }: IProps) {
 																	}
 																</Select>
 															</FormControl>
-														</>
-													)
+														</>)
+														: (<>
+															<Box>
+																<h3>
+																	Совместная работа
+																</h3>
+																<Typography>
+																	Принимают участие:
+																</Typography>
+																{
+																	workflowsObject[work_id].executors?.map((item, index) => (
+																		<span
+																			key={usersObject[item]._id}
+																		>
+																			{index > 0 && ', '}
+																			{usersObject[item].name}
+																		</span>
+																	))
+																}
+															</Box>
+														</>)
 												}
 												<Button
 													variant="contained"

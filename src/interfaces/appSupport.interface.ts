@@ -1,0 +1,1 @@
+export type IColors = 'blue' | 'red' | 'green' | 'darkgray';

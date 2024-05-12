@@ -87,13 +87,13 @@ export const useWebSocket = ({ oldMeLength, me, users }: IProps) => {
 
 	useEffect(() => {
 		//TODO реешить проблему получения auth токена
-		console.log('смена oldMeLength', oldMeLength);
+		// console.log('смена oldMeLength', oldMeLength);
 		const auth = getAuth();
 		if (!auth) {
-			console.log('отмена запуска вебсокета. нет авторизации', auth);
+			// console.log('отмена запуска вебсокета. нет авторизации', auth);
 		}
 		if (oldMeLength !== 0) {
-			console.log('сменился me или auth');
+			// console.log('сменился me или auth');
 			const newSocket = io(DEFAULT_WEBSOCKET_URL, {
 				query: {
 					login: auth?.auth_login,
@@ -112,18 +112,18 @@ export const useWebSocket = ({ oldMeLength, me, users }: IProps) => {
 			});
 
 			newSocket.on('servermessage', (message) => {
-				console.log('Сообщение от сервера: ', message);
+				// console.log('Сообщение от сервера: ', message);
 				websocketReaction(message);
 			});
 
 			newSocket.on('disconnect', () => {
 				dispatch(setOnline([]));
 				setIsConnected(false);
-				console.log('Соединение разорвано');
+				// console.log('Соединение разорвано');
 			});
 
 			newSocket.on('reconnect_attempt', (attemptNumber) => {
-				console.log('Попытка переподключения номер ', attemptNumber);
+				// console.log('Попытка переподключения номер ', attemptNumber);
 			});
 		}
 		return () => {
