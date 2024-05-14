@@ -1,5 +1,5 @@
 import { Socket } from 'socket.io-client';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { authLoad, load, patchOne } from '@/store/_shared.thunks.ts';
 import { TAppDispatch } from '@/store/_store.ts';
@@ -49,19 +49,24 @@ function App() {
 
 	const timers = useRef<{ [key: string]: number }>({});
 
-	useEffect(() => {
-		if (location != '/login') {
-			const auth = getAuth();
-			if (!auth || meError)
-				navigate('/login');
-			else {
-				if (Object.keys(me).length === 0) {
-					dispatch(authLoad());
-				}
-			}
+	const authOrLogin = () => {
+		if (location === '/login') return;
 
+		const auth = getAuth();
+		if (!auth || meError) {
+			logout();
+			return;
 		}
-		if (location == '/settings/error') {
+
+		if (Object.keys(me).length === 0) {
+			dispatch(authLoad());
+		}
+	};
+
+	useEffect(() => {
+		authOrLogin();
+
+		if (location === '/settings/error') {
 			setMeEmailError('Неверная ссылка подтверждения почты.<br/>Нажмите кнопку "Выслать повторное письмо со ссылкой" и перейдите по ссылке из нового письма');
 			timers.current['clearError'] = setTimeout(() => {
 				navigate('/settings');
@@ -71,10 +76,10 @@ function App() {
 		}
 	}, [location, meError]);
 
-	const logout = () => {
+	const logout = useCallback(() => {
 		dispatch(clearMe());
 		navigate('/login');
-	};
+	}, [dispatch, navigate]);
 
 	const routePage = useRoutes(routes);
 
@@ -94,12 +99,12 @@ function App() {
 
 	const { isConnected, socket } = useWebSocket({ oldMeLength, me, users });
 
-	const connectToWebsocket = () => {
+	const connectToWebsocket = useCallback(() => {
 		if (socket)
 			(socket as Socket).connect();
-	};
+	}, [socket]);
 
-	const changeSounds = (isSoundProps: boolean) => {
+	const changeSounds = useCallback((isSoundProps: boolean) => {
 		dispatch(patchOne({
 			url: 'users/me',
 			data: {
@@ -107,9 +112,9 @@ function App() {
 				isSoundOn: isSoundProps,
 			},
 		}));
-	};
+	}, [dispatch, me._id]);
 
-	const changeMyDepartment = (newVal: string | null) => {
+	const changeMyDepartment = useCallback((newVal: string | null) => {
 		if (newVal && me.currentDepartment != newVal)
 			dispatch(patchOne({
 				url: 'users/me',
@@ -118,7 +123,7 @@ function App() {
 					currentDepartment: newVal,
 				},
 			}));
-	};
+	}, [dispatch, me._id, me.currentDepartment]);
 
 	const socketRef = useRef(socket);
 	useEffect(() => {
@@ -130,7 +135,9 @@ function App() {
 		workflowsInMyDepartmentCountRef.current = workflowsInMyDepartment.length;
 	}, [workflowsInMyDepartment]);
 
-	const checkSocketAndQueueStatus = () => {
+	const workQueueNotificationSound = new Audio('/sounds/works_in.mp3');
+
+	const checkSocketAndQueueStatus = useCallback(() => {
 		//если нет коннекта — то коннектим
 		if (socketRef.current) {
 			if (!socketRef.current.connected) {
@@ -140,8 +147,7 @@ function App() {
 
 		//если есть работа, то звучим
 		if (me && workflowsInMyDepartmentCountRef.current > 0 && !me.currentWorkflowInWork) {
-			const audio = new Audio('/sounds/works_in.mp3');
-			audio.play()
+			workQueueNotificationSound.play()
 				.catch(() => {
 					dispatch(setState({
 						flashMessage: 'dontPlaySound',
@@ -149,7 +155,7 @@ function App() {
 				});
 		}
 		timers.current['checkStatuses'] = setTimeout(() => checkSocketAndQueueStatus(), 5 * 60 * 1000);
-	};
+	}, [socket, me, workflowsInMyDepartment.length, dispatch]);
 
 	useEffect(() => {
 		checkSocketAndQueueStatus();

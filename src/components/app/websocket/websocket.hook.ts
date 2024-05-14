@@ -86,8 +86,6 @@ export const useWebSocket = ({ oldMeLength, me, users }: IProps) => {
 	};
 
 	useEffect(() => {
-		//TODO реешить проблему получения auth токена
-		// console.log('смена oldMeLength', oldMeLength);
 		const auth = getAuth();
 		if (!auth) {
 			// console.log('отмена запуска вебсокета. нет авторизации', auth);
