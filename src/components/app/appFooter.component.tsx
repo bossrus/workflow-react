@@ -1,15 +1,15 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
 import LinkAppFooterComponent from '@/components/app/link.appFooter.component.tsx';
 import { IColors } from '@/interfaces/appSupport.interface.ts';
 import { Box } from '@mui/material';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { IUserUpdate } from '@/interfaces/user.interface.ts';
+import useHotkeysNavigation from '@/_hooks/useHotkeysNavigation.tsx';
 
 interface ILinks {
 	path: string,
 	title: string,
-	letter: string,
+	letter: string[],
 	color: IColors,
 	skipOnLines: string[],
 	requiredField?: keyof IUserUpdate;
@@ -19,14 +19,14 @@ const links: ILinks[] = [
 	{
 		path: '/settings',
 		title: 'Настройки',
-		letter: 'O',
+		letter: ['O', 'Щ'],
 		color: 'blue',
 		skipOnLines: ['/settings'],
 	},
 	{
 		path: '/main/create',
 		title: 'Создать новый заказ',
-		letter: 'N',
+		letter: ['N', 'Т'],
 		color: 'red',
 		skipOnLines: ['/create'],
 		requiredField: 'canStartStopWorks',
@@ -34,7 +34,7 @@ const links: ILinks[] = [
 	{
 		path: '/main/',
 		title: 'Главное окно',
-		letter: 'M',
+		letter: ['M', 'Ь'],
 		color: 'green',
 		skipOnLines: ['publish',
 			'my',
@@ -44,7 +44,7 @@ const links: ILinks[] = [
 	{
 		path: '/stat/',
 		title: 'Статистика',
-		letter: 'S',
+		letter: ['S', 'Ы'],
 		color: 'darkgray',
 		skipOnLines: ['/stat'],
 		requiredField: 'canSeeStatistics',
@@ -59,23 +59,12 @@ function AppFooterComponent() {
 	const navigate = useNavigate();
 	const location = useLocation().pathname;
 
-	const handleKeyDown = (event: KeyboardEvent) => {
-		if (event.ctrlKey || event.shiftKey || event.metaKey || !event.altKey) {
-			return;
-		}
+	const hotkeys = links.map(link => ({
+		letter: link.letter,
+		path: link.path,
+	}));
 
-		const link = links.find(linkItem => linkItem.letter.toLowerCase() === event.key.toLowerCase());
-		if (link) {
-			navigate(link.path);
-		}
-	};
-
-	useEffect(() => {
-		window.addEventListener('keydown', handleKeyDown);
-		return () => {
-			window.removeEventListener('keydown', handleKeyDown);
-		};
-	}, []);
+	useHotkeysNavigation(hotkeys);
 
 	const display = (skipOnLines: string[], requiredField?: keyof IUserUpdate) => {
 		if (skipOnLines.some(skipLine => location.includes(skipLine))) {
@@ -95,11 +84,11 @@ function AppFooterComponent() {
 				{links.map(({ path, title, letter, color, skipOnLines, requiredField }) =>
 						display(skipOnLines, requiredField) && (
 							<LinkAppFooterComponent
-								key={letter}
+								key={letter[0]}
 								color={color}
 								title={title}
 								link={path}
-								letter={letter}
+								letter={letter[0]}
 								goToUrl={navigate}
 							/>
 						),

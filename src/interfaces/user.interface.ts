@@ -40,3 +40,5 @@ export interface IUsersOnlineStore {
 
 export type IUserUpdate = Partial<IUser>
 
+export type IUserKeys = keyof IUser;
+

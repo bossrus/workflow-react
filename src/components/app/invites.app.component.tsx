@@ -1,6 +1,5 @@
 import { Box, Button } from '@mui/material';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
-import SwitchComponent from '@/components/_shared/switch.component.tsx';
 import { useEffect, useRef, useState } from 'react';
 import ModalAppComponent from '@/components/app/modal.app.component.tsx';
 import axiosCreate from '@/_api/axiosCreate.ts';
@@ -8,6 +7,8 @@ import { useDispatch } from 'react-redux';
 import { invites, TAppDispatch, workflows } from '@/store/_store.ts';
 import useWorksSelectors from '@/_hooks/useWorksSelectors.hook.ts';
 import axios from 'axios';
+import SwitchButtonComponent from '@/components/_shared/switchButton.component.tsx';
+import { FALSE_COLOR } from '@/_constants/colors.ts';
 
 
 interface IOrderElement {
@@ -167,8 +168,14 @@ const InvitesAppComponent = () => {
 										</small>
 									</Box>
 									<Box className={'scale'} sx={{ mr: '-30px' }}>
-										<SwitchComponent switchLabel={'Присоединиться'} valueChecked={checks[key]}
-														 changeChecked={(checked) => handleSwitchChange(key, checked)}
+										<SwitchButtonComponent
+											checkState={checks[key]}
+											changeChecked={(checked) => handleSwitchChange(key, checked)}
+											trueBackgroundColor={'green'}
+											falseBackgroundColor={FALSE_COLOR}
+											trueTitle={'Присоединиться'}
+											falseTitle={'Отказаться'}
+											mode={'usual'}
 										/>
 									</Box>
 								</Box>

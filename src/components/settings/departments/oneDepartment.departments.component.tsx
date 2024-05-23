@@ -3,26 +3,37 @@ import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
 import { IDepartment } from '@/interfaces/department.interface.ts';
 import EditButtonComponent from '@/components/_shared/editButton.component.tsx';
 import DeleteButtonComponent from '@/components/_shared/deleteButton.component.tsx';
+import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
+import { useDispatch } from 'react-redux';
+import { TAppDispatch } from '@/store/_store.ts';
+import { setState } from '@/store/_currentStates.slice.ts';
+import { deleteOne } from '@/store/_shared.thunks.ts';
 
 interface IOneDepartmentProps {
-	changeEditedDepartment: (id: string) => void;
-	deleteDepartment: (id: string) => void;
 	department: IDepartment;
-	currentDepartment: string | undefined;
 }
 
-// {title, 	numberInWorkflow,	isUsedInWorkflow}
-function OneDepartmentComponent({
-									currentDepartment,
-									changeEditedDepartment,
-									deleteDepartment,
-									department: { _id, title, numberInWorkflow, isUsedInWorkflow },
-								}: IOneDepartmentProps) {
+const OneDepartmentDepartmentsComponent = ({
+											   department: { _id, title, numberInWorkflow, isUsedInWorkflow },
+										   }: IOneDepartmentProps) => {
+
+	const { currentDepartment } = useReduxSelectors().states;
+
 	const disabled = currentDepartment === _id;
+
+	const dispatch = useDispatch<TAppDispatch>();
+
+	const changeEditedDepartment = (id: string | undefined) => {
+		dispatch(setState({ currentDepartment: id }));
+	};
+
+	const deleteDepartment = (id: string) => {
+		dispatch(deleteOne({ url: 'departments', id }));
+	};
+
 	return (
 		<Box
 			display="flex" p={1} m={2}
-			// maxWidth={'300px'}
 			className={`${disabled ? 'in-depth' : 'shadow'}`}
 			borderRadius={'10px'}
 		>
@@ -67,6 +78,6 @@ function OneDepartmentComponent({
 			</Box>
 		</Box>
 	);
-}
+};
 
-export default OneDepartmentComponent;
+export default OneDepartmentDepartmentsComponent;

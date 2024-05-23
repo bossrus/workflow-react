@@ -1,41 +1,30 @@
 import { Box } from '@mui/material';
 import TabsLineComponent from '@/components/_shared/tabsLine.component.tsx';
 import { useParams } from 'react-router-dom';
-import { ComponentType, lazy, Suspense } from 'react';
+import { ComponentType } from 'react';
+import MeSettingsComponent from '@/components/settings/me/me.settings.component.tsx';
+import DepartmentsComponents from '@/components/settings/departments/departments.component.tsx';
+import FirmsComponents from '@/components/settings/firms/firms.component.tsx';
+import MainModificationsComponents from '@/components/settings/modifications/_mainModifications.component.tsx';
+import MainTypesOfWorkComponents from '@/components/settings/typesOfWork/_mainTypesOfWork.component.tsx';
+import MainUsersComponents from '@/components/settings/users/_mainUsers.component.tsx';
+import { ITabs } from '@/interfaces/appSupport.interface.ts';
 
-// тут нет необходимости использовать ленивую загрузку, но чисто для интереса - чоб и не
-const MeSettingsComponent = lazy(() =>
-	import( './me/meSettings.component.tsx'),
-);
-const MainDepartmentsComponents = lazy(() =>
-	import( './departments/_mainDepartments.component.tsx'),
-);
-const MainFirmsComponents = lazy(() =>
-	import( './firms/_mainFirms.component.tsx'),
-);
-const MainModificationsComponents = lazy(() =>
-	import( './modifications/_mainModifications.component.tsx'),
-);
-const MainTypesOfWorkComponents = lazy(() =>
-	import( './typesOfWork/_mainTypesOfWork.component.tsx'),
-);
-const MainUsersComponents = lazy(() =>
-	import( './users/_mainUsers.component.tsx'),
-);
 
-const tabs = [
+const tabs: ITabs[] = [
 	{ label: 'Мои настройки', url: 'me' },
-	{ label: 'Номера журналов', url: 'modifications' },
-	{ label: 'Отделы', url: 'departments' },
-	{ label: 'Клиенты', url: 'firms' },
-	{ label: 'Типы работ', url: 'types-of-work' },
-	{ label: 'Сотрудники', url: 'employees' },
+	{ label: 'Номера журналов', url: 'modifications', access: ['isAdmin', 'canMakeModification'] },
+	{ label: 'Отделы', url: 'departments', access: ['isAdmin'] },
+	{ label: 'Клиенты', url: 'firms', access: ['isAdmin'] },
+	{ label: 'Типы работ', url: 'types-of-work', access: ['isAdmin'] },
+	{ label: 'Сотрудники', url: 'employees', access: ['isAdmin'] },
 ];
 
 const componentMapping: { [key: string]: ComponentType } = {
 	'me': MeSettingsComponent,
-	'departments': MainDepartmentsComponents,
-	'firms': MainFirmsComponents,
+	'departments': DepartmentsComponents,
+	'firms': FirmsComponents,
+
 	'modifications': MainModificationsComponents,
 	'types-of-work': MainTypesOfWorkComponents,
 	'employees': MainUsersComponents,
@@ -53,9 +42,7 @@ function SettingsComponent() {
 					<TabsLineComponent tabs={tabs} chapter={path || 'me'} section={'settings'} />
 				</Box>
 				<Box flexGrow={1}>
-					<Suspense>
-						<SelectedComponent />
-					</Suspense>
+					<SelectedComponent />
 				</Box>
 			</Box>
 		</>

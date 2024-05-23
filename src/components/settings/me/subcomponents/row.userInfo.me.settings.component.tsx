@@ -6,10 +6,11 @@ interface IProps {
 	title: string;
 }
 
-function RowInMeSettingsComponent({ children, title }: IProps) {
+function RowUserInfoMeSettingsComponent({ children, title }: IProps) {
 	return (
 		<Box
 			paddingBottom={1}
+			paddingLeft={'30%'}
 		>
 			<Typography variant="caption" sx={{ color: '#989a9b' }}>
 				{title}
@@ -21,4 +22,4 @@ function RowInMeSettingsComponent({ children, title }: IProps) {
 	);
 }
 
-export default RowInMeSettingsComponent;
+export default RowUserInfoMeSettingsComponent;

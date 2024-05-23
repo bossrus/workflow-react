@@ -130,14 +130,14 @@ body {
   width: 100% !important;
   height: 100% !important;
   padding-bottom: 30px;
-  overflow: auto;
+  overflow: auto !important;
 }
 
 .just-table-container {
   width: 100% !important;
   height: 100% !important;
   padding-bottom: 30px;
-  overflow: auto;
+  overflow: auto !important;
   padding-bottom: 0 !important;
 }
 
@@ -145,7 +145,7 @@ body {
   width: 100% !important;
   height: 100% !important;
   padding-bottom: 30px;
-  overflow: auto;
+  overflow: auto !important;
   padding-bottom: 10px;
 }
 
@@ -176,7 +176,11 @@ body {
 }
 
 .text-gray {
-  color: #000000;
+  color: #979797;
+}
+
+.text-black {
+  color: black;
 }
 
 .text-bold {

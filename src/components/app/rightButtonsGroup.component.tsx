@@ -1,10 +1,8 @@
-import { FormControlLabel, FormGroup, IconButton, Tooltip, Typography } from '@mui/material';
+import { FormGroup, IconButton, Tooltip } from '@mui/material';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
-import VolumeOffIcon from '@mui/icons-material/VolumeOff';
-import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import { tooltipProps } from '@/scss/tooltipsProps.ts';
-import { MaterialUISwitch, SwitchStyledIcon } from '@/scss/switchStyled';
+import SwitchButtonComponent from '@/components/_shared/switchButton.component.tsx';
 
 interface IRightButtonsGroupProps {
 	isSoundOn: boolean,
@@ -16,45 +14,17 @@ interface IRightButtonsGroupProps {
 function rightButtonsGroupComponent(props: IRightButtonsGroupProps) {
 	const { isSoundOn, changeSounds, logout } = props;
 
-	const switchLabel = isSoundOn ? 'Звук включён' : 'Звук выключен';
-
 	return (
 		<>
 			<FormGroup>
-				<FormControlLabel
-					control={
-						<MaterialUISwitch
-							sx={{ m: 1 }}
-							icon={
-								<SwitchStyledIcon
-									sx={{ backgroundColor: 'red' }}
-								>
-									<VolumeOffIcon
-										sx={{ color: 'black' }}
-									/>
-								</SwitchStyledIcon>
-							}
-							checkedIcon={
-								<SwitchStyledIcon
-									sx={{ backgroundColor: 'green' }}
-								>
-									<VolumeUpIcon
-										sx={{ color: 'white' }}
-									/>
-								</SwitchStyledIcon>
-							}
-						/>
-					}
-					label={<Typography
-						sx={{
-							fontWeight: 'bold',
-							color: isSoundOn ? 'green' : 'red',
-						}}
-					>
-						{switchLabel}
-					</Typography>}
-					checked={isSoundOn}
-					onChange={(_event, checked) => changeSounds(checked)}
+				<SwitchButtonComponent
+					checkState={isSoundOn}
+					changeChecked={changeSounds}
+					trueBackgroundColor={'green'}
+					falseBackgroundColor={'red'}
+					trueTitle={'Звук включен'}
+					falseTitle={'Звук выключен'}
+					mode={'sound'}
 				/>
 			</FormGroup>
 			<Tooltip

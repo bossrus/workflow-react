@@ -2,25 +2,37 @@ import { Box, Typography } from '@mui/material';
 import { IFirm } from '@/interfaces/firm.interface.ts';
 import DeleteButtonComponent from '@/components/_shared/deleteButton.component.tsx';
 import EditButtonComponent from '@/components/_shared/editButton.component.tsx';
+import { useDispatch } from 'react-redux';
+import { TAppDispatch } from '@/store/_store.ts';
+import { setState } from '@/store/_currentStates.slice.ts';
+import { deleteOne } from '@/store/_shared.thunks.ts';
+import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 
 interface IOneFirmProps {
-	changeEditedFirm: (id: string) => void;
-	deleteFirm: (id: string) => void;
 	firm: IFirm;
-	currentFirm: string | undefined;
 }
 
-function OneFirmComponent({
-							  currentFirm,
-							  changeEditedFirm,
-							  deleteFirm,
-							  firm: { _id, title, basicPriority },
-						  }: IOneFirmProps) {
+function OneFirmFirmsComponent({
+								   firm: { _id, title, basicPriority },
+							   }: IOneFirmProps) {
+	const { currentFirm } = useReduxSelectors().states;
+
 	const disabled = currentFirm === _id;
+	const dispatch = useDispatch<TAppDispatch>();
+
+	const changeEditedFirm = (id: string | undefined) => {
+		dispatch(setState({
+			currentFirm: id,
+		}));
+	};
+
+	const deleteFirm = (id: string) => {
+		dispatch(deleteOne({ url: 'firms', id }));
+	};
+
 	return (
 		<Box
 			display="flex" p={1} m={2}
-			// maxWidth={'300px'}
 			className={`${disabled ? 'in-depth' : 'shadow'}`}
 			borderRadius={'10px'}
 		>
@@ -44,8 +56,10 @@ function OneFirmComponent({
 
 
 			</Box>
-			<Box display="flex" flexDirection="column" justifyContent="space-between"
-				// p={1}
+			<Box
+				display="flex"
+				flexDirection="column"
+				justifyContent="space-between"
 			>
 				<DeleteButtonComponent id={_id} dis={disabled} onClickHere={deleteFirm} />
 				<EditButtonComponent id={_id} dis={disabled} onClickHere={changeEditedFirm} />
@@ -54,4 +68,4 @@ function OneFirmComponent({
 	);
 }
 
-export default OneFirmComponent;
+export default OneFirmFirmsComponent;

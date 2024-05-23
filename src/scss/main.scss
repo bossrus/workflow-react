@@ -107,7 +107,7 @@ body {
   width: 100% !important;
   height: 100% !important;
   padding-bottom: 30px;
-  overflow: auto;
+  overflow: auto !important;
 }
 
 .date-picker {
@@ -170,7 +170,11 @@ body {
 }
 
 .text-gray {
-  color: #000000;
+  color: #979797;
+}
+
+.text-black {
+  color: black;
 }
 
 .text-bold {
