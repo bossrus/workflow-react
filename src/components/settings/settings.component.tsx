@@ -5,7 +5,7 @@ import { ComponentType } from 'react';
 import MeSettingsComponent from '@/components/settings/me/me.settings.component.tsx';
 import DepartmentsComponents from '@/components/settings/departments/departments.component.tsx';
 import FirmsComponents from '@/components/settings/firms/firms.component.tsx';
-import MainModificationsComponents from '@/components/settings/modifications/_mainModifications.component.tsx';
+import ModificationsComponents from '@/components/settings/modifications/modifications.component.tsx';
 import MainTypesOfWorkComponents from '@/components/settings/typesOfWork/_mainTypesOfWork.component.tsx';
 import MainUsersComponents from '@/components/settings/users/_mainUsers.component.tsx';
 import { ITabs } from '@/interfaces/appSupport.interface.ts';
@@ -24,8 +24,8 @@ const componentMapping: { [key: string]: ComponentType } = {
 	'me': MeSettingsComponent,
 	'departments': DepartmentsComponents,
 	'firms': FirmsComponents,
+	'modifications': ModificationsComponents,
 
-	'modifications': MainModificationsComponents,
 	'types-of-work': MainTypesOfWorkComponents,
 	'employees': MainUsersComponents,
 };

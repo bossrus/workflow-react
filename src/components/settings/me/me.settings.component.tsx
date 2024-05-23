@@ -1,8 +1,8 @@
 import { Box } from '@mui/material';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
-import UserInfoComponent from './subcomponents/userInfo.me.settings.component';
-import EmailSettingsComponent from '@/components/settings/me/subcomponents/email.me.settings.component.tsx';
-import PasswordSettingsComponent from '@/components/settings/me/subcomponents/password.me.settings.component.tsx';
+import UserInfoComponent from './userInfo.me.settings.component.tsx';
+import EmailSettingsComponent from '@/components/settings/me/email.me.settings.component.tsx';
+import PasswordSettingsComponent from '@/components/settings/me/password.me.settings.component.tsx';
 import { FC } from 'react';
 
 const MeSettingsComponent: FC = () => {

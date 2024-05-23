@@ -1,13 +1,13 @@
 import { Box } from '@mui/material';
 import RowUserInfoMeSettingsComponent
-	from '@/components/settings/me/subcomponents/row.userInfo.me.settings.component.tsx';
+	from '@/components/settings/me/row.userInfo.me.settings.component.tsx';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 
 
 const UserInfoComponent = () => {
 
 	const { me, departmentsObject } = useReduxSelectors();
-	
+
 	const title = 'отдел' + (me.departments?.length as number > 1 ? 'ы' : '');
 
 	return (

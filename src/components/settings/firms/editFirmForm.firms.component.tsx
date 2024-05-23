@@ -7,6 +7,7 @@ import { setState } from '@/store/_currentStates.slice.ts';
 import { IFirmUpdate } from '@/interfaces/firm.interface.ts';
 import { patchOne } from '@/store/_shared.thunks.ts';
 import makeSlug from '@/_services/makeSlug.service.ts';
+import useEscapeKey from '@/_hooks/useEscapeKey.hook.ts';
 
 function EditFirmFormComponent() {
 	const { firmsObject, states: { currentFirm } } = useReduxSelectors();
@@ -51,6 +52,8 @@ function EditFirmFormComponent() {
 		dispatch(setState({ currentFirm: undefined }));
 	};
 
+	useEscapeKey(clearFields);
+	
 	const saveFirm = () => {
 		if (stopSave) return;
 		const firm: IFirmUpdate = {};

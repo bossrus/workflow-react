@@ -11,6 +11,7 @@ import SwitchButtonComponent from '@/components/_shared/switchButton.component.t
 import { FALSE_COLOR } from '@/_constants/colors.ts';
 import makeSlug from '@/_services/makeSlug.service.ts';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
+import useEscapeKey from '@/_hooks/useEscapeKey.hook.ts';
 
 const EditDepartmentFormComponent = () => {
 	const { departmentsObject, states: { currentDepartment } } = useReduxSelectors();
@@ -61,6 +62,8 @@ const EditDepartmentFormComponent = () => {
 		setStopSave(true);
 		dispatch(setState({ currentDepartment: undefined }));
 	};
+
+	useEscapeKey(clearFields);
 
 	const saveDepartment = () => {
 		if (stopSave) return;

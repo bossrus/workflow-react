@@ -2,21 +2,36 @@ import { Box, Typography } from '@mui/material';
 import { IModification } from '@/interfaces/modification.interface.ts';
 import DeleteButtonComponent from '@/components/_shared/deleteButton.component.tsx';
 import EditButtonComponent from '@/components/_shared/editButton.component.tsx';
+import { useDispatch } from 'react-redux';
+import { TAppDispatch } from '@/store/_store.ts';
+import { deleteOne } from '@/store/_shared.thunks.ts';
+import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
+import { setState } from '@/store/_currentStates.slice.ts';
 
 interface IOneModificationProps {
-	changeEditedModification: (id: string) => void;
-	deleteModification: (id: string) => void;
 	modification: IModification;
-	currentModification: string | undefined;
 }
 
-function OneModificationComponent({
-									  currentModification,
-									  changeEditedModification,
-									  deleteModification,
-									  modification: { _id, title },
-								  }: IOneModificationProps) {
+function OneModificationModificationsComponent({
+												   modification: { _id, title },
+											   }: IOneModificationProps) {
+	const { states: { currentModification } } = useReduxSelectors();
+
 	const disabled = currentModification === _id;
+
+	const dispatch = useDispatch<TAppDispatch>();
+
+
+	const changeEditedModification = (id: string | undefined) => {
+		dispatch(setState({
+			currentModification: id,
+		}));
+	};
+
+	const deleteModification = (id: string) => {
+		dispatch(deleteOne({ url: 'modifications', id }));
+	};
+
 	return (
 		<Box
 			display="flex" p={1} m={2}
@@ -44,4 +59,4 @@ function OneModificationComponent({
 	);
 }
 
-export default OneModificationComponent;
+export default OneModificationModificationsComponent;
