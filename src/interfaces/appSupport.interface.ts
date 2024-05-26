@@ -1,6 +1,6 @@
 import { IUser } from '@/interfaces/user.interface.ts';
 
-export type IColors = 'blue' | 'red' | 'green' | 'darkgray';
+export type IColors = 'blue' | 'red' | 'green' | 'darkgray' | 'black' | 'gray' | 'yellow' | 'purple' | 'orange';
 
 export interface IHotkey {
 	letter: string[];

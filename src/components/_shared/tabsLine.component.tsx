@@ -37,7 +37,7 @@ function TabsLineComponent({ section, chapter, tabs }: IProps) {
 		}
 		setHotkeys(newHotKeys);
 		setResultTabs(newTabs);
-	}, [tabs]);
+	}, [tabs, me]);
 
 	useHotkeysNavigation(hotkeys);
 

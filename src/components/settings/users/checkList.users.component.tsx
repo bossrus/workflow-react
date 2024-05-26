@@ -14,7 +14,7 @@ interface IProps {
 }
 
 
-function CheckListMainUserComponent({ list, usingElements, changeUsingElements }: IProps) {
+function CheckListUsersComponent({ list, usingElements, changeUsingElements }: IProps) {
 
 	return (<>
 			{
@@ -50,4 +50,4 @@ function CheckListMainUserComponent({ list, usingElements, changeUsingElements }
 	);
 }
 
-export default CheckListMainUserComponent;
+export default CheckListUsersComponent;

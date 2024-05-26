@@ -53,13 +53,13 @@ function EditFirmFormComponent() {
 	};
 
 	useEscapeKey(clearFields);
-	
+
 	const saveFirm = () => {
 		if (stopSave) return;
 		const firm: IFirmUpdate = {};
 		if (currentFirm !== undefined) {
 			firm._id = currentFirm;
-			if (title !== firmsObject[currentFirm].title) firm.title = title;
+			if (title !== firmsObject[currentFirm].title) firm.title = title.trim();
 			if (basicPriority !== firmsObject[currentFirm].basicPriority) {
 				firm.basicPriority = basicPriority;
 			}

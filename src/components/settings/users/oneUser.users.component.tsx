@@ -1,40 +1,49 @@
 import { Box, Typography } from '@mui/material';
 import { IUser } from '@/interfaces/user.interface.ts';
-import { IDepartmentsObject } from '@/interfaces/department.interface.ts';
-import CheckedStringOneUserComponent from '@/components/settings/users/checkedString.oneUser.component.tsx';
+import CheckedStringOneUserUsersComponent from '@/components/settings/users/checkedString.oneUser.users.component.tsx';
 import DeleteButtonComponent from '@/components/_shared/deleteButton.component.tsx';
 import EditButtonComponent from '@/components/_shared/editButton.component.tsx';
+import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
+import { setState } from '@/store/_currentStates.slice.ts';
+import { useDispatch } from 'react-redux';
+import { TAppDispatch } from '@/store/_store.ts';
 
 interface IOneUserProps {
-	changeEditedUser: (id: string) => void;
-	deleteUser: (id: string) => void;
 	user: IUser;
-	currentUser: string | undefined;
-	listOfDepartments: IDepartmentsObject;
+	deleteUser: (id: string) => void;
 }
 
-function OneUserComponent({
-							  currentUser,
-							  changeEditedUser,
-							  deleteUser,
-							  listOfDepartments,
-							  user: {
-								  _id,
-								  name,
-								  departments,
-								  canMakeModification,
-								  canSeeStatistics,
-								  isAdmin,
-								  canStartStopWorks,
-								  canWriteToSupport,
-								  login,
-							  },
-						  }: IOneUserProps) {
+function OneUserUsersComponent({
+								   user: {
+									   _id,
+									   name,
+									   departments,
+									   canMakeModification,
+									   canSeeStatistics,
+									   isAdmin,
+									   canStartStopWorks,
+									   canWriteToSupport,
+									   login,
+								   },
+								   deleteUser,
+							   }: IOneUserProps) {
+
+	const { departmentsObject: listOfDepartments, states: { currentUser } } = useReduxSelectors();
+
 	const disabled = currentUser === _id;
+
+	const dispatch = useDispatch<TAppDispatch>();
+
+	const changeEditedUser = (id: string | undefined) => {
+		dispatch(setState({
+			currentUser: id,
+		}));
+	};
+
+
 	return (
 		<Box
 			display="flex" p={1} m={2}
-			// maxWidth={'300px'}
 			className={`${disabled ? 'in-depth' : 'shadow'}`}
 			borderRadius={'10px'}
 		>
@@ -69,19 +78,20 @@ function OneUserComponent({
 						имеющиеся права:
 					</Typography>
 					{
-						canMakeModification && <CheckedStringOneUserComponent title={'создать новые номера'} />
+						canMakeModification && <CheckedStringOneUserUsersComponent title={'создать новые номера'} />
 					}
 					{
-						canSeeStatistics && <CheckedStringOneUserComponent title={'видеть статистику'} />
+						canSeeStatistics && <CheckedStringOneUserUsersComponent title={'видеть статистику'} />
 					}
 					{
-						canStartStopWorks && <CheckedStringOneUserComponent title={'начинать и завершать работу'} />
+						canStartStopWorks &&
+						<CheckedStringOneUserUsersComponent title={'начинать и завершать работу'} />
 					}
 					{
-						canWriteToSupport && <CheckedStringOneUserComponent title={'писать в поддержку'} />
+						canWriteToSupport && <CheckedStringOneUserUsersComponent title={'писать в поддержку'} />
 					}
 					{
-						isAdmin && <CheckedStringOneUserComponent title={'администрировать'} />
+						isAdmin && <CheckedStringOneUserUsersComponent title={'администрировать'} />
 					}
 				</Box>
 
@@ -97,4 +107,4 @@ function OneUserComponent({
 	);
 }
 
-export default OneUserComponent;
+export default OneUserUsersComponent;

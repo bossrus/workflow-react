@@ -6,8 +6,8 @@ import MeSettingsComponent from '@/components/settings/me/me.settings.component.
 import DepartmentsComponents from '@/components/settings/departments/departments.component.tsx';
 import FirmsComponents from '@/components/settings/firms/firms.component.tsx';
 import ModificationsComponents from '@/components/settings/modifications/modifications.component.tsx';
-import MainTypesOfWorkComponents from '@/components/settings/typesOfWork/_mainTypesOfWork.component.tsx';
-import MainUsersComponents from '@/components/settings/users/_mainUsers.component.tsx';
+import MainTypesOfWorkComponents from '@/components/settings/typesOfWork/typesOfWork.component.tsx';
+import UsersComponents from '@/components/settings/users/users.component.tsx';
 import { ITabs } from '@/interfaces/appSupport.interface.ts';
 
 
@@ -25,9 +25,8 @@ const componentMapping: { [key: string]: ComponentType } = {
 	'departments': DepartmentsComponents,
 	'firms': FirmsComponents,
 	'modifications': ModificationsComponents,
-
 	'types-of-work': MainTypesOfWorkComponents,
-	'employees': MainUsersComponents,
+	'employees': UsersComponents,
 };
 
 function SettingsComponent() {

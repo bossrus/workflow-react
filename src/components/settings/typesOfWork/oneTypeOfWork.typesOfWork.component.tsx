@@ -2,26 +2,38 @@ import { Box, Typography } from '@mui/material';
 import { ITypeOfWork } from '@/interfaces/worktype.interface.ts';
 import DeleteButtonComponent from '@/components/_shared/deleteButton.component.tsx';
 import EditButtonComponent from '@/components/_shared/editButton.component.tsx';
+import { useDispatch } from 'react-redux';
+import { TAppDispatch } from '@/store/_store.ts';
+import { setState } from '@/store/_currentStates.slice.ts';
+import { deleteOne } from '@/store/_shared.thunks.ts';
+import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 
 interface IOneTypeOfWorkProps {
-	changeEditedTypeOfWork: (id: string) => void;
-	deleteTypeOfWork: (id: string) => void;
 	typeOfWork: ITypeOfWork;
-	currentTypeOfWork: string | undefined;
 }
 
-// {title, 	numberInWorkflow,	isUsedInWorkflow}
-function OneTypeOfWorkComponent({
-									currentTypeOfWork,
-									changeEditedTypeOfWork,
-									deleteTypeOfWork,
-									typeOfWork: { _id, title },
-								}: IOneTypeOfWorkProps) {
+function OneTypeOfWorkTypesOfWorkComponent({
+											   typeOfWork: { _id, title },
+										   }: IOneTypeOfWorkProps) {
+
+	const { states: { currentTypeOfWork } } = useReduxSelectors();
 	const disabled = currentTypeOfWork === _id;
+
+	const dispatch = useDispatch<TAppDispatch>();
+
+	const changeEditedTypeOfWork = (id: string | undefined) => {
+		dispatch(setState({
+			currentTypeOfWork: id,
+		}));
+	};
+
+	const deleteTypeOfWork = (id: string) => {
+		dispatch(deleteOne({ url: 'typesOfWork', id }));
+	};
+
 	return (
 		<Box
 			display="flex" p={1} m={2}
-			// maxWidth={'300px'}
 			className={`${disabled ? 'in-depth' : 'shadow'}`}
 			borderRadius={'10px'}
 		>
@@ -38,7 +50,6 @@ function OneTypeOfWorkComponent({
 
 			</Box>
 			<Box display="flex" flexDirection="column" justifyContent="space-between"
-				// p={1}
 			>
 				<DeleteButtonComponent id={_id} dis={disabled} onClickHere={deleteTypeOfWork} />
 				<EditButtonComponent id={_id} dis={disabled} onClickHere={changeEditedTypeOfWork} />
@@ -47,4 +58,4 @@ function OneTypeOfWorkComponent({
 	);
 }
 
-export default OneTypeOfWorkComponent;
+export default OneTypeOfWorkTypesOfWorkComponent;

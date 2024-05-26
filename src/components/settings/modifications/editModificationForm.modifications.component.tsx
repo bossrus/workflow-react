@@ -58,7 +58,7 @@ const EditModificationFormModificationsComponent = () => {
 	const saveModification = () => {
 		if (stopSave) return;
 		const modification: IModificationUpdate = {
-			title: title,
+			title: title.trim(),
 		};
 		if (currentModification !== undefined) {
 			modification._id = currentModification;

@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import TabsLineComponent from '@/components/_shared/tabsLine.component.tsx';
 import { useNavigate, useParams } from 'react-router-dom';
-import MainUsersComponents from '@/components/settings/users/_mainUsers.component.tsx';
+import UsersComponents from '@/components/settings/users/users.component.tsx';
 import CreateMainComponent from '@/components/main/create/create.main.component.tsx';
 import InMyDepartmentMainComponent from '@/components/main/inMyDepartment/inMyDepartment.main.component.tsx';
 import NotPublishedMainComponent from '@/components/main/notPublished/notPublished.main.component.tsx';
@@ -137,7 +137,7 @@ function MainComponent() {
 							{path === 'publish' && <NotPublishedMainComponent />}
 							{path === 'all-works' && <AllWorksMainComponent />}
 							{path === 'my' && <MyMainComponent />}
-							{path === 'employees' && <MainUsersComponents />}
+							{path === 'employees' && <UsersComponents />}
 						</Box>
 						: <Box className={'table-container'}>
 							<h1>ПУСТО!</h1>

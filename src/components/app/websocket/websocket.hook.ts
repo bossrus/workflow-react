@@ -36,7 +36,7 @@ export const useWebSocket = ({ oldMeLength, me, users }: IProps) => {
 		workflowsAll: workflowsObject,
 	} = useReduxSelectors();
 
-	const deletes = {
+	const deletes: { [key: string]: (id: string) => { type: string, payload: string } } = {
 		'workflows': workflows.actions.deleteElement,
 		'users': usersStore.actions.deleteElement,
 		'departments': departments.actions.deleteElement,
@@ -50,7 +50,6 @@ export const useWebSocket = ({ oldMeLength, me, users }: IProps) => {
 
 	const websocketReaction = ({ bd, operation, id, version }: IWebsocket) => {
 		if (bd == 'websocket') {
-			// console.log('обновляем вебсокет:', JSON.parse(id));
 			dispatch(setOnline(JSON.parse(id)));
 		} else {
 			switch (operation) {
@@ -89,6 +88,7 @@ export const useWebSocket = ({ oldMeLength, me, users }: IProps) => {
 		const auth = getAuth();
 		if (!auth) {
 			// console.log('отмена запуска вебсокета. нет авторизации', auth);
+			return;
 		}
 		if (oldMeLength !== 0) {
 			// console.log('сменился me или auth');
@@ -121,7 +121,7 @@ export const useWebSocket = ({ oldMeLength, me, users }: IProps) => {
 			});
 
 			newSocket.on('reconnect_attempt', (attemptNumber) => {
-				// console.log('Попытка переподключения номер ', attemptNumber);
+				console.log('Попытка переподключения номер ', attemptNumber);
 			});
 		}
 		return () => {
