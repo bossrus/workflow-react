@@ -7,6 +7,7 @@ import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { setState } from '@/store/_currentStates.slice.ts';
 import { useDispatch } from 'react-redux';
 import { TAppDispatch } from '@/store/_store.ts';
+import { getTitleByID } from '@/_services/getTitleByID.service.ts';
 
 interface IOneUserProps {
 	user: IUser;
@@ -70,7 +71,7 @@ function OneUserUsersComponent({
 				</Typography>
 				{departments.map(department => (
 					<Typography key={department} variant="h5" sx={{ fontWeight: 'bold' }}>
-						{listOfDepartments[department] ? listOfDepartments[department].title : 'это надо удалить :)'}
+						{getTitleByID(listOfDepartments, department)}
 					</Typography>
 				))}
 				<Box sx={{ pt: 2 }}>

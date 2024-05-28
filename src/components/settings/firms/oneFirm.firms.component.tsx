@@ -7,6 +7,9 @@ import { TAppDispatch } from '@/store/_store.ts';
 import { setState } from '@/store/_currentStates.slice.ts';
 import { deleteOne } from '@/store/_shared.thunks.ts';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
+import { useEffect } from 'react';
+import { isNotValidDeleteMessage } from '@/_services/isValidDeleteMessage.ts';
+import useDeleteRecord from '@/_hooks/useDeleteRecord.hook.ts';
 
 interface IOneFirmProps {
 	firm: IFirm;
@@ -15,7 +18,7 @@ interface IOneFirmProps {
 function OneFirmFirmsComponent({
 								   firm: { _id, title, basicPriority },
 							   }: IOneFirmProps) {
-	const { currentFirm } = useReduxSelectors().states;
+	const { currentFirm, deleteMessage } = useReduxSelectors().states;
 
 	const disabled = currentFirm === _id;
 	const dispatch = useDispatch<TAppDispatch>();
@@ -26,9 +29,17 @@ function OneFirmFirmsComponent({
 		}));
 	};
 
-	const deleteFirm = (id: string) => {
-		dispatch(deleteOne({ url: 'firms', id }));
-	};
+	const marker = 'отдел';
+
+	const deleteFirm = useDeleteRecord(_id, marker, title);
+
+	useEffect(() => {
+		if (isNotValidDeleteMessage(deleteMessage, marker, _id)) return;
+		if (deleteMessage!.result) {
+			dispatch(deleteOne({ url: 'firms', id: _id }));
+		}
+		dispatch(setState({ deleteMessage: undefined }));
+	}, [deleteMessage]);
 
 	return (
 		<Box

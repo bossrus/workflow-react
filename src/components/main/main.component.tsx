@@ -10,13 +10,16 @@ import MyMainComponent from '@/components/main/my/my.main.component.tsx';
 import { useEffect, useState } from 'react';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import useWorksSelectors from '@/_hooks/useWorksSelectors.hook.ts';
+import { ITabs } from '@/interfaces/appSupport.interface.ts';
 
-interface ITabs {
-	label: string,
-	url: string,
-	badge: number,
-	count: number
-}
+const components: { [key: string]: JSX.Element } = {
+	'create': <CreateMainComponent />,
+	'my-department': <InMyDepartmentMainComponent />,
+	'publish': <NotPublishedMainComponent />,
+	'all-works': <AllWorksMainComponent />,
+	'my': <MyMainComponent />,
+	'employees': <UsersComponents />,
+};
 
 
 function MainComponent() {
@@ -31,7 +34,6 @@ function MainComponent() {
 		workflowsInMyDepartment,
 	} = useWorksSelectors();
 	const { path } = useParams();
-	// console.log('путь в main.component >> ', path);
 
 	const [tabs, setTabs] = useState<ITabs[]>([]);
 	const navigate = useNavigate();
@@ -57,7 +59,7 @@ function MainComponent() {
 		const newTabs: ITabs[] = [];
 		if (me.canStartStopWorks && workflowsNotPublishedArray.length > 0) {
 			newTabs.push({
-				label: 'Публикация компонентов',
+				label: 'Публикация заказов',
 				url: 'publish',
 				badge: workflowsNotPublishedArray[0].urgency,
 				count: workflowsNotPublishedArray.length,
@@ -81,7 +83,7 @@ function MainComponent() {
 		}
 		if (workflowsPublishedArray.length > 0) {
 			newTabs.push({
-				label: 'Очередь общая очередь заказов',
+				label: 'Общая очередь заказов',
 				url: 'all-works',
 				badge: workflowsPublishedArray[0].urgency,
 				count: workflowsPublishedArray.length,
@@ -132,12 +134,7 @@ function MainComponent() {
 					}
 					{path && path != '' ?
 						<Box flexGrow={1} boxSizing={'border-box'}>
-							{path === 'create' && <CreateMainComponent />}
-							{path === 'my-department' && <InMyDepartmentMainComponent />}
-							{path === 'publish' && <NotPublishedMainComponent />}
-							{path === 'all-works' && <AllWorksMainComponent />}
-							{path === 'my' && <MyMainComponent />}
-							{path === 'employees' && <UsersComponents />}
+							{components[path] && components[path]}
 						</Box>
 						: <Box className={'table-container'}>
 							<h1>ПУСТО!</h1>

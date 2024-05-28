@@ -9,6 +9,7 @@ import useWorksSelectors from '@/_hooks/useWorksSelectors.hook.ts';
 import axios from 'axios';
 import SwitchButtonComponent from '@/components/_shared/switchButton.component.tsx';
 import { FALSE_COLOR } from '@/_constants/colors.ts';
+import { getTitleByID } from '@/_services/getTitleByID.service.ts';
 
 
 interface IOrderElement {
@@ -59,17 +60,17 @@ const InvitesAppComponent = () => {
 		for (const order of Object.values(inviteToJoin)) {
 			if (newOrders[order.workflow] === undefined && order.department === workflowsObject[order.workflow].currentDepartment) {
 				newChecks[order.workflow] = true;
-				const description = firmsObject[workflowsObject[order.workflow].firm].title
+				const description = getTitleByID(firmsObject, workflowsObject[order.workflow].firm)
 					+ ' №'
-					+ modificationsObject[workflowsObject[order.workflow].modification].title
+					+ getTitleByID(modificationsObject, workflowsObject[order.workflow].modification)
 					+ ', '
-					+ typesOfWorkObject[workflowsObject[order.workflow].type].title
+					+ getTitleByID(typesOfWorkObject, workflowsObject[order.workflow].type)
 					+ ', '
-					+ departmentsObject[order.department].title;
+					+ getTitleByID(departmentsObject, order.department);
 
 				newOrders[order.workflow] = {
 					idWorkflow: order.workflow,
-					title: workflowsObject[order.workflow].title,
+					title: getTitleByID(workflowsObject, order.workflow),
 					description: description,
 				};
 			}

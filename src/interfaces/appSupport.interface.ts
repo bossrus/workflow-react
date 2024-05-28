@@ -14,3 +14,4 @@ export interface ITabs {
 	count?: number | undefined;
 	access?: (keyof IUser)[] | undefined;
 }
+

@@ -1,9 +1,10 @@
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { Box } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { assignColor } from '@/_constants/urgencyColors.ts';
 import useWorksSelectors from '@/_hooks/useWorksSelectors.hook.ts';
 import WorkInfoComponent from '@/components/_shared/workInfo.component.tsx';
+import { getTitleByID } from '@/_services/getTitleByID.service.ts';
 
 function AllWorksMainComponent() {
 	const {
@@ -29,13 +30,17 @@ function AllWorksMainComponent() {
 		setColors(newColors);
 	}, [workflowsPublishedArray]);
 
+	const canShow = useMemo(() => {
+		return workflowsPublishedArray.length > 0 &&
+			Object.keys(typesOfWorkObject).length > 0 &&
+			Object.keys(firmsObject).length > 0 &&
+			Object.keys(usersObject).length > 0;
+	}, [workflowsPublishedArray, typesOfWorkObject, firmsObject, usersObject]);
+
 	return (
 		<>
 			{
-				Object.keys(workflowsPublishedArray).length > 0 &&
-				Object.keys(typesOfWorkObject).length > 0 &&
-				Object.keys(firmsObject).length > 0 &&
-				Object.keys(usersObject).length > 0 &&
+				canShow &&
 				<Box height={'100%'} py={2} boxSizing={'border-box'} width={'100%'} display="flex"
 					 flexDirection="column">
 					<Box
@@ -63,10 +68,10 @@ function AllWorksMainComponent() {
 													idProps={wrk._id!}
 													colorProps={colors[wrk._id!]}
 													workflowTitle={wrk.title}
-													workflowFirmTitle={firmsObject[wrk.firm!].title}
-													workflowModificationTitle={modificationsObject[wrk.modification!].title}
-													workflowTypeTitle={typesOfWorkObject[wrk.type!].title}
-													workflowDepartmentTitle={departmentsObject[wrk.currentDepartment].title}
+													workflowFirmTitle={getTitleByID(firmsObject, wrk.firm)}
+													workflowModificationTitle={getTitleByID(modificationsObject, wrk.modification)}
+													workflowTypeTitle={getTitleByID(typesOfWorkObject, wrk.type)}
+													workflowDepartmentTitle={getTitleByID(departmentsObject, wrk.currentDepartment)}
 													workflowCountPictures={wrk.countPictures}
 													workflowCountPages={wrk.countPages}
 													workflowDescription={wrk.description}

@@ -9,6 +9,7 @@ import makeSlug from '@/_services/makeSlug.service.ts';
 import CheckListUsersComponent from '@/components/settings/users/checkList.users.component.tsx';
 import { USER_RIGHTS } from '@/_constants/userRights.ts';
 import useEscapeKey from '@/_hooks/useEscapeKey.hook.ts';
+import { getTitleByID } from '@/_services/getTitleByID.service.ts';
 
 interface IEditUserFormProps {
 	currentUser: string | undefined;
@@ -29,8 +30,8 @@ const EditUserFormUsersComponent = ({ currentUser, usersObject, saveUser }: IEdi
 	const [rights, setRights] = useState<string[]>([]);
 
 	useEffect(() => {
-		if (currentUser) {
-			setName(usersObject[currentUser].name);
+		if (currentUser && usersObject[currentUser]) {
+			setName(getTitleByID(usersObject, currentUser));
 			setNameOfEditedUser(usersObject[currentUser].name);
 			setUsersDepartments(usersObject[currentUser].departments);
 			setLogin(usersObject[currentUser].login);

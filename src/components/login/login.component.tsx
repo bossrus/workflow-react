@@ -54,7 +54,6 @@ function LoginComponent() {
 	const [showError, setShowError] = useState('');
 
 	useEffect(() => {
-		// console.log('loginError = ', loginError);
 		if (wasTry && loginError) {
 			setShowError(loginError.message);
 			setTimeout(() => {

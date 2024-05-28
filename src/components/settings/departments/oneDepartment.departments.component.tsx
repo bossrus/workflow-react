@@ -7,7 +7,10 @@ import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { useDispatch } from 'react-redux';
 import { TAppDispatch } from '@/store/_store.ts';
 import { setState } from '@/store/_currentStates.slice.ts';
+import { useEffect } from 'react';
 import { deleteOne } from '@/store/_shared.thunks.ts';
+import { isNotValidDeleteMessage } from '@/_services/isValidDeleteMessage.ts';
+import useDeleteRecord from '@/_hooks/useDeleteRecord.hook.ts';
 
 interface IOneDepartmentProps {
 	department: IDepartment;
@@ -17,7 +20,7 @@ const OneDepartmentDepartmentsComponent = ({
 											   department: { _id, title, numberInWorkflow, isUsedInWorkflow },
 										   }: IOneDepartmentProps) => {
 
-	const { currentDepartment } = useReduxSelectors().states;
+	const { currentDepartment, deleteMessage } = useReduxSelectors().states;
 
 	const disabled = currentDepartment === _id;
 
@@ -27,9 +30,17 @@ const OneDepartmentDepartmentsComponent = ({
 		dispatch(setState({ currentDepartment: id }));
 	};
 
-	const deleteDepartment = (id: string) => {
-		dispatch(deleteOne({ url: 'departments', id }));
-	};
+	const marker = 'отдел';
+
+	const deleteDepartment = useDeleteRecord(_id, marker, title);
+
+	useEffect(() => {
+		if (isNotValidDeleteMessage(deleteMessage, marker, _id)) return;
+		if (deleteMessage!.result) {
+			dispatch(deleteOne({ url: 'departments', id: _id }));
+		}
+		dispatch(setState({ deleteMessage: undefined }));
+	}, [deleteMessage]);
 
 	return (
 		<Box

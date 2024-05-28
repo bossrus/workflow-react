@@ -14,9 +14,10 @@ import { clearMe } from '@/store/me.slice.ts';
 import { useErrors } from '@/_hooks/errors.hook.ts';
 import InvitesAppComponent from '@/components/app/invites.app.component.tsx';
 import { setState } from '@/store/_currentStates.slice.ts';
-import SecurityFlashAppComponent from '@/components/app/flashes.app.component.tsx';
+import SecurityFlashAppComponent from '@/components/app/securityFlash.app.component.tsx';
 import useWorksSelectorsHook from '@/_hooks/useWorksSelectors.hook.ts';
 import AppFooterComponent from '@/components/app/appFooter.component.tsx';
+import DeleteFlashAppComponent from '@/components/app/deleteFlash.app.component.tsx';
 
 function App() {
 
@@ -100,7 +101,7 @@ function App() {
 	const { isConnected, socket } = useWebSocket({ oldMeLength, me, users });
 
 	const connectToWebsocket = useCallback(() => {
-		if (socket)
+		if (socket && !socket?.connected)
 			(socket as Socket).connect();
 	}, [socket]);
 
@@ -216,6 +217,10 @@ function App() {
 							{
 								states.flashMessage == 'dontPlaySound' &&
 								<SecurityFlashAppComponent />
+							}
+							{
+								states.flashMessage == 'delete' &&
+								<DeleteFlashAppComponent message={states.deleteMessage} />
 							}
 						</Box>
 					}

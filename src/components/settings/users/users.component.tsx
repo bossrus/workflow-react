@@ -9,10 +9,13 @@ import { deleteOne, patchOne } from '@/store/_shared.thunks.ts';
 import { loadUsers } from '@/components/settings/users/loadUsers.service.ts';
 import EditUserFormUsersComponent from '@/components/settings/users/editUserForm.users.component.tsx';
 import { useNavigate } from 'react-router-dom';
+import { isNotValidDeleteMessage } from '@/_services/isValidDeleteMessage.ts';
+import { setState } from '@/store/_currentStates.slice.ts';
+import { getTitleByID } from '@/_services/getTitleByID.service.ts';
 
 function UsersComponents() {
 
-	const { states: { currentUser }, me, usersObject: lowUsersInfo } = useReduxSelectors();
+	const { states: { currentUser, deleteMessage }, me, usersObject: lowUsersInfo } = useReduxSelectors();
 
 	const navigate = useNavigate();
 	useEffect(() => {
@@ -26,7 +29,6 @@ function UsersComponents() {
 	const [usersObject, setUsersObject] = useState<IUserObject>({});
 
 	useEffect(() => {
-		console.log('ОБНОВИЛСЯ МАССИВ СОТРУДНИКОВ');
 		usersLoadingFromApi().then();
 	}, [lowUsersInfo]);
 
@@ -42,11 +44,30 @@ function UsersComponents() {
 
 	const dispatch = useDispatch<TAppDispatch>();
 
-	const deleteUser = (id: string) => {
-		dispatch(deleteOne({ url: 'users', id }));
-		const newUsersObject = { ...usersObject };
-		delete newUsersObject[id];
-		fillLocalUserList(newUsersObject);
+	const marker = 'пользователя';
+
+	const [userIdToDel, setUserIdToDel] = useState<string>('');
+
+
+	useEffect(() => {
+		if (isNotValidDeleteMessage(deleteMessage, marker, userIdToDel)) return;
+		if (deleteMessage!.result) {
+			dispatch(deleteOne({ url: 'users', id: userIdToDel }));
+			const newUsersObject = { ...usersObject };
+			delete newUsersObject[userIdToDel];
+			fillLocalUserList(newUsersObject);
+		}
+		dispatch(setState({ deleteMessage: undefined }));
+		setUserIdToDel('');
+	}, [deleteMessage]);
+
+
+	const deleteUser = async (id: string) => {
+		dispatch(setState({
+			flashMessage: 'delete',
+			deleteMessage: { id: id, message: `${marker} «${getTitleByID(usersObject, id)}»`, result: undefined },
+		}));
+		setUserIdToDel(id);
 	};
 
 	const saveUser = async (user: IUserUpdate) => {

@@ -2,6 +2,7 @@ import { Box } from '@mui/material';
 import RowUserInfoMeSettingsComponent
 	from '@/components/settings/me/row.userInfo.me.settings.component.tsx';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
+import { getTitleByID } from '@/_services/getTitleByID.service.ts';
 
 
 const UserInfoComponent = () => {
@@ -22,7 +23,7 @@ const UserInfoComponent = () => {
 				<RowUserInfoMeSettingsComponent title={title}>
 					{me.departments.map((department) => (
 						<p style={{ margin: 0 }} key={department}>
-							{departmentsObject[department].title}
+							{getTitleByID(departmentsObject, department)}
 						</p>
 					))}
 				</RowUserInfoMeSettingsComponent>

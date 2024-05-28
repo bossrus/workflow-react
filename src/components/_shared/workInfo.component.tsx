@@ -1,9 +1,16 @@
 import { Box } from '@mui/material';
 import Checkbox from '@mui/material/Checkbox';
 import EditButtonComponent from '@/components/_shared/editButton.component.tsx';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { useNavigate } from 'react-router-dom';
+import useDeleteRecord from '@/_hooks/useDeleteRecord.hook.ts';
+import { isNotValidDeleteMessage } from '@/_services/isValidDeleteMessage.ts';
+import { deleteOne } from '@/store/_shared.thunks.ts';
+import { setState } from '@/store/_currentStates.slice.ts';
+import { useDispatch } from 'react-redux';
+import { TAppDispatch } from '@/store/_store.ts';
+import DeleteButtonComponent from '@/components/_shared/deleteButton.component.tsx';
 
 interface IProps {
 	idProps: string,
@@ -43,23 +50,7 @@ function WorkInfoComponent({
 							   children,
 						   }: IProps) {
 	const [showDescription, setShowDescription] = useState(false);
-	const { me } = useReduxSelectors();
-
-
-	// console.log('idProps', idProps);
-	// console.log('colorProps', colorProps);
-	// console.log('checkedProps', checkedProps);
-	// console.log('changeChecked', changeChecked);
-	// console.log('creator', creator);
-	// console.log('workflowTitle', workflowTitle);
-	// console.log('workflowFirmTitle', workflowFirmTitle);
-	// console.log('workflowModificationTitle', workflowModificationTitle);
-	// console.log('workflowTypeTitle', workflowTypeTitle);
-	// console.log('workflowDepartmentTitle', workflowDepartmentTitle);
-	// console.log('workflowCountPictures', workflowCountPictures);
-	// console.log('workflowCountPages', workflowCountPages);
-	// console.log('workflowDescription', workflowDescription);
-
+	const { me, states: { deleteMessage } } = useReduxSelectors();
 
 	const navigate = useNavigate();
 	const editWorkflow = (id: string) => {
@@ -67,9 +58,21 @@ function WorkInfoComponent({
 	};
 
 	const setShowDescr = (show: boolean) => {
-		// console.log('типа вошли в проверку отображения');
 		setShowDescription(show);
 	};
+
+	const dispatch = useDispatch<TAppDispatch>();
+	const marker = 'заказ';
+
+	const deleteWorkflow = useDeleteRecord(idProps, marker, `${workflowTitle} <small><small><i>(${workflowFirmTitle} №${workflowModificationTitle}, ${workflowTypeTitle})</i></small></small>`);
+
+	useEffect(() => {
+		if (isNotValidDeleteMessage(deleteMessage, marker, idProps)) return;
+		if (deleteMessage!.result) {
+			dispatch(deleteOne({ url: 'workflows', id: idProps }));
+		}
+		dispatch(setState({ deleteMessage: undefined }));
+	}, [deleteMessage]);
 
 	return (
 		<>
@@ -142,6 +145,11 @@ function WorkInfoComponent({
 							<EditButtonComponent id={idProps}
 												 dis={false}
 												 onClickHere={editWorkflow} />
+							<DeleteButtonComponent
+								id={idProps}
+								dis={false}
+								onClickHere={deleteWorkflow}
+							/>
 						</Box>
 					}
 					<Box>

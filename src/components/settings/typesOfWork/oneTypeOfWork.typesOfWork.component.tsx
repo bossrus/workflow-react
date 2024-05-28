@@ -7,6 +7,9 @@ import { TAppDispatch } from '@/store/_store.ts';
 import { setState } from '@/store/_currentStates.slice.ts';
 import { deleteOne } from '@/store/_shared.thunks.ts';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
+import useDeleteRecord from '@/_hooks/useDeleteRecord.hook.ts';
+import { useEffect } from 'react';
+import { isNotValidDeleteMessage } from '@/_services/isValidDeleteMessage.ts';
 
 interface IOneTypeOfWorkProps {
 	typeOfWork: ITypeOfWork;
@@ -16,7 +19,7 @@ function OneTypeOfWorkTypesOfWorkComponent({
 											   typeOfWork: { _id, title },
 										   }: IOneTypeOfWorkProps) {
 
-	const { states: { currentTypeOfWork } } = useReduxSelectors();
+	const { currentTypeOfWork, deleteMessage } = useReduxSelectors().states;
 	const disabled = currentTypeOfWork === _id;
 
 	const dispatch = useDispatch<TAppDispatch>();
@@ -27,9 +30,18 @@ function OneTypeOfWorkTypesOfWorkComponent({
 		}));
 	};
 
-	const deleteTypeOfWork = (id: string) => {
-		dispatch(deleteOne({ url: 'typesOfWork', id }));
-	};
+	const marker = 'тип заказа';
+
+	const deleteTypeOfWork = useDeleteRecord(_id, marker, title);
+
+	useEffect(() => {
+		if (isNotValidDeleteMessage(deleteMessage, marker, _id)) return;
+		if (deleteMessage!.result) {
+			dispatch(deleteOne({ url: 'typesOfWork', id: _id }));
+		}
+		dispatch(setState({ deleteMessage: undefined }));
+	}, [deleteMessage]);
+
 
 	return (
 		<Box

@@ -7,6 +7,9 @@ import { TAppDispatch } from '@/store/_store.ts';
 import { deleteOne } from '@/store/_shared.thunks.ts';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { setState } from '@/store/_currentStates.slice.ts';
+import { useEffect } from 'react';
+import { isNotValidDeleteMessage } from '@/_services/isValidDeleteMessage.ts';
+import useDeleteRecord from '@/_hooks/useDeleteRecord.hook.ts';
 
 interface IOneModificationProps {
 	modification: IModification;
@@ -15,7 +18,7 @@ interface IOneModificationProps {
 function OneModificationModificationsComponent({
 												   modification: { _id, title },
 											   }: IOneModificationProps) {
-	const { states: { currentModification } } = useReduxSelectors();
+	const { currentModification, deleteMessage } = useReduxSelectors().states;
 
 	const disabled = currentModification === _id;
 
@@ -28,9 +31,18 @@ function OneModificationModificationsComponent({
 		}));
 	};
 
-	const deleteModification = (id: string) => {
-		dispatch(deleteOne({ url: 'modifications', id }));
-	};
+	const marker = 'номер издания';
+
+	const deleteModification = useDeleteRecord(_id, marker, title);
+
+	useEffect(() => {
+		if (isNotValidDeleteMessage(deleteMessage, marker, _id)) return;
+		if (deleteMessage!.result) {
+			dispatch(deleteOne({ url: 'modifications', id: _id }));
+		}
+		dispatch(setState({ deleteMessage: undefined }));
+	}, [deleteMessage]);
+
 
 	return (
 		<Box

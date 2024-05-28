@@ -25,7 +25,14 @@ interface ICurrentStatesLocal {
 		sortByField: keyof IWorkflow,
 		sortDirection: IOrder,
 	};
-	flashMessage: string;
+	flashMessage: 'dontPlaySound' | 'delete';
+	deleteMessage: IDeleteMessage;
+}
+
+export interface IDeleteMessage {
+	id: string;
+	message: string;
+	result?: boolean;
 }
 
 export type ICurrentStates = Partial<ICurrentStatesLocal>;
