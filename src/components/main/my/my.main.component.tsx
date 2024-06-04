@@ -20,8 +20,6 @@ function MyMainComponent() {
 	const [tabs, setTabs] = useState<Itabs[]>([]);
 
 	const { id: paramsId } = useParams();
-	// console.log('paramsPath в my.main.component >>>>', paramsPath);
-	// console.log('id в my.main.component >>>>', paramsId);
 
 	const { me } = useReduxSelectors();
 	const {
@@ -39,7 +37,6 @@ function MyMainComponent() {
 			_id: me._id,
 			currentWorkflowInWork: id,
 		};
-		// console.log('диспатчим');
 		dispatch(patchOne({
 			url: 'users/me',
 			data: data,
@@ -47,23 +44,19 @@ function MyMainComponent() {
 	};
 
 	useEffect(() => {
-		// console.log('зашли в юзефект');
 		if (workflowsInMyProcess.length < 1) return;
-		// console.log('проверка на длину миновала');
 		if (!paramsId
 			|| !workflowsObject[paramsId]
 			|| !workflowsObject[paramsId].executors
 			|| !workflowsObject[paramsId].executors!.includes(me._id!)
 			|| workflowsObject[paramsId].currentDepartment !== me.currentDepartment
 		) {
-			// console.log('внутри уcловий');
 			if (workflowsInMyProcess.length > 0) {
-				// console.log('переход на актив!');
 				navigate('/main/my/' + workflowsInMyProcess[0]._id);
 			} else {
-				// console.log('неча утут делать');
 				navigate('/main');
 			}
+			return;
 		}
 		if (me.currentWorkflowInWork != paramsId) {
 			changeMeCurrent(paramsId!);
@@ -71,7 +64,6 @@ function MyMainComponent() {
 	}, [paramsId, workflowsInMyProcess]);
 
 	useEffect(() => {
-		// console.log('меняем табс при ', workflowsInMyProcess.length);
 		setTabs(workflowsInMyProcess.map((work) => {
 			return {
 				label: work.title,
@@ -79,16 +71,6 @@ function MyMainComponent() {
 			};
 		}));
 	}, [workflowsInMyProcess]);
-
-	// useEffect(() => {
-	// 	// console.log('табы пустые. пошли отседа');
-	// 	// if (tabs.length < 1) navigate('/main');
-	//
-	// 	// console.log('workflowsInMyProcess.length > 0 =', workflowsInMyProcess.length > 0);
-	// 	// console.log('tabs.length > 0 =', tabs.length > 0);
-	// 	// console.log('paramsId =', paramsId);
-	//
-	// }, [tabs]);
 
 	return (
 		<>
@@ -107,10 +89,10 @@ function MyMainComponent() {
 						boxSizing={'border-box'}
 					>
 						<Box justifyContent="center" id={'test'} display={'flex'}>
-							<TabsLineComponent tabs={tabs} chapter={paramsId!} section={'main/my'} />
+							<TabsLineComponent tabs={tabs} chapter={paramsId} section={'main/my'} />
 						</Box>
 						<Box flexGrow={1} p={2}>
-							<WorkMyMainComponent work_id={paramsId!} />
+							<WorkMyMainComponent incomingWorkID={paramsId!} />
 						</Box>
 					</Box>
 				</Box>

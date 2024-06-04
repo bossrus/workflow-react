@@ -1,5 +1,5 @@
 import { Box, Button, TextField, Typography } from '@mui/material';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { validateEmail } from '@/_services/emailValidation.service.ts';
 import { IUser } from '@/interfaces/user.interface.ts';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
@@ -8,8 +8,7 @@ import { TAppDispatch } from '@/store/_store.ts';
 import axiosCreate from '@/_api/axiosCreate.ts';
 import { changeMeEmail } from '@/store/me.slice.ts';
 import { patchOne } from '@/store/_shared.thunks.ts';
-import SwitchButtonComponent
-	from '@/components/_shared/switchButton.component.tsx';
+import SwitchButtonComponent from '@/components/_shared/switchButton.component.tsx';
 import { FALSE_COLOR } from '@/_constants/colors.ts';
 
 const EmailSettingsComponent = () => {
@@ -28,11 +27,11 @@ const EmailSettingsComponent = () => {
 		dispatch(changeMeEmail({ id: me._id!, email }));
 	};
 
-	const changeSubscribe = useCallback((isCanSendLetters: boolean) => {
+	const changeSubscribe = (isCanSendLetters: boolean) => {
 		setCanSendLetters(isCanSendLetters);
 		const newMe: Partial<IUser> = { _id: me._id, isSendLetterAboutNewWorks: isCanSendLetters };
 		dispatch(patchOne({ url: 'users/me', data: newMe }));
-	}, [me._id, dispatch]);
+	};
 
 	const [disableButton, setDisableButton] = useState(false);
 

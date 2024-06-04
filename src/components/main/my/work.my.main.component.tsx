@@ -1,12 +1,15 @@
 import { Box, Button, FormControl, MenuItem, Select, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import axiosCreate from '@/_api/axiosCreate.ts';
 import useWorksSelectors from '@/_hooks/useWorksSelectors.hook.ts';
+import { TAppDispatch } from '@/store/_store.ts';
+import { useDispatch } from 'react-redux';
+import { closeWorkflowThunk } from '@/store/workflows.thunks.ts';
 
 interface IProps {
-	work_id: string;
+	incomingWorkID: string;
 }
 
 interface IList {
@@ -14,7 +17,7 @@ interface IList {
 	title: string;
 }
 
-function WorkMyMainComponent({ work_id }: IProps) {
+function WorkMyMainComponent({ incomingWorkID }: IProps) {
 
 	const {
 		me,
@@ -45,7 +48,7 @@ function WorkMyMainComponent({ work_id }: IProps) {
 		if (!me.currentDepartment || usersArray.length < 1) return;
 		const newUsers: IList[] = [];
 		for (const user of usersArray) {
-			if (user._id !== me._id && user.departments.includes(me.currentDepartment) && !workflowsObject[work_id].executors!.includes(user._id))
+			if (user._id !== me._id && user.departments.includes(me.currentDepartment) && !workflowsObject[incomingWorkID].executors!.includes(user._id))
 				newUsers.push({
 					title: user.name,
 					id: user._id,
@@ -55,7 +58,7 @@ function WorkMyMainComponent({ work_id }: IProps) {
 	}, [usersArray, me.currentDepartment, workflowsObject]);
 
 	useEffect(() => {
-		if (!me.currentDepartment || departmentsInWorkflowArray.length < 1 || !workflowsObject[work_id]) return;
+		if (!me.currentDepartment || departmentsInWorkflowArray.length < 1 || !workflowsObject[incomingWorkID]) return;
 		const newDepartments: IList[] = departmentsInWorkflowArray.map(({ _id, title }) => ({
 			id: _id,
 			title,
@@ -68,20 +71,23 @@ function WorkMyMainComponent({ work_id }: IProps) {
 		}
 		const index = newDepartments.findIndex(department => department.id === me.currentDepartment);
 		setDepartmentsList(newDepartments);
-		if (workflowsObject[work_id].executors!.length < 2) {
-			// console.log('а екзекуторов тута', workflowsObject[work_id].executors!.length);
+		if (workflowsObject[incomingWorkID].executors!.length < 2) {
 			setSelectedDepartment(newDepartments[index + 1].id);
 		} else {
-			// console.log('а тут вовсе даже совместное творчество');
 			setSelectedDepartment('justClose');
 		}
 	}, [me.currentDepartment, departmentsInWorkflowArray, workflowsObject, me.currentWorkflowInWork]);
 
+	const descriptionRef = useRef(description);
+	useEffect(() => {
+		descriptionRef.current = description;
+	}, [description]);
+
 	const saveToDescription = () => {
-		if (!description) return;
+		if (!descriptionRef.current) return;
 		(async () => {
-			await axiosCreate.patch('/workflows/description/' + work_id, {
-				text: description,
+			await axiosCreate.patch('/workflows/description/' + incomingWorkID, {
+				text: descriptionRef.current,
 			});
 		})();
 		setDescription('');
@@ -89,29 +95,68 @@ function WorkMyMainComponent({ work_id }: IProps) {
 
 	const inviteUser = () => {
 		(async () => {
-			await axiosCreate.post('/invites', {
-				from: me._id,
-				to: selectedUser,
-				workflow: work_id,
-			});
+			await
+				axiosCreate.post('/invites', {
+					from: me._id,
+					to: selectedUser,
+					workflow: incomingWorkID,
+				});
 		})();
 		setSelectedUser('');
 	};
 
+	const selectedDepartmentRef = useRef(selectedDepartment);
+	useEffect(() => {
+		selectedDepartmentRef.current = selectedDepartment;
+	}, [selectedDepartment]);
+
+
+	const stopWorkRef = useRef(false);
+
+
 	const closeWorkflow = () => {
-		(async () => {
-			await axiosCreate.patch('/workflows/close/' + work_id, {
-				newDepartment: selectedDepartment,
-			});
-		})();
-		setDescription('');
+
+		if (stopWorkRef.current) return;
+
+		if (descriptionRef.current.trim() !== '')
+			saveToDescription();
+
+		dispatch(closeWorkflowThunk({
+			workflow: {
+				_id: incomingWorkID,
+				currentDepartment: selectedDepartmentRef.current,
+			}, myId: me._id as string,
+		}));
+
+		stopWorkRef.current = true;
+
 		navigate('/main');
 	};
+
+	const dispatch = useDispatch<TAppDispatch>();
+
+	useEffect(() => {
+
+
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (!event.altKey || event.shiftKey || event.ctrlKey || event.metaKey) return;
+
+			if (event.key.toLowerCase() === 'enter') {
+				closeWorkflow();
+			}
+		};
+
+		document.addEventListener('keydown', handleKeyDown);
+
+		return () => {
+			document.removeEventListener('keydown', handleKeyDown);
+		};
+	}, []);
 
 	return (
 		<>
 			{
-				workflowsObject[work_id] &&
+				workflowsObject[incomingWorkID] &&
 				firmsObject &&
 				modificationsObject &&
 				typesOfWorkObject &&
@@ -131,19 +176,19 @@ function WorkMyMainComponent({ work_id }: IProps) {
 						gap={1}
 					>
 						<Box>
-							{firmsObject[workflowsObject[work_id].firm].title}
+							{firmsObject[workflowsObject[incomingWorkID].firm].title}
 						</Box>
 						<Box>
-							№{modificationsObject[workflowsObject[work_id].modification].title},
+							№{modificationsObject[workflowsObject[incomingWorkID].modification].title},
 						</Box>
 						<Box>
 							<strong>
-								{workflowsObject[work_id].title}
+								{workflowsObject[incomingWorkID].title}
 							</strong>,
 						</Box>
 						<Box>
 							<i>
-								{typesOfWorkObject[workflowsObject[work_id].type].title}
+								{typesOfWorkObject[workflowsObject[incomingWorkID].type].title}
 							</i>
 						</Box>
 
@@ -157,7 +202,7 @@ function WorkMyMainComponent({ work_id }: IProps) {
 									<td className={'align-top'}>
 							<pre className={'warp-text table-container'}
 								 style={{ boxSizing: 'border-box', marginTop: 0 }}>
-							{workflowsObject[work_id].description}
+							{workflowsObject[incomingWorkID].description}
 							</pre>
 									</td>
 								</tr>
@@ -278,7 +323,7 @@ function WorkMyMainComponent({ work_id }: IProps) {
 																	Принимают участие:
 																</Typography>
 																{
-																	workflowsObject[work_id].executors?.map((item, index) => (
+																	workflowsObject[incomingWorkID].executors?.map((item, index) => (
 																		<span
 																			key={usersObject[item]._id}
 																		>
@@ -299,7 +344,8 @@ function WorkMyMainComponent({ work_id }: IProps) {
 													className={'up-shadow'}
 													onClick={closeWorkflow}
 												>
-													Завершить работу
+													<span>Завершить работу <small
+														style={{ color: 'white' }}>(ALT+Enter)</small></span>
 												</Button>
 											</Box></Box>
 									</td>

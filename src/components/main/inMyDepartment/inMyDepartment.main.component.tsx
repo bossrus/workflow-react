@@ -1,12 +1,14 @@
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { Box, Button } from '@mui/material';
-import { useEffect, useState } from 'react';
-import axiosCreate from '@/_api/axiosCreate.ts';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ToWorkButtonComponent from '@/components/_shared/toWorkButton.component.tsx';
 import { assignColor } from '@/_constants/urgencyColors.ts';
 import useWorksSelectors from '@/_hooks/useWorksSelectors.hook.ts';
 import WorkInfoComponent from '@/components/_shared/workInfo.component.tsx';
+import { TAppDispatch } from '@/store/_store.ts';
+import { useDispatch } from 'react-redux';
+import { takeWorkflowThunk } from '@/store/workflows.thunks.ts';
 
 function InMyDepartmentMainComponent() {
 	const {
@@ -82,25 +84,33 @@ function InMyDepartmentMainComponent() {
 
 	const navigate = useNavigate();
 
+	const checksRef = useRef(checks);
+	useEffect(() => {
+		checksRef.current = checks;
+	}, [checks]);
+
+	const dispatch = useDispatch<TAppDispatch>();
+
 	async function takeWorks(id: string = '') {
 		const data: string[] = [];
 		if (id === '') {
-			for (let key in checks) {
-				if (checks[key]) {
+			for (let key in checksRef.current) {
+				if (checksRef.current[key]) {
 					data.push(key);
 				}
 			}
 		} else {
 			data.push(id);
 		}
-		const result = await axiosCreate.patch('/workflows/take', { ids: data });
-		// console.log('забрали в работу, вроде', result);
-		navigate('/main/');
+		if (data.length > 0) {
+			dispatch(takeWorkflowThunk({ ids: data }));
+			navigate('/main/');
+		}
 	}
 
 	const selectWorkflowsByFirm = (firm: string) => {
-		const newChecks: Record<string, boolean> = { ...checks };
-		for (let key in checks) {
+		const newChecks: Record<string, boolean> = { ...checksRef.current };
+		for (let key in checksRef.current) {
 			if (firm === '' || workflowsObject[key].firm === firm) {
 				newChecks[key] = true;
 			}
@@ -108,14 +118,42 @@ function InMyDepartmentMainComponent() {
 		setChecks(newChecks);
 	};
 
+	useEffect(() => {
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key.toLowerCase() === 'escape') {
+				uncheckAll();
+			}
+			if (!event.altKey || event.shiftKey || event.ctrlKey || event.metaKey) return;
+
+			if (event.key.toLowerCase() === 'enter') {
+				takeWorks().then();
+			}
+
+			if (event.key.toLowerCase() === 'a' || event.key.toLowerCase() === 'ф') {
+				selectWorkflowsByFirm('');
+			}
+
+		};
+
+		document.addEventListener('keydown', handleKeyDown);
+
+		return () => {
+			document.removeEventListener('keydown', handleKeyDown);
+		};
+	}, []);
+
+	const canShowPage = () => {
+		return Object.keys(workflows).length > 0 &&
+			Object.keys(typesOfWorkObject).length > 0 &&
+			Object.keys(firmsObject).length > 0 &&
+			Object.keys(usersObject).length > 0 &&
+			Object.keys(checks).length > 0;
+	};
+
 	return (
 		<>
 			{
-				Object.keys(workflows).length > 0 &&
-				Object.keys(typesOfWorkObject).length > 0 &&
-				Object.keys(firmsObject).length > 0 &&
-				Object.keys(usersObject).length > 0 &&
-				Object.keys(checks).length > 0 &&
+				canShowPage() &&
 				<Box height={'100%'} py={2} boxSizing={'border-box'} width={'100%'} display="flex"
 					 flexDirection="column">
 					<Box
@@ -180,7 +218,7 @@ function InMyDepartmentMainComponent() {
 								disabled={countChecked === Object.keys(workflows).length}
 								onClick={() => selectWorkflowsByFirm('')}
 							>
-								Выделить все заказы
+								<span>Выделить все заказы <small style={{ color: 'gray' }}>(ALT+A)</small></span>
 							</Button>
 							{listOfFirms.length > 1 &&
 								listOfFirms.map((firm) => (
@@ -207,7 +245,8 @@ function InMyDepartmentMainComponent() {
 								disabled={!anyChecked}
 								onClick={uncheckAll}
 							>
-								Снять выделение со всех заказов
+								<span>Снять выделение со всех заказов <small
+									style={{ color: 'gray' }}>(ESC)</small></span>
 							</Button>
 							<Button
 								variant="contained"
@@ -218,7 +257,11 @@ function InMyDepartmentMainComponent() {
 								disabled={!anyChecked}
 								onClick={() => takeWorks()}
 							>
-								Взять в работу выделенны{countChecked > 1 ? 'е' : 'й'} заказ{countChecked > 1 && 'ы'}
+								<span>
+									Взять в работу выделенны
+									{countChecked > 1 ? 'е' : 'й'} заказ
+									{countChecked > 1 && 'ы'} <small
+									style={{ color: 'white' }}>(ALT+Enter)</small></span>
 							</Button>
 
 						</Box>

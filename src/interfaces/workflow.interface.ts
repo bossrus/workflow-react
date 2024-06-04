@@ -32,7 +32,16 @@ export interface IWorkflowStore {
 	error: IError | undefined;
 }
 
+
 export type IWorkflowsKeys = keyof IWorkflow;
 
 export type IWorkflowUpdate = Partial<IWorkflow>
 
+export interface IWorkflowSlice {
+	workflow: IWorkflowUpdate;
+	myId: string;
+}
+
+export interface ITakeWorkflowThunk {
+	ids: string[];
+}

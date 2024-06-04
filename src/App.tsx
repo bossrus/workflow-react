@@ -1,5 +1,5 @@
 import { Socket } from 'socket.io-client';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { authLoad, load, patchOne } from '@/store/_shared.thunks.ts';
 import { TAppDispatch } from '@/store/_store.ts';
@@ -77,10 +77,10 @@ function App() {
 		}
 	}, [location, meError]);
 
-	const logout = useCallback(() => {
+	const logout = () => {
 		dispatch(clearMe());
 		navigate('/login');
-	}, [dispatch, navigate]);
+	};
 
 	const routePage = useRoutes(routes);
 
@@ -100,12 +100,12 @@ function App() {
 
 	const { isConnected, socket } = useWebSocket({ oldMeLength, me, users });
 
-	const connectToWebsocket = useCallback(() => {
+	const connectToWebsocket = () => {
 		if (socket && !socket?.connected)
 			(socket as Socket).connect();
-	}, [socket]);
+	};
 
-	const changeSounds = useCallback((isSoundProps: boolean) => {
+	const changeSounds = (isSoundProps: boolean) => {
 		dispatch(patchOne({
 			url: 'users/me',
 			data: {
@@ -113,9 +113,9 @@ function App() {
 				isSoundOn: isSoundProps,
 			},
 		}));
-	}, [dispatch, me._id]);
+	};
 
-	const changeMyDepartment = useCallback((newVal: string | null) => {
+	const changeMyDepartment = (newVal: string | null) => {
 		if (newVal && me.currentDepartment != newVal)
 			dispatch(patchOne({
 				url: 'users/me',
@@ -124,7 +124,7 @@ function App() {
 					currentDepartment: newVal,
 				},
 			}));
-	}, [dispatch, me._id, me.currentDepartment]);
+	};
 
 	const socketRef = useRef(socket);
 	useEffect(() => {
@@ -138,7 +138,7 @@ function App() {
 
 	const workQueueNotificationSound = new Audio('/sounds/works_in.mp3');
 
-	const checkSocketAndQueueStatus = useCallback(() => {
+	const checkSocketAndQueueStatus = () => {
 		//если нет коннекта — то коннектим
 		if (socketRef.current) {
 			if (!socketRef.current.connected) {
@@ -147,7 +147,7 @@ function App() {
 		}
 
 		//если есть работа, то звучим
-		if (me && workflowsInMyDepartmentCountRef.current > 0 && !me.currentWorkflowInWork) {
+		if (me && workflowsInMyDepartmentCountRef.current > 0 && !me.currentWorkflowInWork && me.isSoundOn) {
 			workQueueNotificationSound.play()
 				.catch(() => {
 					dispatch(setState({
@@ -156,7 +156,7 @@ function App() {
 				});
 		}
 		timers.current['checkStatuses'] = setTimeout(() => checkSocketAndQueueStatus(), 5 * 60 * 1000);
-	}, [socket, me, workflowsInMyDepartment.length, dispatch]);
+	};
 
 	useEffect(() => {
 		checkSocketAndQueueStatus();

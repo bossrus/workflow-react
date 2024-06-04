@@ -8,8 +8,7 @@ import {
 	modifications,
 	TAppState,
 	typesOfWork,
-	users,
-	workflows,
+	users, workflows,
 } from '@/store/_store.ts';
 import { IUser, IUserObject, IUserUpdate } from '@/interfaces/user.interface.ts';
 import { selectMe, selectMeError } from '@/store/me.slice.ts';

@@ -22,6 +22,8 @@ function TabsLineComponent({ section, chapter, tabs }: IProps) {
 	const [hotkeys, setHotkeys] = useState<IHotkey[]>([]);
 	const [resultTabs, setResultTabs] = useState<ITabs[]>([]);
 
+	const [needShift, setNeedShift] = useState(false);
+
 	const goToNewTab = (_event: SyntheticEvent, newValue: number) => {
 		navigate(`/${section}/${tabs[newValue].url}`);
 	};
@@ -35,11 +37,14 @@ function TabsLineComponent({ section, chapter, tabs }: IProps) {
 				newHotKeys.push({ letter: [(newHotKeys.length + 1).toString()], path: `/${section}/${tab.url}` });
 			}
 		}
+		const splitResult = newHotKeys[0].path.split('/main/my/');
+		setNeedShift(splitResult.length > 1);
 		setHotkeys(newHotKeys);
 		setResultTabs(newTabs);
 	}, [tabs, me]);
 
-	useHotkeysNavigation(hotkeys);
+
+	useHotkeysNavigation(hotkeys, needShift);
 
 	const showTab = (access?: IUserKeys[]) => {
 		if (!access) {
@@ -72,7 +77,8 @@ function TabsLineComponent({ section, chapter, tabs }: IProps) {
 							<span>
 								<span className={activeTab !== index ? 'text-black' : ''}>{label}</span>
 								{' '}
-								<small className={'text-gray'}>(ALT&nbsp;+&nbsp;{index + 1})</small>
+								<small
+									className={'text-gray'}>(ALT&nbsp;+&nbsp;{needShift && <>SHIFT&nbsp;+&nbsp;</>}{index + 1})</small>
 							</span>
 							{count ? (
 								<Box

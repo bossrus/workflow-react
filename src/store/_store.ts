@@ -12,9 +12,9 @@ export const firms = createEntitySlice('firms');
 export const users = createEntitySlice('users');
 export const typesOfWork = createEntitySlice('typesOfWork');
 export const modifications = createEntitySlice('modifications');
-export const workflows = createEntitySlice('workflows');
 export const flashes = createEntitySlice('flashes');
 export const invites = createEntitySlice('invites');
+export const workflows = createEntitySlice('workflows');
 
 
 export const myStore = configureStore({

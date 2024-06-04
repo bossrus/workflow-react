@@ -21,7 +21,11 @@ function createInitialState<T>(): IEntityStore<T> {
 	};
 }
 
-export function createEntitySlice<T>(entityNameString: string): {
+interface IHasId {
+	_id: string;
+}
+
+export function createEntitySlice<T extends IHasId>(entityNameString: string): {
 	slice: Slice,
 	actions: any,
 	reducer: Reducer,
@@ -40,6 +44,14 @@ export function createEntitySlice<T>(entityNameString: string): {
 		name: sliceName,
 		initialState,
 		reducers: {
+			updateElement: (state, action: PayloadAction<T>) => {
+				const id: string = action.payload._id as string;
+				state.data[id] = {
+					...state.data[id],
+					...action.payload,
+				};
+				console.log('action in auto reducer =', action.payload);
+			},
 			clearErrors: (state) => {
 				state.error = undefined;
 			},

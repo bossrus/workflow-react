@@ -1,38 +1,29 @@
-import {
-	Box,
-	Button,
-	FormControl,
-	FormControlLabel,
-	FormGroup,
-	InputLabel,
-	MenuItem,
-	Select,
-	TextField,
-	Typography,
-} from '@mui/material';
+import { Box, Button, FormControl, FormGroup, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
-import { MaterialUISwitch, SwitchStyledIcon } from '@/scss/switchStyled.ts';
-import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getIDByTitle } from '@/_services/getIDByTitle.service.ts';
-import { IDepartment } from '@/interfaces/department.interface.ts';
-import { ITypeOfWork } from '@/interfaces/worktype.interface.ts';
-import { IModification } from '@/interfaces/modification.interface.ts';
-import { IFirm } from '@/interfaces/firm.interface.ts';
 import axiosCreate from '@/_api/axiosCreate.ts';
 import { IWorkflowsKeys, IWorkflowUpdate } from '@/interfaces/workflow.interface.ts';
 import { useDispatch } from 'react-redux';
 import { patchOne } from '@/store/_shared.thunks.ts';
-import { TAppDispatch } from '@/store/_store.ts';
+import { TAppDispatch, workflows } from '@/store/_store.ts';
 import { useNavigate, useParams } from 'react-router-dom';
 import useWorksSelectors from '@/_hooks/useWorksSelectors.hook.ts';
 import { FALSE_COLOR } from '@/_constants/colors.ts';
+import SwitchButtonComponent from '@/components/_shared/switchButton.component.tsx';
 
 function CreateMainComponent() {
 	const {
-		departmentsArray, firmsArray, modificationsArray, typesOfWorkArray,
+		departmentsArray, firmsArray, modificationsArray, typesOfWorkArray, me,
 	} = useReduxSelectors();
+
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (Object.keys(me).length <= 0) return;
+		if (!me.canStartStopWorks)
+			navigate('/main');
+	}, [me.canStartStopWorks]);
 
 	const { workflowsObject } = useWorksSelectors();
 
@@ -50,6 +41,8 @@ function CreateMainComponent() {
 		description: '',
 	});
 
+	const workStateRef = useRef(workState);
+
 	useEffect(() => {
 		if (!departmentsArray || departmentsArray.length === 0) return;
 		changeField('currentDepartment', departmentsArray[0]._id);
@@ -64,25 +57,23 @@ function CreateMainComponent() {
 
 	const { id } = useParams();
 
-	const makeCanSave = (list: IWorkflowUpdate[] | null) => {
+	const calculateCanSave = (list: IWorkflowUpdate[] | null): boolean => {
 		let result: boolean = false;
 		if (id) {
-			if (Object.keys(workflowsObject).length <= 0) return;
 			const work = workflowsObject[id];
-			if (work) {
-				const newType = getIDByTitle<ITypeOfWork>(typesOfWorkArray, 'Новый заказ');
-				result = workState.firm != work.firm ||
-					workState.modification != work.modification ||
-					workState.title != work.title ||
-					(workState.type != newType ? workState.mainId != work.mainId : false) ||
-					workState.type != work.type ||
-					workState.countPages != work.countPages ||
-					workState.countPictures != work.countPictures ||
-					workState.urgency != work.urgency ||
-					workState.currentDepartment != work.currentDepartment ||
-					workState.setToStat != work.setToStat ||
-					workState.description != work.description;
-			}
+			if (!work) return false;
+			const newType = getIDByTitle(typesOfWorkArray, 'Новый заказ');
+			result = workState.firm != work.firm ||
+				workState.modification != work.modification ||
+				workState.title != work.title ||
+				(workState.type != newType ? workState.mainId != work.mainId : false) ||
+				workState.type != work.type ||
+				workState.countPages != work.countPages ||
+				workState.countPictures != work.countPictures ||
+				workState.urgency != work.urgency ||
+				workState.currentDepartment != work.currentDepartment ||
+				workState.setToStat != work.setToStat ||
+				workState.description != work.description;
 		} else {
 			const isCoincidence = list?.some(item => item.title?.toLowerCase() === workState.title?.toLowerCase());
 			const index = typesOfWorkArray.findIndex(obj => obj._id === workState.type);
@@ -97,26 +88,31 @@ function CreateMainComponent() {
 				workState.description !== '';
 			result = (isNotNewOrder || !isCoincidence) && isFormFilled;
 		}
-		setCanSave(result);
+		return result;
+	};
+
+	const makeCanSave = (list: IWorkflowUpdate[] | null) => {
+		setCanSave(calculateCanSave(list));
 	};
 
 	useEffect(() => {
 		makeCanSave(namesToShortList);
+		workStateRef.current = workState;
 	}, [workState]);
 
 	const tagsMappings = {
 		'[<FRM>]': (value: string, state: IWorkflowUpdate) => ({
 			...state,
-			firm: getIDByTitle<IFirm>(firmsArray, value),
+			firm: getIDByTitle(firmsArray, value),
 		}),
 		'[<MDFCTR>]': (value: string, state: IWorkflowUpdate) => ({
 			...state,
-			modification: getIDByTitle<IModification>(modificationsArray, value),
+			modification: getIDByTitle(modificationsArray, value),
 		}),
 		'[<NM>]': (value: string, state: IWorkflowUpdate) => ({ ...state, title: value }),
 		'[<DPRT>]': (value: string, state: IWorkflowUpdate) => ({
 			...state,
-			currentDepartment: getIDByTitle<IDepartment>(departmentsArray, value),
+			currentDepartment: getIDByTitle(departmentsArray, value),
 		}),
 		'[<DSCRPTN>]': (value: string, state: IWorkflowUpdate) => ({ ...state, description: value }),
 		'[<CNTPGS>]': (value: string, state: IWorkflowUpdate) => ({ ...state, countPages: Number(value) }),
@@ -125,12 +121,12 @@ function CreateMainComponent() {
 		'[<TOSTAT>]': (value: string, state: IWorkflowUpdate) => ({ ...state, setToStat: value === 'on' }),
 		'[<TP>]': (value: string, state: IWorkflowUpdate) => ({
 			...state,
-			type: getIDByTitle<ITypeOfWork>(typesOfWorkArray, value),
+			type: getIDByTitle(typesOfWorkArray, value),
 		}),
 	};
 
 	const convertText = (allDescription: string | undefined) => {
-		if (!allDescription) return null;
+		if (!allDescription || !canAutoConvert) return null;
 		let newState = { ...workState };
 		for (const [key, getNewState] of Object.entries(tagsMappings)) {
 			const tempTxt = allDescription.split(key);
@@ -165,16 +161,19 @@ function CreateMainComponent() {
 		if (workState.firm == '' || workState.modification == '') return;
 		if (data.length > 0) {
 			for (const element of data) {
-				//в данном случае urgency используется как степень совпадения.
-				// просто лениво создавать новое поле, которое нужно только в одном месте
+				//В данном случае urgency используется как степень совпадения.
+				// Просто лениво создавать новое поле, которое нужно только в одном месте
 				element.urgency = getCoincidenceLevel(element.title!, workState.title!);
 			}
 			data.sort((a, b) => b.urgency! - a.urgency!);
 		}
 		const newList = data.length > 0 ? data : null;
+		if (newList) {
+			changeField('mainId', newList[0].mainId as string);
+		}
 		setNamesToShortList(newList);
 		const firstItem = data.length > 0 ? data[0]._id! : '';
-		const newOrderId = getIDByTitle<ITypeOfWork>(typesOfWorkArray, 'Новый заказ');
+		const newOrderId = getIDByTitle(typesOfWorkArray, 'Новый заказ');
 		const newState: IWorkflowUpdate = {
 			...workState,
 			mainId: firstItem,
@@ -182,37 +181,36 @@ function CreateMainComponent() {
 		if (!newList && workState.type != newOrderId) {
 			newState.type = newOrderId;
 		}
+
 		setWorkState(newState);
 		setShowAnotherNameHandler(currentType);
 	};
 
 	useEffect(() => {
-		if (workState.firm !== '' &&
-			workState.modification !== '') {
+		const fetchData = async () => {
 			let currentType = workState.type as string;
-			(async () => {
-				const result = await axiosCreate.post('workflows/in_this_modification',
-					{
-						firm: workState.firm,
-						modification: workState.modification,
-					},
-				);
-				if (result.data == null || result.data.length === 0) {
-					currentType = getIDByTitle<ITypeOfWork>(typesOfWorkArray, 'Новый заказ');
-					const newState = { ...workState, type: currentType };
-					setWorkState(newState);
-				}
-				setShortList(result.data, currentType);
-				makeCanSave(result.data);
-			})();
+			const result = await axiosCreate.post('workflows/in_this_modification', {
+				firm: workState.firm,
+				modification: workState.modification,
+			});
+			if (result.data == null || result.data.length === 0) {
+				currentType = getIDByTitle(typesOfWorkArray, 'Новый заказ');
+				const newState = { ...workState, type: currentType };
+				setWorkState(newState);
+			}
+			setShortList(result.data, currentType);
+			makeCanSave(result.data);
+		};
+
+		if (workState.firm !== '' && workState.modification !== '') {
+			fetchData().then();
 		}
-	}, [workState.firm,
-		workState.modification]);
+	}, [workState.firm, workState.modification]);
 
 	useEffect(() => {
 		let currentType = workState.type as string;
 		if (!namesToShortList || namesToShortList.length === 0) {
-			currentType = getIDByTitle<ITypeOfWork>(typesOfWorkArray, 'Новый заказ');
+			currentType = getIDByTitle(typesOfWorkArray, 'Новый заказ');
 			const newState = { ...workState, type: currentType };
 			setWorkState(newState);
 		}
@@ -234,29 +232,40 @@ function CreateMainComponent() {
 	};
 
 	const dispatch = useDispatch<TAppDispatch>();
+
+	const namesToShortListRef = useRef(namesToShortList);
+	useEffect(() => {
+		namesToShortListRef.current = namesToShortList;
+	}, [namesToShortList]);
+
+	const getTitleFromShortList = (id: string) => {
+		return namesToShortListRef.current?.find(obj => obj._id === id)?.title;
+	};
+
 	const saveWork = async () => {
-		if (id && Object.keys(workflowsObject).length <= 0) return;
-		const currentTypeIndex = typesOfWorkArray.findIndex(obj => obj._id === workState.type);
-		const IdOfNewOrderType = getIDByTitle<ITypeOfWork>(typesOfWorkArray, 'Новый заказ');
+		const currentTypeIndex = typesOfWorkArray.findIndex(obj => obj._id === workStateRef.current.type);
+		const IdOfNewOrderType = getIDByTitle(typesOfWorkArray, 'Новый заказ');
 		const work: IWorkflowUpdate = id ? workflowsObject[id] : {};
 		const data: IWorkflowUpdate = id ? { _id: id } : {};
-		if (!id || work.firm != workState.firm) data.firm = workState.firm;
-		if (!id || work.modification != workState.modification) data.modification = workState.modification;
-		if (!id || work.title != workState.title) data.title = workState.title;
-		if (!id || work.mainId != workState.mainId) if (typesOfWorkArray[currentTypeIndex].title != 'Новый заказ') data.mainId = workState.mainId;
-		if (!id && workState.type != IdOfNewOrderType) data.title = workflowsObject[workState.mainId!].title;
-		if (!id || work.type != workState.type) data.type = workState.type;
-		if (!id || work.countPages != workState.countPages) data.countPages = workState.countPages;
-		if (!id || work.countPictures != workState.countPictures) data.countPictures = workState.countPictures;
-		if (!id || work.urgency != workState.urgency) data.urgency = workState.urgency;
-		if (!id || work.currentDepartment != workState.currentDepartment) data.currentDepartment = workState.currentDepartment;
-		if (!id || work.setToStat != workState.setToStat) data.setToStat = workState.setToStat;
-		if (!id || work.description != workState.description) data.description = workState.description;
+		if (!id || work.firm != workStateRef.current.firm) data.firm = workStateRef.current.firm;
+		if (!id || work.modification != workStateRef.current.modification) data.modification = workStateRef.current.modification;
+		if (!id || work.title != workStateRef.current.title) data.title = workStateRef.current.title;
+		if (!id || work.type != workStateRef.current.type) data.type = workStateRef.current.type;
+		if (!id || work.countPages != workStateRef.current.countPages) data.countPages = workStateRef.current.countPages;
+		if (!id || work.countPictures != workStateRef.current.countPictures) data.countPictures = workStateRef.current.countPictures;
+		if (!id || work.urgency != workStateRef.current.urgency) data.urgency = workStateRef.current.urgency;
+		if (!id || work.currentDepartment != workStateRef.current.currentDepartment) data.currentDepartment = workStateRef.current.currentDepartment;
+		if (!id || work.setToStat != workStateRef.current.setToStat) data.setToStat = workStateRef.current.setToStat;
+		if (!id || work.description != workStateRef.current.description) data.description = workStateRef.current.description;
+		if ((!id || work.mainId != workStateRef.current.mainId) && typesOfWorkArray[currentTypeIndex].title != 'Новый заказ') data.mainId = workStateRef.current.mainId;
+		if (!id && workStateRef.current.type != IdOfNewOrderType) data.title = getTitleFromShortList(workStateRef.current.mainId!);
+
+		if (id) dispatch(workflows.actions.updateElement(data));
 		dispatch(patchOne({ url: 'workflows', data }));
+
 		clearFields();
 	};
 
-	const navigate = useNavigate();
 	const clearFields = () => {
 		setWorkState({
 			firm: '',
@@ -298,6 +307,8 @@ function CreateMainComponent() {
 		setWorkState({ ...workState, [name]: value });
 	};
 
+	const changeSwitcher = (checked: boolean) => changeField('setToStat', checked);
+
 	useEffect(() => {
 		setCanAutoConvert(canConvertDescription(workState.description));
 	}, [workState.description]);
@@ -306,7 +317,7 @@ function CreateMainComponent() {
 		if (!id || Object.keys(workflowsObject).length <= 0) return;
 		const work = workflowsObject[id];
 		if (!work) return;
-		const newState: IWorkflowUpdate = {
+		setWorkState({
 			firm: work.firm,
 			modification: work.modification,
 			title: work.title,
@@ -318,9 +329,52 @@ function CreateMainComponent() {
 			currentDepartment: work.currentDepartment,
 			setToStat: work.setToStat,
 			description: work.description,
+		});
+	}, [id, workflowsObject]);
+
+	const descriptionRef = useRef<HTMLInputElement>(null);
+
+	useEffect(() => {
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (!event.key) return;
+
+			if (event.key.toLowerCase() === 'escape') {
+				clearFields();
+			}
+			if (!event.altKey || event.shiftKey || event.ctrlKey || event.metaKey) return;
+
+			if (event.key.toLowerCase() === 'enter') {
+				saveWork().then();
+			}
+
+			if (event.key.toLowerCase() === 'a' || event.key.toLowerCase() === 'ф') {
+				convertText(workState.description);
+			}
+
+			if (event.key.toLowerCase() === 'v' || event.key.toLowerCase() === 'м') {
+				event.preventDefault();
+				if (descriptionRef.current) {
+					descriptionRef.current.focus();
+					navigator.clipboard.readText().then((text) => {
+						if (descriptionRef.current) {
+							descriptionRef.current.value += text;
+							setWorkState((prevState) => ({
+								...prevState,
+								description: prevState.description + text,
+							}));
+						}
+					});
+				}
+			}
+
 		};
-		setWorkState(newState);
-	}, [workflowsObject]);
+
+		document.addEventListener('keydown', handleKeyDown);
+
+		return () => {
+			document.removeEventListener('keydown', handleKeyDown);
+		};
+	}, []);
 
 	return (
 		<Box display="flex" py={2} height="100%" boxSizing={'border-box'} gap={2}>
@@ -356,11 +410,13 @@ function CreateMainComponent() {
 											overflow: 'auto!important',
 										},
 									}}
+									inputRef={descriptionRef}
 									id="description"
-									label="Описание заказа"
+									label="Описание заказа (alt+V)"
 									multiline
 									value={workState.description}
 									onChange={(e) => changeField('description', e.target.value)}
+									autoFocus={true}
 								/>
 							</td>
 						</tr>
@@ -378,7 +434,8 @@ function CreateMainComponent() {
 						disabled={!canAutoConvert}
 						onClick={() => convertText(workState.description)}
 					>
-						Автоматическое заполнение полей
+						<span>Автоматическое заполнение полей <small
+							style={{ color: 'gray' }}>(ALT+A)</small></span>
 					</Button>
 				</Box>
 			</Box>
@@ -544,40 +601,14 @@ function CreateMainComponent() {
 								</Select>
 							</FormControl>
 							<FormGroup>
-								<FormControlLabel
-									control={
-										<MaterialUISwitch
-											sx={{ m: 1 }}
-											icon={
-												<SwitchStyledIcon
-													sx={{ backgroundColor: FALSE_COLOR }}
-												>
-													<CancelOutlinedIcon
-														sx={{ color: 'black' }}
-													/>
-												</SwitchStyledIcon>
-											}
-											checkedIcon={
-												<SwitchStyledIcon
-													sx={{ backgroundColor: 'green' }}
-												>
-													<CheckCircleOutlineIcon
-														sx={{ color: 'white' }}
-													/>
-												</SwitchStyledIcon>
-											}
-										/>
-									}
-									label={<Typography
-										sx={{
-											fontWeight: 'bold',
-											color: workState.setToStat ? 'green' : FALSE_COLOR,
-										}}
-									>
-										{workState.setToStat ? 'Заносить в статистику' : 'Не заносить в статистику'}
-									</Typography>}
-									checked={workState.setToStat}
-									onChange={(_event, checked) => changeField('setToStat', checked)}
+								<SwitchButtonComponent
+									mode={'usual'}
+									changeChecked={changeSwitcher}
+									checkState={workState.setToStat as boolean}
+									falseBackgroundColor={FALSE_COLOR}
+									falseTitle={'Не заносить в статистику'}
+									trueBackgroundColor={'green'}
+									trueTitle={'Заносить в статистику'}
 								/>
 							</FormGroup>
 						</td>
@@ -596,8 +627,9 @@ function CreateMainComponent() {
 					>
 						{
 							id
-								? 'Сохранить правку'
-								: 'Создать новое задание'
+								? <span>Сохранить правку <small style={{ color: 'white' }}>(ALT+Enter)</small></span>
+								:
+								<span>Создать новое задание <small style={{ color: 'white' }}>(ALT+Enter)</small></span>
 						}
 					</Button>
 					<Button
@@ -611,8 +643,8 @@ function CreateMainComponent() {
 
 						{
 							id
-								? 'Отменить правку'
-								: 'Сбросить форму'
+								? <span>Отменить правку <small style={{ color: 'gray' }}>(ESC)</small></span>
+								: <span>Сбросить форму <small style={{ color: 'gray' }}>(ESC)</small></span>
 						}
 					</Button></Box>
 			</Box>

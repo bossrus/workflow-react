@@ -10,8 +10,7 @@ import {
 	modifications,
 	TAppDispatch,
 	typesOfWork,
-	users as usersStore,
-	workflows,
+	users as usersStore, workflows,
 } from '@/store/_store.ts';
 import { setOnline } from '@/store/usersOnline.slice.ts';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';

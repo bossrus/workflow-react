@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { IHotkey } from '@/interfaces/appSupport.interface.ts';
 
 
-const useHotkeysNavigation = (hotkeys: IHotkey[]) => {
+const useHotkeysNavigation = (hotkeys: IHotkey[], needShift: boolean) => {
 	const navigate = useNavigate();
 
 	const handleKeyDown = (event: KeyboardEvent) => {
-		if (event.ctrlKey || event.shiftKey || event.metaKey || !event.altKey) {
+		if (event.ctrlKey || event.metaKey || (!event.altKey && (!needShift || !event.shiftKey))) {
 			return;
 		}
 
