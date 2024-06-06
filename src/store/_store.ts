@@ -1,5 +1,5 @@
 // src/store/_store.ts
-import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { createEntitySlice } from '@/store/_sliceFactory.ts';
 import { meReducer } from '@/store/me.slice.ts';
 import { currentStatesReducer } from '@/store/_currentStates.slice.ts';
@@ -17,21 +17,22 @@ export const invites = createEntitySlice('invites');
 export const workflows = createEntitySlice('workflows');
 
 
-export const myStore = configureStore({
-	reducer: {
-		usersOnline: usersOnlineReducer,
-		me: meReducer,
-		currentStates: currentStatesReducer,
+const rootReducer = combineReducers({
+	usersOnline: usersOnlineReducer,
+	me: meReducer,
+	currentStates: currentStatesReducer,
+	departments: departments.reducer,
+	firms: firms.reducer,
+	modifications: modifications.reducer,
+	users: users.reducer,
+	typesOfWork: typesOfWork.reducer,
+	workflows: workflows.reducer,
+	flashes: flashes.reducer,
+	invites: invites.reducer,
+});
 
-		departments: departments.reducer,
-		firms: firms.reducer,
-		modifications: modifications.reducer,
-		users: users.reducer,
-		typesOfWork: typesOfWork.reducer,
-		workflows: workflows.reducer,
-		flashes: flashes.reducer,
-		invites: invites.reducer,
-	},
+export const myStore = configureStore({
+	reducer: rootReducer,
 });
 
 export type TAppState = ReturnType<typeof myStore.getState>;

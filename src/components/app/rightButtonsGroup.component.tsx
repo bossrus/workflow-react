@@ -1,8 +1,6 @@
-import { FormGroup, IconButton, Tooltip } from '@mui/material';
-import RateReviewIcon from '@mui/icons-material/RateReview';
-import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
-import { tooltipProps } from '@/scss/tooltipsProps.ts';
+import { FormGroup } from '@mui/material';
 import SwitchButtonComponent from '@/components/_shared/switchButton.component.tsx';
+import RoundButtonComponent from '@/components/_shared/roundButton.component.tsx';
 
 interface IRightButtonsGroupProps {
 	isSoundOn: boolean,
@@ -27,31 +25,21 @@ function rightButtonsGroupComponent(props: IRightButtonsGroupProps) {
 					mode={'sound'}
 				/>
 			</FormGroup>
-			<Tooltip
-				title={'Техподдержка'}
-				arrow
-				componentsProps={tooltipProps}
-			>
-				<IconButton
-					color="primary"
-					className={'up-shadow'}
-				>
-					<RateReviewIcon />
-				</IconButton>
-			</Tooltip>
-			<Tooltip
-				title={'Выход'}
-				arrow
-				componentsProps={tooltipProps}
-			>
-				<IconButton
-					color="secondary"
-					className={'up-shadow'}
-					onClick={logout}
-				>
-					<MeetingRoomIcon />
-				</IconButton>
-			</Tooltip>
+
+			{/*//а нужна ли поддержка? :)*/}
+
+			{/*<RoundButtonComponent*/}
+			{/*	id={''}*/}
+			{/*	dis={false}*/}
+			{/*	onClickHere={logout}*/}
+			{/*	mode={'support'}*/}
+			{/*/>*/}
+			<RoundButtonComponent
+				id={''}
+				dis={false}
+				onClickHere={logout}
+				mode={'exit'}
+			/>
 		</>
 	);
 }

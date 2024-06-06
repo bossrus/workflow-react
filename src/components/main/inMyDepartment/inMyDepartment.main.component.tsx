@@ -2,13 +2,14 @@ import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { Box, Button } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ToWorkButtonComponent from '@/components/_shared/toWorkButton.component.tsx';
 import { assignColor } from '@/_constants/urgencyColors.ts';
 import useWorksSelectors from '@/_hooks/useWorksSelectors.hook.ts';
 import WorkInfoComponent from '@/components/_shared/workInfo.component.tsx';
 import { TAppDispatch } from '@/store/_store.ts';
 import { useDispatch } from 'react-redux';
 import { takeWorkflowThunk } from '@/store/workflows.thunks.ts';
+import RoundButtonComponent from '@/components/_shared/roundButton.component.tsx';
+import { getTitleByID } from '@/_services/getTitleByID.service.ts';
 
 function InMyDepartmentMainComponent() {
 	const {
@@ -20,12 +21,15 @@ function InMyDepartmentMainComponent() {
 
 	const {
 		workflowsObject,
-		workflowsInMyDepartment: workflows,
+		workflowsInMyDepartment,
 	} = useWorksSelectors();
 
 	const [listOfFirms, setListOfFirms] = useState<string[]>([]);
 	const [colors, setColors] = useState<Record<string, string>>({});
 
+	const [checks, setChecks] = useState<Record<string, boolean>>({});
+	const [anyChecked, setAnyChecked] = useState(false);
+	const [countChecked, setCountChecked] = useState(0);
 
 	useEffect(() => {
 		setChecks({});
@@ -33,21 +37,16 @@ function InMyDepartmentMainComponent() {
 		setCountChecked(0);
 
 		const newColors: Record<string, string> = {};
-		for (let work of workflows) {
+		for (let work of workflowsInMyDepartment) {
 			newColors[work._id!] = assignColor(work.urgency);
 		}
 		setColors(newColors);
-	}, [workflows]);
-
-	const [checks, setChecks] = useState<Record<string, boolean>>({});
-	const [anyChecked, setAnyChecked] = useState(false);
-	const [countChecked, setCountChecked] = useState(0);
-
+	}, [workflowsInMyDepartment]);
 
 	const uncheckAll = () => {
 		const allChecks: Record<string, boolean> = {};
 		const newFirmsList: Record<string, boolean> = {};
-		for (let workflow of workflows) {
+		for (let workflow of workflowsInMyDepartment) {
 			allChecks[workflow._id!] = false;
 			if (!newFirmsList[workflow.firm]) newFirmsList[workflow.firm] = true;
 		}
@@ -57,23 +56,15 @@ function InMyDepartmentMainComponent() {
 	};
 
 	useEffect(() => {
-		if (workflows.length <= 0) return;
+		if (workflowsInMyDepartment.length <= 0) return;
 		uncheckAll();
-	}, [workflows]);
+	}, [workflowsInMyDepartment]);
 
 	const updateAnyChecked = () => {
-		let count = 0;
-		let selected = false;
-		for (let value of Object.values(checks)) {
-			if (value) {
-				selected = true;
-				count++;
-			}
-		}
-		setAnyChecked(selected);
+		const count = Object.values(checks).filter(value => value).length;
+		setAnyChecked(count > 0);
 		setCountChecked(count);
 	};
-
 	useEffect(() => {
 		updateAnyChecked();
 	}, [checks]);
@@ -92,16 +83,7 @@ function InMyDepartmentMainComponent() {
 	const dispatch = useDispatch<TAppDispatch>();
 
 	async function takeWorks(id: string = '') {
-		const data: string[] = [];
-		if (id === '') {
-			for (let key in checksRef.current) {
-				if (checksRef.current[key]) {
-					data.push(key);
-				}
-			}
-		} else {
-			data.push(id);
-		}
+		const data: string[] = id ? [id] : Object.keys(checksRef.current).filter(key => checksRef.current[key]);
 		if (data.length > 0) {
 			dispatch(takeWorkflowThunk({ ids: data }));
 			navigate('/main/');
@@ -109,15 +91,15 @@ function InMyDepartmentMainComponent() {
 	}
 
 	const selectWorkflowsByFirm = (firm: string) => {
-		const newChecks: Record<string, boolean> = { ...checksRef.current };
-		for (let key in checksRef.current) {
+		const newChecks = Object.keys(checksRef.current).reduce((acc, key) => {
 			if (firm === '' || workflowsObject[key].firm === firm) {
-				newChecks[key] = true;
+				acc[key] = true;
 			}
-		}
+			return acc;
+		}, { ...checksRef.current });
+
 		setChecks(newChecks);
 	};
-
 	useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {
 			if (event.key.toLowerCase() === 'escape') {
@@ -143,7 +125,7 @@ function InMyDepartmentMainComponent() {
 	}, []);
 
 	const canShowPage = () => {
-		return Object.keys(workflows).length > 0 &&
+		return Object.keys(workflowsInMyDepartment).length > 0 &&
 			Object.keys(typesOfWorkObject).length > 0 &&
 			Object.keys(firmsObject).length > 0 &&
 			Object.keys(usersObject).length > 0 &&
@@ -174,16 +156,16 @@ function InMyDepartmentMainComponent() {
 										 height={'100%'}
 									>
 										{
-											workflows.length > 0 &&
-											workflows.map((wrk) => (
+											workflowsInMyDepartment.length > 0 &&
+											workflowsInMyDepartment.map((wrk) => (
 												<WorkInfoComponent
 													key={wrk._id}
 													idProps={wrk._id!}
 													colorProps={colors[wrk._id!]}
 													workflowTitle={wrk.title}
-													workflowFirmTitle={firmsObject[wrk.firm!].title}
-													workflowModificationTitle={modificationsObject[wrk.modification!].title}
-													workflowTypeTitle={typesOfWorkObject[wrk.type!].title}
+													workflowFirmTitle={getTitleByID(firmsObject, wrk.firm)}
+													workflowModificationTitle={getTitleByID(modificationsObject, wrk.modification)}
+													workflowTypeTitle={getTitleByID(typesOfWorkObject, wrk.type)}
 													workflowCountPages={wrk.countPages}
 													workflowCountPictures={wrk.countPictures}
 													workflowDescription={wrk.description}
@@ -191,8 +173,12 @@ function InMyDepartmentMainComponent() {
 													checkedProps={checks[wrk._id!]}
 													workflowShowDepartment={false}
 												>
-													<ToWorkButtonComponent id={wrk._id!} dis={false}
-																		   onClickHere={takeWorks} />
+													<RoundButtonComponent
+														mode={'toWork'}
+														id={wrk._id!}
+														dis={false}
+														onClickHere={takeWorks}
+													/>
 												</WorkInfoComponent>
 											))
 										}
@@ -215,7 +201,7 @@ function InMyDepartmentMainComponent() {
 								sx={{ mt: 2, borderRadius: '10px', flexGrow: 1 }}
 								color={'primary'}
 								className={'up-shadow'}
-								disabled={countChecked === Object.keys(workflows).length}
+								disabled={countChecked === Object.keys(workflowsInMyDepartment).length}
 								onClick={() => selectWorkflowsByFirm('')}
 							>
 								<span>Выделить все заказы <small style={{ color: 'gray' }}>(ALT+A)</small></span>
@@ -229,10 +215,10 @@ function InMyDepartmentMainComponent() {
 										sx={{ mt: 2, borderRadius: '10px', flexGrow: 1 }}
 										color={'inherit'}
 										className={'up-shadow'}
-										disabled={countChecked === Object.keys(workflows).length}
+										disabled={countChecked === Object.keys(workflowsInMyDepartment).length}
 										onClick={() => selectWorkflowsByFirm(firm)}
 									>
-										Выделить все заказы «{firmsObject[firm].title}»
+										Выделить все заказы «{getTitleByID(firmsObject, firm)}»
 									</Button>
 								))
 							}

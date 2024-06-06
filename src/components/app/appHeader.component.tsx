@@ -3,6 +3,7 @@ import { IUserObject, IUserUpdate } from '@/interfaces/user.interface.ts';
 import OnlineIconComponent from '@/components/app/onlineIcon.component.tsx';
 import RightButtonsGroupComponent from '@/components/app/rightButtonsGroup.component.tsx';
 import { IDepartmentsObject } from '@/interfaces/department.interface.ts';
+import { getTitleByID } from '@/_services/getTitleByID.service.ts';
 
 interface IAppHeaderProps {
 	me: IUserUpdate,
@@ -12,7 +13,6 @@ interface IAppHeaderProps {
 	users: IUserObject,
 	connectToWebsocket: () => void,
 	changeMyDepartment: (newVal: string | null) => void,
-	// changeMyDepartment: (event: ChangeEvent<HTMLSelectElement>) => void,
 	changeSounds: (isSoundProps: boolean) => void,
 	logout: () => void,
 }
@@ -55,7 +55,7 @@ function AppHeaderComponent(props: IAppHeaderProps) {
 								{me && me.departments && Object.keys(departments).length > 0 && (
 									me.departments.map((item) => (
 										<MenuItem key={item} value={item}>
-											{departments[item]?.title}
+											{getTitleByID(departments, item)}
 										</MenuItem>
 									))
 								)

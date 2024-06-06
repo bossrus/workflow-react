@@ -7,6 +7,7 @@ import useWorksSelectors from '@/_hooks/useWorksSelectors.hook.ts';
 import { TAppDispatch } from '@/store/_store.ts';
 import { useDispatch } from 'react-redux';
 import { closeWorkflowThunk } from '@/store/workflows.thunks.ts';
+import { getTitleByID } from '@/_services/getTitleByID.service.ts';
 
 interface IProps {
 	incomingWorkID: string;
@@ -176,19 +177,19 @@ function WorkMyMainComponent({ incomingWorkID }: IProps) {
 						gap={1}
 					>
 						<Box>
-							{firmsObject[workflowsObject[incomingWorkID].firm].title}
+							{getTitleByID(firmsObject, workflowsObject[incomingWorkID].firm)}
 						</Box>
 						<Box>
-							№{modificationsObject[workflowsObject[incomingWorkID].modification].title},
+							№{getTitleByID(modificationsObject, workflowsObject[incomingWorkID].modification)},
 						</Box>
 						<Box>
 							<strong>
-								{workflowsObject[incomingWorkID].title}
+								{getTitleByID(workflowsObject, incomingWorkID)}
 							</strong>,
 						</Box>
 						<Box>
 							<i>
-								{typesOfWorkObject[workflowsObject[incomingWorkID].type].title}
+								{getTitleByID(typesOfWorkObject, workflowsObject[incomingWorkID].type)}
 							</i>
 						</Box>
 

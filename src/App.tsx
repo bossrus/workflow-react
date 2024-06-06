@@ -16,7 +16,7 @@ import InvitesAppComponent from '@/components/app/invites.app.component.tsx';
 import { setState } from '@/store/_currentStates.slice.ts';
 import SecurityFlashAppComponent from '@/components/app/securityFlash.app.component.tsx';
 import useWorksSelectorsHook from '@/_hooks/useWorksSelectors.hook.ts';
-import AppFooterComponent from '@/components/app/appFooter.component.tsx';
+import AppFooterComponent from '@/components/app/appFooter/appFooter.component.tsx';
 import DeleteFlashAppComponent from '@/components/app/deleteFlash.app.component.tsx';
 
 function App() {
@@ -29,13 +29,18 @@ function App() {
 
 
 	const {
-		departmentsObject: departments,
+		departmentsObject,
 		me,
 		meError,
-		usersObject: users,
+		usersObject,
 		onlineUsers,
 		inviteToJoin,
 		states,
+
+		//следующие 3 только для контроля того, что всё загрузилось, и что можно показывать приложение
+		firmsArray,
+		modificationsArray,
+		typesOfWorkArray,
 	} = useReduxSelectors();
 
 	const {
@@ -98,7 +103,7 @@ function App() {
 		}
 	}, [dispatch, me]);
 
-	const { isConnected, socket } = useWebSocket({ oldMeLength, me, users });
+	const { isConnected, socket } = useWebSocket({ oldMeLength, me, users: usersObject });
 
 	const connectToWebsocket = () => {
 		if (socket && !socket?.connected)
@@ -165,12 +170,20 @@ function App() {
 		};
 	}, []);
 
+	const canShow = (): boolean => {
+		return Object.keys(me).length > 0
+			&& Object.keys(usersObject).length > 0
+			&& Object.keys(departmentsObject).length > 0
+			&& modificationsArray.length > 0
+			&& firmsArray.length > 0
+			&& typesOfWorkArray.length > 0;
+	};
 
 	return (
 		<>
 			{location != '/login' ?
 				(<>
-					{Object.keys(me).length > 0 &&
+					{canShow() &&
 						<Box display="flex" flexDirection="column" height="100%">
 							<Snackbar
 								anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
@@ -195,8 +208,8 @@ function App() {
 								changeMyDepartment={changeMyDepartment}
 								changeSounds={changeSounds}
 								logout={logout}
-								users={users}
-								departments={departments}
+								users={usersObject}
+								departments={departmentsObject}
 								me={me}
 								isConnected={isConnected}
 								connectToWebsocket={connectToWebsocket}

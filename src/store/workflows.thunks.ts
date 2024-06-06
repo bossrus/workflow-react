@@ -33,11 +33,6 @@ export const takeWorkflowThunk = createAsyncThunk(
 
 		const { data: workflows } = (getState() as TAppState).workflows;
 
-		// const meObject = (getState() as TAppState).me.data;
-		// const key = Object.keys(meObject)[0];
-		// const me = meObject[key];
-		// const myId = me._id as string;
-
 		const { _id: myId = '' } = (getState() as TAppState).me.data?.[Object.keys((getState() as TAppState).me.data ?? {})[0]] ?? {};
 
 		ids.forEach((id: string) => {

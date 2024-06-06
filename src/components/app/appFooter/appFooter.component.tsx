@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import LinkAppFooterComponent from '@/components/app/link.appFooter.component.tsx';
+import LinkAppFooterComponent from '@/components/app/appFooter/link.appFooter.component.tsx';
 import { IColors } from '@/interfaces/appSupport.interface.ts';
 import { Box } from '@mui/material';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
@@ -64,7 +64,7 @@ function AppFooterComponent() {
 		path: link.path,
 	}));
 
-	useHotkeysNavigation(hotkeys);
+	useHotkeysNavigation(hotkeys, false);
 
 	const display = (skipOnLines: string[], requiredField?: keyof IUserUpdate) => {
 		if (skipOnLines.some(skipLine => location.includes(skipLine))) {

@@ -61,16 +61,13 @@ function MyMainComponent() {
 		if (me.currentWorkflowInWork != paramsId) {
 			changeMeCurrent(paramsId!);
 		}
-	}, [paramsId, workflowsInMyProcess]);
-
-	useEffect(() => {
 		setTabs(workflowsInMyProcess.map((work) => {
 			return {
 				label: work.title,
 				url: work._id!,
 			};
 		}));
-	}, [workflowsInMyProcess]);
+	}, [paramsId, workflowsInMyProcess, me.currentWorkflowInWork, me.currentDepartment]);
 
 	return (
 		<>

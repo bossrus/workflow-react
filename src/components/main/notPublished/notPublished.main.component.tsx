@@ -8,6 +8,7 @@ import WorkInfoComponent from '@/components/_shared/workInfo.component.tsx';
 import { useDispatch } from 'react-redux';
 import { TAppDispatch } from '@/store/_store.ts';
 import { publishWorkflowThunk } from '@/store/workflows.thunks.ts';
+import { getTitleByID } from '@/_services/getTitleByID.service.ts';
 
 function NotPublishedMainComponent() {
 	const {
@@ -128,15 +129,9 @@ function NotPublishedMainComponent() {
 	const dispatch = useDispatch<TAppDispatch>();
 
 	async function publishWorks() {
-		console.log('checksRef.current=', checksRef.current);
 		if (Object.keys(checksRef.current).length <= 0) return;
-		const data: string[] = [];
-		for (let key in checksRef.current) {
-			if (checksRef.current[key]) {
-				data.push(key);
-			}
-		}
-		console.log('data = ', data);
+		const data: string[] = Object.entries(checksRef.current)
+			.reduce<string[]>((acc, [key, value]) => (value ? [...acc, key] : acc), []);
 		if (data.length <= 0) return;
 		dispatch(publishWorkflowThunk({ ids: data }));
 		navigate(`/main/`);
@@ -208,11 +203,11 @@ function NotPublishedMainComponent() {
 													idProps={key}
 													colorProps={colors[key]}
 													checkedProps={checks[key]}
-													workflowTitle={workflowsNotPublishedObject[key].title}
-													workflowFirmTitle={firmsObject[workflowsNotPublishedObject[key].firm].title}
-													workflowModificationTitle={modificationsObject[workflowsNotPublishedObject[key].modification].title}
-													workflowTypeTitle={typesOfWorkObject[workflowsNotPublishedObject[key].type].title}
-													workflowDepartmentTitle={departmentsObject[workflowsNotPublishedObject[key].currentDepartment].title}
+													workflowTitle={getTitleByID(workflowsNotPublishedObject, key)}
+													workflowFirmTitle={getTitleByID(firmsObject, workflowsNotPublishedObject[key].firm)}
+													workflowModificationTitle={getTitleByID(modificationsObject, workflowsNotPublishedObject[key].modification)}
+													workflowTypeTitle={getTitleByID(typesOfWorkObject, workflowsNotPublishedObject[key].type)}
+													workflowDepartmentTitle={getTitleByID(departmentsObject, workflowsNotPublishedObject[key].currentDepartment)}
 													workflowCountPictures={workflowsNotPublishedObject[key].countPictures}
 													workflowCountPages={workflowsNotPublishedObject[key].countPages}
 													workflowDescription={workflowsNotPublishedObject[key].description}

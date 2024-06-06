@@ -1,7 +1,6 @@
 import { Box, Typography } from '@mui/material';
 import { IFirm } from '@/interfaces/firm.interface.ts';
-import DeleteButtonComponent from '@/components/_shared/deleteButton.component.tsx';
-import EditButtonComponent from '@/components/_shared/editButton.component.tsx';
+import RoundButtonComponent from '@/components/_shared/roundButton.component.tsx';
 import { useDispatch } from 'react-redux';
 import { TAppDispatch } from '@/store/_store.ts';
 import { setState } from '@/store/_currentStates.slice.ts';
@@ -72,8 +71,8 @@ function OneFirmFirmsComponent({
 				flexDirection="column"
 				justifyContent="space-between"
 			>
-				<DeleteButtonComponent id={_id} dis={disabled} onClickHere={deleteFirm} />
-				<EditButtonComponent id={_id} dis={disabled} onClickHere={changeEditedFirm} />
+				<RoundButtonComponent mode={'delete'} id={_id} dis={disabled} onClickHere={deleteFirm} />
+				<RoundButtonComponent mode={'edit'} id={_id} dis={disabled} onClickHere={changeEditedFirm} />
 			</Box>
 		</Box>
 	);

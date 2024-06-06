@@ -1,6 +1,5 @@
 import { Box } from '@mui/material';
 import Checkbox from '@mui/material/Checkbox';
-import EditButtonComponent from '@/components/_shared/editButton.component.tsx';
 import { ReactNode, useEffect, useState } from 'react';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +9,7 @@ import { deleteOne } from '@/store/_shared.thunks.ts';
 import { setState } from '@/store/_currentStates.slice.ts';
 import { useDispatch } from 'react-redux';
 import { TAppDispatch } from '@/store/_store.ts';
-import DeleteButtonComponent from '@/components/_shared/deleteButton.component.tsx';
+import RoundButtonComponent from '@/components/_shared/roundButton.component.tsx';
 
 interface IProps {
 	idProps: string,
@@ -142,10 +141,13 @@ function WorkInfoComponent({
 					{
 						me.canStartStopWorks &&
 						<Box alignItems={'end'}>
-							<EditButtonComponent id={idProps}
-												 dis={false}
-												 onClickHere={editWorkflow} />
-							<DeleteButtonComponent
+							<RoundButtonComponent
+								mode={'edit'}
+								id={idProps}
+								dis={false}
+								onClickHere={editWorkflow} />
+							<RoundButtonComponent
+								mode={'delete'}
 								id={idProps}
 								dis={false}
 								onClickHere={deleteWorkflow}

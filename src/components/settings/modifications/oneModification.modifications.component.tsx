@@ -1,7 +1,6 @@
 import { Box, Typography } from '@mui/material';
 import { IModification } from '@/interfaces/modification.interface.ts';
-import DeleteButtonComponent from '@/components/_shared/deleteButton.component.tsx';
-import EditButtonComponent from '@/components/_shared/editButton.component.tsx';
+import RoundButtonComponent from '@/components/_shared/roundButton.component.tsx';
 import { useDispatch } from 'react-redux';
 import { TAppDispatch } from '@/store/_store.ts';
 import { deleteOne } from '@/store/_shared.thunks.ts';
@@ -64,8 +63,8 @@ function OneModificationModificationsComponent({
 			</Box>
 			<Box display="flex" flexDirection="column" justifyContent="space-between"
 			>
-				<DeleteButtonComponent id={_id} dis={disabled} onClickHere={deleteModification} />
-				<EditButtonComponent id={_id} dis={disabled} onClickHere={changeEditedModification} />
+				<RoundButtonComponent mode={'delete'} id={_id} dis={disabled} onClickHere={deleteModification} />
+				<RoundButtonComponent mode={'edit'} id={_id} dis={disabled} onClickHere={changeEditedModification} />
 			</Box>
 		</Box>
 	);

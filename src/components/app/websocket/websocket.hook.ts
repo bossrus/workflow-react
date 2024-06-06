@@ -33,6 +33,7 @@ export const useWebSocket = ({ oldMeLength, me, users }: IProps) => {
 		typesOfWorkObject,
 		departmentsObject,
 		workflowsAll: workflowsObject,
+		flashMessages,
 	} = useReduxSelectors();
 
 	const deletes: { [key: string]: (id: string) => { type: string, payload: string } } = {
@@ -44,6 +45,15 @@ export const useWebSocket = ({ oldMeLength, me, users }: IProps) => {
 		'typesOfWork': typesOfWork.actions.deleteElement,
 	};
 
+	const entities = {
+		'departments': departmentsObject,
+		'firms': firmsObject,
+		'modifications': modificationsObject,
+		'typesOfWork': typesOfWorkObject,
+		'workflows': workflowsObject,
+		'users': users,
+		'flashes': flashMessages,
+	};
 
 	const [socket, setSocket] = useState<Socket>();
 
@@ -53,28 +63,23 @@ export const useWebSocket = ({ oldMeLength, me, users }: IProps) => {
 		} else {
 			switch (operation) {
 				case 'update':
-					if ((bd == 'departments' && (!departmentsObject[id] || departmentsObject[id].version != version))
-						|| (bd == 'firms' && (!firmsObject[id] || firmsObject[id].version != version))
-						|| (bd == 'modifications' && (!modificationsObject[id] || modificationsObject[id].version != version))
-						|| (bd == 'typesOfWork' && (!typesOfWorkObject[id] || typesOfWorkObject[id].version != version))
-						|| (bd == 'workflows' && (!workflowsObject[id] || workflowsObject[id].version != version))
-						|| (bd == 'users' && (!users[id] || users[id].version != version))
-						|| (bd == 'flashes')
-					) {
-						// console.log('\twebsocket обновляет ', bd, ' №', id);
-						dispatch(loadById({ url: bd, id: id }));
+					if (
+						bd != 'invites' &&
+						entities[bd] &&
+						(bd == 'flashes' || !entities[bd][id] || entities[bd][id].version != version)) {
+						dispatch(loadById({ url: bd, id }));
 					}
+
 					if (bd == 'invites' && id == me._id) {
-						// console.log('\twebsocket обновляет ', bd, ' для №', id);
 						dispatch(load({ url: bd }));
 					}
+
 					if (id == me._id && me.version !== version) {
-						// console.log('\tнужно обновить самого себя');
 						dispatch(loadById({ url: 'users/me', id }));
 					}
 					break;
+
 				case 'delete':
-					// console.log('\twebsocket удаляет ', bd, ' №', id);
 					if (bd !== 'invites' && bd !== 'flashes') {
 						dispatch(deletes[bd](id));
 					}
@@ -86,7 +91,6 @@ export const useWebSocket = ({ oldMeLength, me, users }: IProps) => {
 	useEffect(() => {
 		const auth = getAuth();
 		if (!auth) {
-			// console.log('отмена запуска вебсокета. нет авторизации', auth);
 			return;
 		}
 		if (oldMeLength !== 0) {
@@ -109,14 +113,12 @@ export const useWebSocket = ({ oldMeLength, me, users }: IProps) => {
 			});
 
 			newSocket.on('servermessage', (message) => {
-				// console.log('Сообщение от сервера: ', message);
 				websocketReaction(message);
 			});
 
 			newSocket.on('disconnect', () => {
 				dispatch(setOnline([]));
 				setIsConnected(false);
-				// console.log('Соединение разорвано');
 			});
 
 			newSocket.on('reconnect_attempt', (attemptNumber) => {
@@ -125,7 +127,6 @@ export const useWebSocket = ({ oldMeLength, me, users }: IProps) => {
 		}
 		return () => {
 			if (oldMeLength !== 0) {
-				// console.log('useWebsocket is closed');
 				if (socket && auth && Object.keys(me).length > 0) {
 					setIsConnected(false);
 					socket.disconnect();

@@ -11,6 +11,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import useWorksSelectors from '@/_hooks/useWorksSelectors.hook.ts';
 import { FALSE_COLOR } from '@/_constants/colors.ts';
 import SwitchButtonComponent from '@/components/_shared/switchButton.component.tsx';
+import { getTitleByID } from '@/_services/getTitleByID.service.ts';
+import { debounce } from '@/_services/debonce.service.ts';
 
 function CreateMainComponent() {
 	const {
@@ -27,12 +29,17 @@ function CreateMainComponent() {
 
 	const { workflowsObject } = useWorksSelectors();
 
+	const typeNewOrderId = useRef('');
+	useEffect(() => {
+		typeNewOrderId.current = getIDByTitle(typesOfWorkArray, 'Новый заказ');
+	}, [typesOfWorkArray]);
+
 	const [workState, setWorkState] = useState<IWorkflowUpdate>({
 		firm: '',
 		modification: '',
 		title: '',
 		mainId: '',
-		type: getIDByTitle(typesOfWorkArray, 'Новый заказ'),
+		type: typeNewOrderId.current,
 		countPages: 1,
 		countPictures: 1,
 		urgency: 50000,
@@ -42,6 +49,7 @@ function CreateMainComponent() {
 	});
 
 	const workStateRef = useRef(workState);
+
 
 	useEffect(() => {
 		if (!departmentsArray || departmentsArray.length === 0) return;
@@ -53,46 +61,62 @@ function CreateMainComponent() {
 
 
 	const [canSave, setCanSave] = useState(false);
+
 	const [showAnotherName, setShowAnotherName] = useState(false);
 
 	const { id } = useParams();
 
 	const calculateCanSave = (list: IWorkflowUpdate[] | null): boolean => {
 		let result: boolean = false;
+		const isCoincidence = list?.some(item => item.title?.toLowerCase() === workStateRef.current.title?.toLowerCase());
+		const isNotNewOrder = workStateRef.current.type !== typeNewOrderId.current;
+
+		const {
+			firm,
+			modification,
+			title,
+			type,
+			countPages,
+			countPictures,
+			urgency,
+			currentDepartment,
+			setToStat,
+			description,
+			mainId,
+		} = workStateRef.current;
+
+
 		if (id) {
 			const work = workflowsObject[id];
 			if (!work) return false;
-			const newType = getIDByTitle(typesOfWorkArray, 'Новый заказ');
-			result = workState.firm != work.firm ||
-				workState.modification != work.modification ||
-				workState.title != work.title ||
-				(workState.type != newType ? workState.mainId != work.mainId : false) ||
-				workState.type != work.type ||
-				workState.countPages != work.countPages ||
-				workState.countPictures != work.countPictures ||
-				workState.urgency != work.urgency ||
-				workState.currentDepartment != work.currentDepartment ||
-				workState.setToStat != work.setToStat ||
-				workState.description != work.description;
+			result = firm != work.firm ||
+				modification != work.modification ||
+				title != work.title ||
+				(type != typeNewOrderId.current ? mainId != work.mainId : false) ||
+				type != work.type ||
+				countPages != work.countPages ||
+				countPictures != work.countPictures ||
+				urgency != work.urgency ||
+				currentDepartment != work.currentDepartment ||
+				setToStat != work.setToStat ||
+				description != work.description;
 		} else {
-			const isCoincidence = list?.some(item => item.title?.toLowerCase() === workState.title?.toLowerCase());
-			const index = typesOfWorkArray.findIndex(obj => obj._id === workState.type);
-			const isNotNewOrder = index !== -1 && workState.title!.length > 0 && typesOfWorkArray[index].title !== 'Новый заказ';
-			const isFormFilled = workState.firm !== '' &&
-				workState.modification !== '' &&
-				workState.title !== '' &&
-				workState.type !== '' &&
-				workState.countPages !== 0 &&
-				workState.countPictures !== 0 &&
-				workState.currentDepartment !== '' &&
-				workState.description !== '';
-			result = (isNotNewOrder || !isCoincidence) && isFormFilled;
+			result = firm !== '' &&
+				modification !== '' &&
+				title !== '' &&
+				type !== '' &&
+				countPages !== 0 &&
+				countPictures !== 0 &&
+				currentDepartment !== '' &&
+				description !== '';
 		}
+		result = (result && (isNotNewOrder || !isCoincidence));
 		return result;
 	};
 
 	const makeCanSave = (list: IWorkflowUpdate[] | null) => {
-		setCanSave(calculateCanSave(list));
+		const result = calculateCanSave(list);
+		setCanSave(result);
 	};
 
 	useEffect(() => {
@@ -157,34 +181,45 @@ function CreateMainComponent() {
 		return count;
 	};
 
+	const removeCurrentIdFromArray = (arr: IWorkflowUpdate[]) => {
+		return arr.filter(item => item._id !== id);
+	};
+
 	const setShortList = (data: IWorkflowUpdate[], currentType: string) => {
 		if (workState.firm == '' || workState.modification == '') return;
-		if (data.length > 0) {
-			for (const element of data) {
+		const dataWithoutCurrentWorkflow = removeCurrentIdFromArray(data);
+		if (dataWithoutCurrentWorkflow.length > 0) {
+			for (const element of dataWithoutCurrentWorkflow) {
 				//В данном случае urgency используется как степень совпадения.
 				// Просто лениво создавать новое поле, которое нужно только в одном месте
 				element.urgency = getCoincidenceLevel(element.title!, workState.title!);
 			}
-			data.sort((a, b) => b.urgency! - a.urgency!);
+			dataWithoutCurrentWorkflow.sort((a, b) => b.urgency! - a.urgency!);
 		}
-		const newList = data.length > 0 ? data : null;
+		const newList = dataWithoutCurrentWorkflow.length > 0 ? dataWithoutCurrentWorkflow : null;
 		if (newList) {
-			changeField('mainId', newList[0].mainId as string);
+			changeField('mainId', newList[0]._id as string);
 		}
-		setNamesToShortList(newList);
-		const firstItem = data.length > 0 ? data[0]._id! : '';
-		const newOrderId = getIDByTitle(typesOfWorkArray, 'Новый заказ');
+		const firstItem = newList
+			? newList.length > 0
+				? newList[0]._id!
+				: ''
+			: '';
+
 		const newState: IWorkflowUpdate = {
 			...workState,
 			mainId: firstItem,
 		};
-		if (!newList && workState.type != newOrderId) {
-			newState.type = newOrderId;
+		if (!newList && workState.type != typeNewOrderId.current) {
+			newState.type = typeNewOrderId.current;
 		}
 
+		setNamesToShortList(newList);
 		setWorkState(newState);
 		setShowAnotherNameHandler(currentType);
 	};
+
+	const isShortListLoadAttemptedRef = useRef(false);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -194,10 +229,10 @@ function CreateMainComponent() {
 				modification: workState.modification,
 			});
 			if (result.data == null || result.data.length === 0) {
-				currentType = getIDByTitle(typesOfWorkArray, 'Новый заказ');
-				const newState = { ...workState, type: currentType };
-				setWorkState(newState);
+				currentType = typeNewOrderId.current;
+				setWorkState({ ...workState, type: currentType });
 			}
+			isShortListLoadAttemptedRef.current = true;
 			setShortList(result.data, currentType);
 			makeCanSave(result.data);
 		};
@@ -207,28 +242,41 @@ function CreateMainComponent() {
 		}
 	}, [workState.firm, workState.modification]);
 
+	const prevTypeRef = useRef<string | undefined>(undefined);
+
 	useEffect(() => {
-		let currentType = workState.type as string;
-		if (!namesToShortList || namesToShortList.length === 0) {
-			currentType = getIDByTitle(typesOfWorkArray, 'Новый заказ');
-			const newState = { ...workState, type: currentType };
+		if (!workState.type || !isShortListLoadAttemptedRef.current) return;
+
+		let currentType = workState.type;
+
+		if ((!namesToShortList || namesToShortList.length === 0) && currentType !== typeNewOrderId.current) {
+			dispatch(workflows.actions.setError({
+				status: 404,
+				message: `В выбранном номере выбранного журнала нет материалов. Тип «${getTitleByID(typesOfWorkArrayRef.current, currentType)}» делать не к чему.`,
+			}));
+
+			const newState = { ...workState, type: typeNewOrderId.current };
 			setWorkState(newState);
 		}
+		if (currentType === typeNewOrderId.current && prevTypeRef.current !== typeNewOrderId.current) {
+			if (namesToShortList) {
+				setShortList(namesToShortList, currentType);
+			}
+		}
+		prevTypeRef.current = currentType;
 		setShowAnotherNameHandler(currentType);
 	}, [workState.type]);
 
+	const debounceSetShortList = debounce(setShortList);
 	useEffect(() => {
 		if (workState.firm !== '' && workState.modification !== '' && namesToShortList && namesToShortList.length > 0) {
-			setShortList(namesToShortList, workState.type as string);
+			debounceSetShortList(namesToShortList, workState.type as string);
 		}
 	}, [workState.title]);
 
 	const setShowAnotherNameHandler = (currentType: string) => {
 
-		const index = typesOfWorkArray.findIndex(obj => obj._id === currentType);
-		if (index !== -1) {
-			setShowAnotherName(typesOfWorkArray[index].title != 'Новый заказ');
-		}
+		setShowAnotherName(currentType !== typeNewOrderId.current);
 	};
 
 	const dispatch = useDispatch<TAppDispatch>();
@@ -242,23 +290,45 @@ function CreateMainComponent() {
 		return namesToShortListRef.current?.find(obj => obj._id === id)?.title;
 	};
 
+	const workflowsObjectRef = useRef(workflowsObject);
+	useEffect(() => {
+		workflowsObjectRef.current = workflowsObject;
+	}, [workflowsObject]);
+
+	const typesOfWorkArrayRef = useRef(typesOfWorkArray);
+	useEffect(() => {
+		typesOfWorkArrayRef.current = typesOfWorkArray;
+	}, [typesOfWorkArray]);
+
+
 	const saveWork = async () => {
-		const currentTypeIndex = typesOfWorkArray.findIndex(obj => obj._id === workStateRef.current.type);
-		const IdOfNewOrderType = getIDByTitle(typesOfWorkArray, 'Новый заказ');
-		const work: IWorkflowUpdate = id ? workflowsObject[id] : {};
-		const data: IWorkflowUpdate = id ? { _id: id } : {};
-		if (!id || work.firm != workStateRef.current.firm) data.firm = workStateRef.current.firm;
-		if (!id || work.modification != workStateRef.current.modification) data.modification = workStateRef.current.modification;
-		if (!id || work.title != workStateRef.current.title) data.title = workStateRef.current.title;
-		if (!id || work.type != workStateRef.current.type) data.type = workStateRef.current.type;
-		if (!id || work.countPages != workStateRef.current.countPages) data.countPages = workStateRef.current.countPages;
-		if (!id || work.countPictures != workStateRef.current.countPictures) data.countPictures = workStateRef.current.countPictures;
-		if (!id || work.urgency != workStateRef.current.urgency) data.urgency = workStateRef.current.urgency;
-		if (!id || work.currentDepartment != workStateRef.current.currentDepartment) data.currentDepartment = workStateRef.current.currentDepartment;
-		if (!id || work.setToStat != workStateRef.current.setToStat) data.setToStat = workStateRef.current.setToStat;
-		if (!id || work.description != workStateRef.current.description) data.description = workStateRef.current.description;
-		if ((!id || work.mainId != workStateRef.current.mainId) && typesOfWorkArray[currentTypeIndex].title != 'Новый заказ') data.mainId = workStateRef.current.mainId;
-		if (!id && workStateRef.current.type != IdOfNewOrderType) data.title = getTitleFromShortList(workStateRef.current.mainId!);
+
+		if (!calculateCanSave(namesToShortListRef.current)) return;
+
+		const work: IWorkflowUpdate = id ? workflowsObjectRef.current[id] : {};
+
+		const data: IWorkflowUpdate = { ...workStateRef.current };
+
+		if (id) {
+			data._id = id;
+		}
+
+		Object.keys(workStateRef.current).forEach(key => {
+			if (id && work[key as keyof IWorkflowUpdate] === workStateRef.current[key as keyof IWorkflowUpdate]) {
+				delete data[key as keyof IWorkflowUpdate];
+			}
+		});
+
+		if (workStateRef.current.type != typeNewOrderId.current) {
+
+			data.title = getTitleFromShortList(workStateRef.current.mainId!);
+
+			if ((!id || work.mainId != workStateRef.current.mainId)) {
+				data.mainId = workStateRef.current.mainId;
+			}
+		} else {
+			delete data.mainId;
+		}
 
 		if (id) dispatch(workflows.actions.updateElement(data));
 		dispatch(patchOne({ url: 'workflows', data }));
@@ -280,16 +350,13 @@ function CreateMainComponent() {
 			setToStat: true,
 			description: '',
 		});
+		typeNewOrderId.current = '';
 		setCanAutoConvert(false);
 		setNamesToShortList(null);
 		setCanSave(false);
 		setShowAnotherName(false);
 		if (id) navigate('/main');
 	};
-
-	useEffect(() => {
-		setShowAnotherNameHandler(workState.type as string);
-	}, [workState.type]);
 
 	const canConvertDescription = (allDescription: string | undefined) => {
 		if (allDescription) {

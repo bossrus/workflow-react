@@ -1,8 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
 import { IDepartment } from '@/interfaces/department.interface.ts';
-import EditButtonComponent from '@/components/_shared/editButton.component.tsx';
-import DeleteButtonComponent from '@/components/_shared/deleteButton.component.tsx';
+import RoundButtonComponent from '@/components/_shared/roundButton.component.tsx';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { useDispatch } from 'react-redux';
 import { TAppDispatch } from '@/store/_store.ts';
@@ -84,8 +83,8 @@ const OneDepartmentDepartmentsComponent = ({
 			<Box display="flex" flexDirection="column" justifyContent="space-between"
 				// p={1}
 			>
-				<DeleteButtonComponent id={_id} dis={disabled} onClickHere={deleteDepartment} />
-				<EditButtonComponent id={_id} dis={disabled} onClickHere={changeEditedDepartment} />
+				<RoundButtonComponent mode={'delete'} id={_id} dis={disabled} onClickHere={deleteDepartment} />
+				<RoundButtonComponent mode={'edit'} id={_id} dis={disabled} onClickHere={changeEditedDepartment} />
 			</Box>
 		</Box>
 	);

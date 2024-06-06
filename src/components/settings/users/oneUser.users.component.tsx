@@ -1,8 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import { IUser } from '@/interfaces/user.interface.ts';
 import CheckedStringOneUserUsersComponent from '@/components/settings/users/checkedString.oneUser.users.component.tsx';
-import DeleteButtonComponent from '@/components/_shared/deleteButton.component.tsx';
-import EditButtonComponent from '@/components/_shared/editButton.component.tsx';
+import RoundButtonComponent from '@/components/_shared/roundButton.component.tsx';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { setState } from '@/store/_currentStates.slice.ts';
 import { useDispatch } from 'react-redux';
@@ -101,8 +100,8 @@ function OneUserUsersComponent({
 			<Box display="flex" flexDirection="column" justifyContent="space-between"
 				// p={1}
 			>
-				<DeleteButtonComponent id={_id} dis={disabled} onClickHere={deleteUser} />
-				<EditButtonComponent id={_id} dis={disabled} onClickHere={changeEditedUser} />
+				<RoundButtonComponent mode={'delete'} id={_id} dis={disabled} onClickHere={deleteUser} />
+				<RoundButtonComponent mode={'edit'} id={_id} dis={disabled} onClickHere={changeEditedUser} />
 			</Box>
 		</Box>
 	);

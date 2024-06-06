@@ -54,17 +54,22 @@ const InvitesAppComponent = () => {
 			Object.keys(usersObject).length <= 0 ||
 			Object.keys(firmsObject).length <= 0 ||
 			Object.keys(typesOfWorkObject).length <= 0) return;
+
 		const newOrders: IOrders = {};
 		const newChecks: Record<string, boolean> = {};
-		// console.log(inviteToJoin);
+
 		for (const order of Object.values(inviteToJoin)) {
-			if (newOrders[order.workflow] === undefined && order.department === workflowsObject[order.workflow].currentDepartment) {
+
+			const workflow = workflowsObject[order.workflow];
+
+			if (newOrders[order.workflow] === undefined && order.department === workflow.currentDepartment) {
+
 				newChecks[order.workflow] = true;
-				const description = getTitleByID(firmsObject, workflowsObject[order.workflow].firm)
+				const description = getTitleByID(firmsObject, workflow.firm)
 					+ ' №'
-					+ getTitleByID(modificationsObject, workflowsObject[order.workflow].modification)
+					+ getTitleByID(modificationsObject, workflow.modification)
 					+ ', '
-					+ getTitleByID(typesOfWorkObject, workflowsObject[order.workflow].type)
+					+ getTitleByID(typesOfWorkObject, workflow.type)
 					+ ', '
 					+ getTitleByID(departmentsObject, order.department);
 
@@ -86,8 +91,6 @@ const InvitesAppComponent = () => {
 
 	const dispatch = useDispatch<TAppDispatch>();
 	const takeWorks = (mode: 'all' | 'nothing' | 'byChecks' = 'byChecks') => {
-		// console.log('взяли', mode);
-		// console.log('\tchecks = ', checksRef.current);
 		const data: string[] = [];
 		if (mode === 'byChecks' || mode === 'all') {
 			for (let key in checksRef.current) {
