@@ -99,7 +99,6 @@ const InvitesAppComponent = () => {
 				}
 			}
 		}
-		// console.log('bnjuj data = ', data);
 		(async () => {
 			try {
 				if (data.length > 0) {
@@ -107,11 +106,9 @@ const InvitesAppComponent = () => {
 				}
 			} catch (error) {
 				if (axios.isAxiosError(error)) {
-					// Now TypeScript knows error is an AxiosError, allowing access to error.response
 					const errorMessage = error.response?.data;
 					dispatch(workflows.actions.setError(errorMessage));
 				} else {
-					// Handle non-Axios errors or provide a generic error message
 					dispatch(workflows.actions.setError('An unexpected error occurred'));
 				}
 			}
@@ -142,36 +139,34 @@ const InvitesAppComponent = () => {
 			{
 				Object.keys(orders).length > 0 &&
 				<ModalAppComponent>
-					<h2 style={{ marginTop: 0, textAlign: 'center' }}>Вас приглашают присоединиться к
+					<h2
+						className={'margin-top-0 text-align-center'}
+					>Вас приглашают присоединиться к
 						заказ{Object.keys(orders).length == 1 ? 'у' : 'ам'}:</h2>
 					<Box
-						display="flex"
-						flexDirection={'column'}
-						height={'100%'}
-						width={'100%'}
+						className={'display-flex flex-direction-column height-100 width-100'}
 					>
 						{
 							Object.entries(orders).map(([key, value]) => (
 								<Box
-									display="flex"
-									flexDirection={'row'}
-									width={'100%'}
-									flexWrap={'wrap'}
 									key={key}
-									gap={1}
-									alignItems={'center'}
+									className={'display-flex flex-direction-row width-100 flex-wrap gap-1su align-items-center'}
 								>
 									<Box>
 										<strong>{value.title}</strong>
 									</Box>
-									<Box flexGrow={1}>
+									<Box
+										className={'flex-grow1'}
+									>
 										<small>
 											(<i>
 											{value.description}
 										</i>)
 										</small>
 									</Box>
-									<Box className={'scale'} sx={{ mr: '-30px' }}>
+									<Box
+										className={'scale-08 margin-right-minus30px'}
+									>
 										<SwitchButtonComponent
 											checkState={checks[key]}
 											changeChecked={(checked) => handleSwitchChange(key, checked)}
@@ -189,11 +184,8 @@ const InvitesAppComponent = () => {
 					</Box>
 					<Button
 						variant="outlined"
-						size="small"
-						fullWidth
-						sx={{ mt: 2, borderRadius: '10px' }}
 						color={'success'}
-						className={'up-shadow'}
+						className={'border-radius-10px width-100 margin-top-2su font-size-0875rem padding-6px-16px up-shadow'}
 						onClick={() => takeWorks('byChecks')}
 					>
 						Ок
@@ -204,7 +196,7 @@ const InvitesAppComponent = () => {
 						</strong>
 						{' — '}
 						<i>
-						<span className={'green-text'}>
+						<span className={'color-green'}>
 							одобрить
 						</span> присоединение ко всем заказам, вне зависимости от переключателей
 						</i>
@@ -214,7 +206,7 @@ const InvitesAppComponent = () => {
 						</strong>
 						{' — '}
 						<i>
-							<span className={'red-text'}>
+							<span className={'color-red'}>
 								отменить
 							</span> присоединение ко всем заказам, вне зависимости от
 							переключателей

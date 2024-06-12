@@ -448,7 +448,7 @@ function CreateMainComponent() {
 			<Box display={'flex'} flexDirection={'column'} flexGrow={1}>
 				<Box display="flex" flexDirection="column" height={'100%!important'} flexGrow={1}>
 					<table
-						className={'table-container-pb10'}
+						className={'table-container-pb10px'}
 					>
 						<tbody>
 						<tr>
@@ -515,7 +515,7 @@ function CreateMainComponent() {
 
 			<Box minWidth={250} display={'flex'} flexDirection={'column'} pt={1}>
 				<table
-					className={'table-container-pb10'}
+					className={'table-container-pb10px'}
 				>
 					<tbody>
 					<tr>
@@ -572,7 +572,7 @@ function CreateMainComponent() {
 								variant="standard"
 								value={workState.title}
 								onChange={(e) => changeField('title', e.target.value)}
-								className={`${showAnotherName ? 'inactive' : ''}`}
+								className={`${showAnotherName ? 'opacity-30' : ''}`}
 							/>
 							{
 								namesToShortList &&
@@ -583,7 +583,7 @@ function CreateMainComponent() {
 								workState.title.length > 0 &&
 								<FormControl variant="standard" fullWidth>
 									<Select
-										className={`${showAnotherName ? '' : 'inactive'}`}
+										className={`${showAnotherName ? '' : 'opacity-30'}`}
 										value={workState.mainId}
 										onChange={(event) => {
 											changeField('mainId', event.target.value);

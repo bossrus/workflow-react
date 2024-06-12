@@ -12,6 +12,8 @@ import { visuallyHidden } from '@mui/utils';
 import { IWorkflow } from '@/interfaces/workflow.interface.ts';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { IOrder } from '@/interfaces/databases.interface.ts';
+import { Button } from '@mui/material';
+import { useEffect } from 'react';
 
 interface IBodyTableProps {
 	rows: IWorkflow[];
@@ -19,7 +21,8 @@ interface IBodyTableProps {
 	setSortByField: (field: keyof IWorkflow) => void,
 	setSortDirection: (field: IOrder) => void,
 	sortByField: keyof IWorkflow,
-	sortDirection: IOrder
+	sortDirection: IOrder,
+	checkSelected: (selectedList: string[]) => void;
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -103,6 +106,7 @@ interface EnhancedTableProps {
 	order: IOrder;
 	orderBy: keyof IWorkflow;
 	rowCount: number;
+
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
@@ -167,6 +171,7 @@ export default function BodyTableStatComponent({
 												   setSortByField,
 												   sortDirection,
 												   setSortDirection,
+												   checkSelected,
 											   }: IBodyTableProps) {
 	const [selected, setSelected] = React.useState<readonly string[]>([]);
 
@@ -181,9 +186,14 @@ export default function BodyTableStatComponent({
 		setSortByField(property as keyof IWorkflow);
 	};
 
+	useEffect(() => {
+		setSelected([]);
+	}, [rows]);
+
 	const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (event.target.checked) {
-			const newSelected = rows.map((n) => n._id as string);
+			const newSelected = rows.filter(row => !row.isCheckedOnStat).map(row => row._id as string);
+			console.log('newSelected = ', newSelected);
 			setSelected(newSelected);
 			return;
 		}
@@ -216,6 +226,11 @@ export default function BodyTableStatComponent({
 			stableSort(rows, getComparator(sortDirection, sortByField as keyof IWorkflow)),
 		[sortDirection, sortByField, rows],
 	);
+
+	function sendCheckedInfo() {
+		checkSelected([...selected]);
+		setSelected([]);
+	}
 
 	return (
 		<Box sx={{ width: '100%', height: '100%' }}>
@@ -255,17 +270,30 @@ export default function BodyTableStatComponent({
 										key={row._id}
 										selected={isItemSelected}
 										sx={{ cursor: 'pointer' }}
-										onClick={(event) => handleClick(event, row._id as string)}
+
 
 									>
 										<TableCell padding="checkbox">
-											<Checkbox
-												color="primary"
-												checked={isItemSelected}
-												inputProps={{
-													'aria-labelledby': labelId,
-												}}
-											/>
+
+											{!row.isCheckedOnStat
+												? <Checkbox
+													color="primary"
+													checked={isItemSelected}
+													inputProps={{
+														'aria-labelledby': labelId,
+													}}
+													onClick={(event) => handleClick(event, row._id as string)}
+												/>
+												: <>
+													{new Date(row.isPublished!).toLocaleString('ru-RU', {
+														day: '2-digit',
+														month: '2-digit',
+														year: '2-digit',
+														hour: '2-digit',
+														minute: '2-digit',
+													})}
+												</>
+											}
 										</TableCell>
 										<TableCell
 											align="left"
@@ -323,8 +351,21 @@ export default function BodyTableStatComponent({
 							})}
 						</TableBody>
 					</Table>
+					<Box px={2} pb={2}>
+						<Button
+							disabled={selected.length === 0}
+							variant="contained"
+							size="small"
+							fullWidth
+							sx={{ borderRadius: '10px', marginTop: '10px' }}
+							color={'info'}
+							className={'up-shadow'}
+							onClick={() => sendCheckedInfo()}
+						>
+							Отметить выделенное
+						</Button>
+					</Box>
 				</TableContainer>
-				// </Paper>
 			}
 		</Box>
 	);

@@ -36,19 +36,19 @@ const DeleteFlashAppComponent = ({ message }: IDeleteFlashProps) => {
 	return (
 		<>
 			{message && (
-				<Box height={'100%'} width={'100%'}>
+				<Box
+					className={'width-100 height-100'}
+				>
 					<ModalAppComponent>
 						<Box
-							display="flex"
-							flexDirection={'column'}
-							textAlign={'center'}
+							className={'display-flex flex-direction-column text-align-center'}
 						>
 							Вы хотите удалить
 							<h2
 								style={{ color: '#ed6c02' }}
 								dangerouslySetInnerHTML={{ __html: message.message }}
 							>
-								{/*{message.message}*/}
+								{message.message}
 							</h2>
 							<h3
 								style={{ marginTop: 0, textAlign: 'center' }}
@@ -56,25 +56,21 @@ const DeleteFlashAppComponent = ({ message }: IDeleteFlashProps) => {
 								Вы уверены?
 							</h3>
 						</Box>
-						<Box display="flex" justifyContent="space-between">
+						<Box
+							className={'display-flex justify-content-space-between'}
+						>
 							<Button
 								variant="contained"
-								size="small"
-								fullWidth
-								sx={{ mt: 2, borderRadius: '10px', flex: 1, mr: 1 }}
 								color={'warning'}
-								className={'up-shadow'}
+								className={'padding-6px-16px font-size-0875rem up-shadow width-100 margin-top-2su border-radius-10px flex-1 margin-right-1su'}
 								onClick={() => switchOff(true)}
 							>
 								Да, удалите.
 							</Button>
 							<Button
 								variant="contained"
-								size="small"
-								fullWidth
-								sx={{ mt: 2, borderRadius: '10px', flex: 1, ml: 1 }}
 								color={'success'}
-								className={'up-shadow'}
+								className={'flex-1 margin-left-1su border-radius-10px margin-top-2su up-shadow width-100 padding-6px-16px font-size-0875rem'}
 								onClick={() => switchOff(false)}
 							>
 								Ни в коем случае! Оставьте как есть.

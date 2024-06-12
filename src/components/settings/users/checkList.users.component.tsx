@@ -38,7 +38,7 @@ function CheckListUsersComponent({ list, usingElements, changeUsingElements }: I
 							/>}
 							label={
 								<Typography
-									className={usingElements.includes(department._id) ? 'text-bold' : 'text-gray'}>
+									className={usingElements.includes(department._id) ? 'text-bold' : 'color-my-gray'}>
 									{department.title}
 								</Typography>
 							}

@@ -31,17 +31,19 @@ const SecurityFlashAppComponent = () => {
 	}, []);
 
 	return (
-		<Box height={'100%'} width={'100%'} onKeyDown={switchOff} onClick={switchOff}>
+		<Box
+			className={'height-100 width-100'}
+			onKeyDown={switchOff}
+			onClick={switchOff}
+		>
 			<ModalAppComponent>
-				<h2 style={{ marginTop: 0, textAlign: 'center' }}>
+				<h2
+					className={'margin-top-0 text-align-center'}
+				>
 					Внимание!
 				</h2>
 				<Box
-					display="flex"
-					flexDirection={'column'}
-					maxHeight={'300px'}
-					maxWidth={'300px'}
-					textAlign={'center'}
+					className={'display-flex flex-direction-column max-height-300px max-width-300px text-align-center'}
 				>
 					<i>Из-за правил безопасности браузера, автоматическое воспроизведение аудио возможно только
 						после того, как вы взаимодействуете с сайтом.</i>
@@ -55,11 +57,8 @@ const SecurityFlashAppComponent = () => {
 				</Box>
 				<Button
 					variant="contained"
-					size="small"
-					fullWidth
-					sx={{ mt: 2, borderRadius: '10px' }}
 					color={'warning'}
-					className={'up-shadow'}
+					className={'size-small width-100 margin-top-2su border-radius-10px up-shadow'}
 					onClick={() => switchOff()}
 				>
 					Разблокировать аудио

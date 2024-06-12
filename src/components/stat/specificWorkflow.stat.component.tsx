@@ -6,6 +6,8 @@ import { ILog, ILogObject } from '@/interfaces/log.interface.ts';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { useNavigate } from 'react-router-dom';
+import { TAppDispatch, workflows } from '@/store/_store.ts';
+import { useDispatch } from 'react-redux';
 
 interface ISpecificWorkflowStatComponentProps {
 	propsId: string;
@@ -27,7 +29,7 @@ function specificWorkflowStatComponent({
 	} = useReduxSelectors();
 
 	useEffect(() => {
-		loadData();
+		loadData().then();
 	}, []);
 
 	const makeLoglist = (idsList: string[], originalList: ILogObject) => {
@@ -44,20 +46,20 @@ function specificWorkflowStatComponent({
 		setLoglist(newList);
 	};
 
+	const dispatch = useDispatch<TAppDispatch>();
+
 	const loadData = async () => {
 		try {
 			const res = await axiosCreate.post('workflows/stat/' + propsId, {});
-			// console.log('\nрезультат запроса:\n', res.data);
 			const dataArray: string[] = [];
 			setWorkflowsList(res.data as IWorkflow[]);
 			(res.data as IWorkflow[]).forEach((item) => {
 				dataArray.push(item._id as string);
 			});
 			const result = await axiosCreate.post('/log', { ids: dataArray });
-			// console.log(result.data);
 			makeLoglist(dataArray, result.data as ILogObject);
 		} catch (e) {
-			// console.log('неудачный запрос', e);
+			dispatch(workflows.actions.setError(e as string));
 		}
 		setIsLoading(false);
 	};
@@ -111,7 +113,7 @@ function specificWorkflowStatComponent({
 										<table className={'table-container'}>
 											<tbody>
 											<tr>
-												<td className={'align-top just-table-container'}>
+												<td className={'vertical-align-top just-table-container-pb0'}>
 													<Box flexGrow={1} p={1} display="flex" gap={1}
 														 overflow="auto"
 														 flexDirection="column"
@@ -175,7 +177,7 @@ function specificWorkflowStatComponent({
 																				</AccordionSummary>
 																				<AccordionDetails
 																				>
-																					<pre className={'warp-text'}>
+																					<pre className={'text-warp'}>
 																						<small><small>
 																							{workflow.description}
 																						</small></small>

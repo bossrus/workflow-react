@@ -64,8 +64,9 @@ function LoginComponent() {
 	}, [loginError]);
 
 	return (
-		<Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" width={'100%'}
-			 height={'100%'}>
+		<Box
+			className={'display-flex flex-direction-column justify-content-center align-items-center width-100 height-100'}
+		>
 			<Card elevation={10}
 				  className={`border-round-1em ${showError ? 'error-border' : ''}`}>
 				<CardContent>
@@ -77,7 +78,7 @@ function LoginComponent() {
 						id="login-small"
 						size="small"
 						variant="standard"
-						fullWidth
+						className={'width-100'}
 						value={login}
 						onChange={(e) => setLogin(e.target.value)}
 						onKeyDown={(e) => {
@@ -91,7 +92,7 @@ function LoginComponent() {
 						id="standard-adornment-password"
 						type={showPassword ? 'text' : 'password'}
 						variant="standard"
-						fullWidth
+						className={'width-100'}
 						InputProps={{
 							endAdornment: (
 								<InputAdornment position="end">
@@ -116,8 +117,7 @@ function LoginComponent() {
 					<Button
 						variant="contained"
 						color="primary"
-						sx={{ mt: '2em' }}
-						fullWidth
+						className={'margin-top-2em width-100'}
 						onClick={clickLoginButton}
 						disabled={login == '' || password == ''}
 					>
@@ -127,7 +127,9 @@ function LoginComponent() {
 			</Card>
 			<Card className={`errorCard ${showError !== '' ? 'show' : ''}`}>
 				<CardContent>
-					<Typography variant="h6" sx={{ m: 'auto' }}>
+					<Typography variant="h6"
+								className={'margin-auto'}
+					>
 						{showError}
 					</Typography>
 				</CardContent>

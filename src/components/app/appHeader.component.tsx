@@ -32,10 +32,15 @@ function AppHeaderComponent(props: IAppHeaderProps) {
 	return (
 		<>
 			{departments && me.name && Object.keys(departments).length > 0 &&
-				(<Box display="flex" flexDirection="row" alignItems="center"
-					  marginBottom={'20px'} flexWrap="wrap">
-					<Box display="flex" justifyContent="flex-start" alignItems="center" flexWrap="wrap">
-						<Box marginRight={'20px'}>
+				(<Box
+					className={'display-flex flex-direction-row align-items-center flex-wrap margin-bottom-20px'}
+				>
+					<Box
+						className={'display-flex justify-content-flex-start align-items-center flex-wrap'}
+					>
+						<Box
+							className={'margin-right-20px'}
+						>
 							<OnlineIconComponent
 								isConnected={isConnected}
 								onlineUsers={onlineUsers}
@@ -43,14 +48,16 @@ function AppHeaderComponent(props: IAppHeaderProps) {
 								connectToWebsocket={connectToWebsocket} />
 						</Box>
 						{me.name}
-						<FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+						<FormControl
+							variant="standard"
+							className={'margin-1su min-width-120px'}
+						>
 							<Select
 								value={me.currentDepartment}
 								onChange={(event) => {
 									changeMyDepartment(event.target.value);
 								}}
-								sx={{ pl: '5px' }}
-
+								className={'padding-left-5px'}
 							>
 								{me && me.departments && Object.keys(departments).length > 0 && (
 									me.departments.map((item) => (
@@ -63,9 +70,13 @@ function AppHeaderComponent(props: IAppHeaderProps) {
 							</Select>
 						</FormControl>
 					</Box>
-					<Box display="flex" flexGrow={1} justifyContent="center" alignItems="center">
+					<Box
+						className={'display-flex flex-grow1 justify-content-center align-items-center'}
+					>
 					</Box>
-					<Box display="flex" justifyContent="flex-end" alignItems="center" flexWrap="wrap">
+					<Box
+						className={'display-flex justify-content-flex-end align-items-center flex-wrap'}
+					>
 						<RightButtonsGroupComponent
 							isSoundOn={me.isSoundOn as boolean}
 							changeSounds={changeSounds}

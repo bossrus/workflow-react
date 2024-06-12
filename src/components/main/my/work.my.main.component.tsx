@@ -200,8 +200,8 @@ function WorkMyMainComponent({ incomingWorkID }: IProps) {
 							<table className={'table-container'}>
 								<tbody>
 								<tr>
-									<td className={'align-top'}>
-							<pre className={'warp-text table-container'}
+									<td className={'vertical-align-top'}>
+							<pre className={'text-warp table-container'}
 								 style={{ boxSizing: 'border-box', marginTop: 0 }}>
 							{workflowsObject[incomingWorkID].description}
 							</pre>
@@ -212,10 +212,10 @@ function WorkMyMainComponent({ incomingWorkID }: IProps) {
 						</Box>
 						<Box minWidth={'300px'} height={'100%'} display={'flex'}
 							 flexDirection={'column'}>
-							<table className={'just-table-container'}>
+							<table className={'just-table-container-pb0'}>
 								<tbody>
 								<tr>
-									<td className={'align-top'}>
+									<td className={'vertical-align-top'}>
 
 										<Box
 											height={'100%'}

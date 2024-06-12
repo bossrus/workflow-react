@@ -6,8 +6,8 @@ import { TAppDispatch } from '@/store/_store.ts';
 import { setState } from '@/store/_currentStates.slice.ts';
 import { IFirmUpdate } from '@/interfaces/firm.interface.ts';
 import { patchOne } from '@/store/_shared.thunks.ts';
-import makeSlug from '@/_services/makeSlug.service.ts';
 import useEscapeKey from '@/_hooks/useEscapeKey.hook.ts';
+import makeSlug from '@/_services/makeSlug.service.ts';
 
 function EditFirmFormComponent() {
 	const { firmsObject, states: { currentFirm } } = useReduxSelectors();
@@ -16,31 +16,52 @@ function EditFirmFormComponent() {
 	const [titleOfEditedFirm, setTitleOfEditedFirm] = useState('');
 	const [stopSave, setStopSave] = useState(true);
 
-	useEffect(() => {
+	const setStates = () => {
 		if (currentFirm) {
 			setTitle(firmsObject[currentFirm].title);
 			setTitleOfEditedFirm(firmsObject[currentFirm].title);
 			setBasicPriority(firmsObject[currentFirm].basicPriority);
 		}
-	}, [currentFirm, firmsObject]);
+	};
 
 	useEffect(() => {
-		let canSave = false;
+		setStates();
+	}, [currentFirm, firmsObject]);
 
-		if (title.trim() !== '') {
-			let titleSlug = makeSlug(title.trim());
-			if (currentFirm !== undefined) {
-				let currentFirmSlug = makeSlug(firmsObject[currentFirm].title);
-				let isTitleChanged = titleSlug !== currentFirmSlug;
-				let isBasicPriorityChanged = basicPriority !== firmsObject[currentFirm].basicPriority;
-				canSave = isTitleChanged || isBasicPriorityChanged;
-			} else {
-				canSave = !(Object.values(firmsObject).some(firm => makeSlug(firm.title.trim()) === titleSlug));
-			}
+	const shouldAllowSave = (
+		title: string,
+		basicPriority: number,
+		currentFirm: string | undefined,
+		firmsObject: {
+			[key: string]: { title: string; basicPriority: number }
+		},
+	): boolean => {
+		if (title.trim() === '') {
+			return false;
 		}
 
+		const titleSlug = makeSlug(title);
+
+		let result: boolean;
+		if (currentFirm !== undefined) {
+			const currentFirmSlug = makeSlug(firmsObject[currentFirm].title);
+
+			const isTitleChanged = titleSlug !== currentFirmSlug;
+			const isBasicPriorityChanged = basicPriority !== firmsObject[currentFirm].basicPriority;
+
+			result = isTitleChanged || isBasicPriorityChanged;
+
+		} else {
+			result = !Object.values(firmsObject).some((firm) => makeSlug(firm.title) === titleSlug);
+		}
+		return result;
+	};
+
+	useEffect(() => {
+		const canSave = shouldAllowSave(title, basicPriority, currentFirm, firmsObject);
 		setStopSave(!canSave);
 	}, [title, basicPriority, currentFirm, firmsObject]);
+	;
 
 	const dispatch = useDispatch<TAppDispatch>();
 

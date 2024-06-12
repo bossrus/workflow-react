@@ -54,7 +54,7 @@ function AllWorksMainComponent() {
 						<table className={'table-container'}>
 							<tbody>
 							<tr>
-								<td className={'align-top'}>
+								<td className={'vertical-align-top'}>
 									<Box flexGrow={1} p={1} display="flex" gap={1}
 										 overflow="auto"
 										 flexDirection="column"

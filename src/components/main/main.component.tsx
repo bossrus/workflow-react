@@ -42,11 +42,10 @@ function MainComponent() {
 	const [publishBefore, setPublishBefore] = useState(0);
 
 	const setBefore = (my: number, dep: number, publ: number) => {
-		setMyBefore(my);
-		setDepartmentBefore(dep);
-		setPublishBefore(publ);
+		if (my !== myBefore) setMyBefore(my);
+		if (dep !== departmentBefore) setDepartmentBefore(dep);
+		if (publ !== publishBefore) setPublishBefore(publ);
 	};
-
 
 	useEffect(() => {
 		setTabs([]);

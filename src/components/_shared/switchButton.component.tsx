@@ -5,6 +5,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { ReactElement } from 'react';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import '@/scss/main.scss';
 
 interface IProps {
 	checkState: boolean;
@@ -16,15 +17,9 @@ interface IProps {
 	mode: 'usual' | 'sound';
 }
 
-const stylesIcon = {
-	width: 20,
-};
+const stylesIcon = 'width-20px';
 
-const stylesSwitch = {
-	width: 32,
-	height: 32,
-	boxSizing: 'border-box',
-};
+const stylesSwitch = 'width-32px height-32px box-sizing-border-box';
 
 interface IIconConfig {
 	checked: ReactElement;
@@ -33,13 +28,13 @@ interface IIconConfig {
 
 const icons: Record<IProps['mode'], IIconConfig> = {
 	usual: {
-		checked: <CancelOutlinedIcon sx={{ color: 'black', ...stylesIcon }} />,
-		unchecked: <CheckCircleOutlineIcon sx={{ color: 'white', ...stylesIcon }} />,
+		checked: <CancelOutlinedIcon className={`color-black ${stylesIcon}`} />,
+		unchecked: <CheckCircleOutlineIcon className={`color-white ${stylesIcon}`} />,
 	},
 	sound:
 		{
-			unchecked: <VolumeOffIcon sx={{ color: 'black', ...stylesIcon }} />,
-			checked: <VolumeUpIcon sx={{ color: 'white', ...stylesIcon }} />,
+			unchecked: <VolumeOffIcon className={`color-black ${stylesIcon}`} />,
+			checked: <VolumeUpIcon className={`color-white ${stylesIcon}`} />,
 		},
 };
 const SwitchButtonComponent = ({
@@ -57,21 +52,18 @@ const SwitchButtonComponent = ({
 			<FormControlLabel
 				control={
 					<MaterialUISwitch
-						sx={{ m: 1 }}
+						className={'margin-1su'}
 						icon={
-							<SwitchStyledIcon sx={{
-								backgroundColor: falseBackgroundColor,
-								...stylesSwitch,
-
-							}}>
+							<SwitchStyledIcon
+								className={stylesSwitch}
+								sx={{ backgroundColor: falseBackgroundColor }}>
 								{icons[mode].unchecked}
 							</SwitchStyledIcon>
 						}
 						checkedIcon={
-							<SwitchStyledIcon sx={{
-								backgroundColor: trueBackgroundColor,
-								...stylesSwitch,
-							}}>
+							<SwitchStyledIcon
+								className={stylesSwitch}
+								sx={{ backgroundColor: trueBackgroundColor }}>
 								{icons[mode].checked}
 							</SwitchStyledIcon>
 						}
@@ -79,7 +71,8 @@ const SwitchButtonComponent = ({
 				}
 				label={
 					<Typography
-						sx={{ fontWeight: 'bold', color: checkState ? trueBackgroundColor : falseBackgroundColor }}>
+						className={'text-warp font-weight-bold'}
+						sx={{ color: checkState ? trueBackgroundColor : falseBackgroundColor }}>
 						{checkState
 							? trueTitle
 							: falseTitle

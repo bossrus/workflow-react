@@ -25,7 +25,7 @@ function FirmsComponents() {
 			<table className={'table-container'}>
 				<tbody>
 				<tr>
-					<td className={'align-top'}>
+					<td className={'vertical-align-top'}>
 						<Box display="flex" flexWrap="wrap" flexGrow={1} overflow="auto" p={2}
 							 sx={{ height: '100%', alignContent: 'flex-start' }}>
 							{sortedFirms.map((firm) => (

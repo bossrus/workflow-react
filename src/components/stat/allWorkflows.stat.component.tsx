@@ -1,4 +1,4 @@
-import { Box, Button } from '@mui/material';
+import { Box } from '@mui/material';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { useEffect, useState } from 'react';
 import axiosCreate from '@/_api/axiosCreate.ts';
@@ -7,7 +7,7 @@ import { IWorkflow } from '@/interfaces/workflow.interface.ts';
 import FiltersStatComponent from '@/components/stat/filters.stat.component.tsx';
 import BodyTableStatComponent from '@/components/stat/body-table.stat.component.tsx';
 import { useDispatch } from 'react-redux';
-import { TAppDispatch } from '@/store/_store.ts';
+import { TAppDispatch, workflows } from '@/store/_store.ts';
 import { setState } from '@/store/_currentStates.slice.ts';
 import { useNavigate } from 'react-router-dom';
 import { IOrder } from '@/interfaces/databases.interface.ts';
@@ -82,42 +82,11 @@ function AllWorkflowsStatComponent() {
 
 	useEffect(() => {
 		if (states.statState == undefined)
-			loadData();
+			loadData().then();
 	}, []);
 
 	const dispatch = useDispatch<TAppDispatch>();
 
-
-	// useEffect(() => {
-	// 	if (!needUpdate) return;
-	// 	sortStatisticData();
-	// }, [statisticData]);
-
-	// const sortStatisticData = (newSortField?: IFieldList) => {
-	// 	// Определяем направление сортировки и поле для сортировки
-	// 	const localSortDirection: IIncreaseDecrease = newSortField === sortByField
-	// 		? (sortDirection === 'increase' ? 'decrease' : 'increase')
-	// 		: 'increase';
-	// 	const localSortField: IFieldList = newSortField || sortByField;
-	//
-	// 	// Обновляем состояние, если это необходимо
-	// 	if (newSortField) {
-	// 		setSortByField(localSortField);
-	// 	}
-	// 	setSortDirection(localSortDirection);
-	//
-	// 	// Выполняем сортировку
-	// 	const sortedData: IWorkflow[] = [...statisticData].sort((a, b) => {
-	// 		const aValue = a[localSortField] ?? '';
-	// 		const bValue = b[localSortField] ?? '';
-	//
-	// 		// Сравниваем значения, учитывая направление сортировки
-	// 		return (aValue < bValue ? -1 : 1) * (localSortDirection === 'increase' ? 1 : -1);
-	// 	});
-	//
-	// 	needUpdate = false;
-	// 	setStatisticData(sortedData);
-	// };
 
 	const loadData = async () => {
 		const data: IDataForStatistic = {};
@@ -139,11 +108,9 @@ function AllWorkflowsStatComponent() {
 		}
 		try {
 			const res = await axiosCreate.post('workflows/stat', data);
-			// console.log('\nрезультат запроса:\n', res.data);
-			// needUpdate = true;
 			setStatisticData(res.data);
 		} catch (e) {
-			// console.log('неудачный запрос', e);
+			dispatch(workflows.actions.setError(e as string));
 		}
 		setCanUpdate(false);
 	};
@@ -162,7 +129,6 @@ function AllWorkflowsStatComponent() {
 
 
 	useEffect(() => {
-		// console.log('заходим в проверку стейта статистики', states.statState);
 		if (states.statState !== undefined) {
 			setFirm(states.statState.firm);
 			setUseFirm(states.statState.useFirm);
@@ -188,8 +154,7 @@ function AllWorkflowsStatComponent() {
 	useEffect(() => {
 		if (!firstEnter) return;
 		setFirstEnter(false);
-		// console.log('запускаем loadData при', useDate);
-		loadData();
+		loadData().then();
 	}, [firm,
 		useFirm,
 		modification,
@@ -207,7 +172,6 @@ function AllWorkflowsStatComponent() {
 
 	const navigate = useNavigate();
 	const showSpecificWorkflows = (id: string) => {
-		// console.log('сохраняем стейт при ', sortByField, ' > ', sortDirection);
 		const statState = {
 			firm,
 			useFirm,
@@ -226,6 +190,16 @@ function AllWorkflowsStatComponent() {
 			statState,
 		}));
 		navigate('/stat/' + id);
+	};
+	const saveChecked = async (checkList: string[]) => {
+		try {
+			await axiosCreate.patch('workflows/checked', {
+				ids: checkList,
+			});
+			await loadData();
+		} catch (e) {
+			dispatch(workflows.actions.setError(e as string));
+		}
 	};
 
 	return (
@@ -264,6 +238,7 @@ function AllWorkflowsStatComponent() {
 						boxSizing={'border-box'}
 					>
 						<BodyTableStatComponent
+							checkSelected={saveChecked}
 							rows={statisticData}
 							showSpecificWorkflows={showSpecificWorkflows}
 							setSortByField={setSortByField}
@@ -273,20 +248,7 @@ function AllWorkflowsStatComponent() {
 						/>
 					</Box>
 				</Box>
-				<Box px={2} pb={2}>
-					<Button
-						disabled={true} //поставить наличие выделенных работ
-						variant="contained"
-						size="small"
-						fullWidth
-						sx={{ borderRadius: '10px' }}
-						color={'info'}
-						className={'up-shadow'}
-						onClick={() => alert('pressing')}
-					>
-						Отметить выделенное
-					</Button>
-				</Box>
+
 			</Box>
 		</>
 	);

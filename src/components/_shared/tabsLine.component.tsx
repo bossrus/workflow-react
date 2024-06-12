@@ -65,30 +65,30 @@ function TabsLineComponent({ section, chapter, tabs }: IProps) {
 			scrollButtons="auto"
 			allowScrollButtonsMobile
 			aria-label="scrollable auto tabs example"
-			sx={{ minHeight: '33px !important', pt: 2 }}
+			className={'min-height-33px padding-top2su'}
 		>
 			{resultTabs.map(({ label, badge, count }, index) => (
 				<Tab
 					key={index}
-					className="down-shadow my-tabs"
-					sx={{ borderRadius: 3 }}
+					className="down-shadow my-tabs border-radius-3su"
 					label={
-						<Box sx={{ display: 'flex', alignItems: 'center' }}>
+						<Box
+							className={'display-flex align-items-center'}
+						>
 							<span>
-								<span className={activeTab !== index ? 'text-black' : ''}>{label}</span>
+								<span className={activeTab !== index ? 'color-black' : ''}>{label}</span>
 								{' '}
 								<small
-									className={'text-gray'}>(ALT&nbsp;+&nbsp;{needShift && <>SHIFT&nbsp;+&nbsp;</>}{index + 1})</small>
+									className={'color-my-gray'}
+								>
+									(ALT&nbsp;+&nbsp;{needShift && <>SHIFT&nbsp;+&nbsp;</>}{index + 1})
+								</small>
 							</span>
 							{count ? (
 								<Box
+									className={'border-radius-50 display-inline-flex align-items-center margin-left-1su padding-3px'}
 									sx={{
 										bgcolor: badge ? assignColor(badge) : 'white',
-										borderRadius: '50%',
-										display: 'inline-flex',
-										alignItems: 'center',
-										ml: 1,
-										p: '3px',
 									}}
 								>
 									&nbsp;&nbsp;{count}&nbsp;&nbsp;

@@ -7,8 +7,6 @@ export type ICheckboxNames = 'showChecked' | 'showUnchecked';
 function StatComponent() {
 	const { id: paramsId } = useParams();
 
-
-	// console.log(paramsId);
 	return (
 		<>
 			{

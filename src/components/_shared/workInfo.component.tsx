@@ -56,8 +56,8 @@ function WorkInfoComponent({
 		navigate(`/main/create/${id}`);
 	};
 
-	const setShowDescr = (show: boolean) => {
-		setShowDescription(show);
+	const changeShowDescr = () => {
+		setShowDescription(!showDescription);
 	};
 
 	const dispatch = useDispatch<TAppDispatch>();
@@ -75,41 +75,34 @@ function WorkInfoComponent({
 
 	return (
 		<>
-			<Box display="flex"
-				 flexDirection="column"
-				 borderRadius={2}
-				 border={1}
-				 borderColor={'#cbcbcb'}
-				 bgcolor={'#fefefe'}
-				 onMouseOver={() => setShowDescr(true)}
-				 onMouseOut={() => setShowDescr(false)}
-				 textAlign={'center'}
+			<Box
+				className={'display-flex flex-direction-column border-radius-2su border-color-my-gray-light background-color-white'}
+				onClick={() => changeShowDescr()}
+				textAlign={'center'}
 			>
-				<Box display="flex"
-					 flexDirection="row"
-					 width={'100%'}
-					 boxShadow={2}
-					 p={1}
-					 bgcolor={colorProps}
-					 borderRadius={2}
-					 boxSizing={'border-box'}
-					 gap={2}
-					 alignItems={'center'}
-					 flexWrap={'wrap'}
+				<Box
+					bgcolor={colorProps}
+					className={'display-flex flex-direction-row width-100 box-shadow padding-1su border-radius-2su box-sizing-border-box gap-2su align-items-center flex-wrap'}
 				>
 					<Box>
 						{
 							changeChecked !== undefined &&
 							checkedProps !== undefined &&
-							<Checkbox checked={checkedProps}
-									  onChange={() => changeChecked(idProps)} />
+							<Checkbox
+								checked={checkedProps}
+								onChange={() => changeChecked(idProps)}
+							/>
 						}
 						{creator}
 					</Box>
-					<Box flexGrow={1}>
+					<Box
+						className={'flex-grow1'}
+					>
 						<strong>{workflowTitle}</strong>
 					</Box>
-					<Box flexGrow={1}>
+					<Box
+						className={'flex-grow1'}
+					>
 						<Box>
 							{workflowFirmTitle}
 						</Box>
@@ -117,7 +110,9 @@ function WorkInfoComponent({
 							№ {workflowModificationTitle}
 						</Box>
 					</Box>
-					<Box flexGrow={1}>
+					<Box
+						className={'flex-grow1'}
+					>
 						<Box>
 							<i>{workflowTypeTitle}</i>
 						</Box>
@@ -127,7 +122,9 @@ function WorkInfoComponent({
 					</Box>
 					{
 						workflowShowDepartment &&
-						<Box flexGrow={1}>
+						<Box
+							className={'flex-grow1'}
+						>
 							{
 								workflowAdditionalInformationToDepartment &&
 								<Box>
@@ -140,7 +137,9 @@ function WorkInfoComponent({
 						</Box>}
 					{
 						me.canStartStopWorks &&
-						<Box alignItems={'end'}>
+						<Box
+							className={'align-items-end'}
+						>
 							<RoundButtonComponent
 								mode={'edit'}
 								id={idProps}
@@ -159,9 +158,11 @@ function WorkInfoComponent({
 					</Box>
 				</Box>
 				{showDescription &&
-					<Box p={1} textAlign={'left'}>
+					<Box
+						className={'padding-1su text-align-left'}
+					>
 						<small>
-							<pre className={'warp-text'}>
+							<pre className={'text-warp'}>
 								<small>
 									{workflowDescription}
 								</small>

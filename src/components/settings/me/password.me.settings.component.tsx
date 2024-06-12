@@ -1,6 +1,6 @@
 import { Box, Button, IconButton, InputAdornment, TextField } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { FC, useState } from 'react';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { TAppDispatch } from '@/store/_store.ts';
 import { IUser } from '@/interfaces/user.interface.ts';
@@ -8,7 +8,7 @@ import { patchOne } from '@/store/_shared.thunks.ts';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 
 const PasswordSettingsComponent = () => {
-	const { me, departmentsObject } = useReduxSelectors();
+	const { me } = useReduxSelectors();
 
 	const [showPassword, setShowPassword] = useState(false);
 	const [password, setPassword] = useState('');
