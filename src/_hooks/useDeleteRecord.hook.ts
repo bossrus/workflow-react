@@ -6,14 +6,12 @@ import { setState } from '@/store/_currentStates.slice.ts';
 const useDeleteRecord = (_id: string, marker: string, title: string) => {
 	const dispatch = useDispatch<TAppDispatch>();
 
-	const deleteRecord = () => {
+	return () => {
 		dispatch(setState({
 			flashMessage: 'delete',
 			deleteMessage: { id: _id, message: `${marker}<br/>«${title}»`, result: undefined },
 		}));
 	};
-
-	return deleteRecord;
 };
 
 export default useDeleteRecord;

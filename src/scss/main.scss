@@ -39,6 +39,31 @@ body {
 .border-radius-3su {
   border-radius: $spacingUnit * 3 !important;
 }
+.border-none {
+  border: none !important;
+}
+
+.text-field-on-create{
+  @include in-depth;
+  width: 100%;
+  border: none !important;
+  display: flex;
+  flex-grow: 1;
+  border-radius: $spacingUnit *2;
+  background-color: $mainBackgroundColor !important;
+}
+
+.text-field-on-create .MuiInputBase-root {
+    border: none;
+    border-radius: $spacingUnit *2 !important;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.text-field-on-create textarea {
+    overflow: auto !important;
+}
 
 .border-1su {
   border: $spacingUnit !important;
@@ -92,7 +117,7 @@ body {
   background-color: white !important;
 }
 
-.flex-grow1 {
+.flex-grow-1 {
   flex-grow: 1 !important;
 }
 
@@ -170,6 +195,10 @@ body {
 
 .min-width-120px {
   min-width: 120px !important;
+}
+
+.min-width-250px {
+  min-width: 250px !important;
 }
 
 .padding-left-5px {
@@ -263,6 +292,11 @@ body {
 
 .margin-top-2em {
   margin-top: 2em !important;
+}
+
+.padding-y-2su{
+  padding-top: $spacingUnit * 2 !important;
+  padding-bottom: $spacingUnit * 2 !important;
 }
 
 .margin-top-0 {
@@ -383,6 +417,10 @@ body {
 
 .justify-content-center {
   justify-content: center !important;
+}
+
+.overflow-auto{
+  overflow: auto !important;
 }
 
 .color-my-gray {

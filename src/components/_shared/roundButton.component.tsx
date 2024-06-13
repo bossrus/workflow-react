@@ -6,6 +6,7 @@ import { ReactElement } from 'react';
 import AddToPhotosIcon from '@mui/icons-material/AddToPhotos';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
+import { MouseEvent } from 'react';
 
 interface IProps {
 	id: string,
@@ -54,6 +55,11 @@ function RoundButtonComponent({
 								  dis,
 								  mode,
 							  }: IProps) {
+	const clickWithPrevent = (event: MouseEvent) => {
+		event.preventDefault();
+		onClickHere(id);
+	};
+
 	return (
 		<Tooltip
 			title={icons[mode].title}
@@ -63,7 +69,7 @@ function RoundButtonComponent({
 			<IconButton
 				color={icons[mode].color}
 				className={'up-shadow'}
-				onClick={() => onClickHere(id)}
+				onClick={(event: MouseEvent) => clickWithPrevent(event)}
 				disabled={dis}
 			>
 				{icons[mode].icon}

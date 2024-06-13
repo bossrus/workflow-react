@@ -12,6 +12,8 @@ interface IDeleteFlashProps {
 
 const DeleteFlashAppComponent = ({ message }: IDeleteFlashProps) => {
 
+	console.log('зашли в делете модал');
+
 	const dispatch = useDispatch<TAppDispatch>();
 
 	const switchOff = (state: boolean) => {
@@ -47,9 +49,7 @@ const DeleteFlashAppComponent = ({ message }: IDeleteFlashProps) => {
 							<h2
 								style={{ color: '#ed6c02' }}
 								dangerouslySetInnerHTML={{ __html: message.message }}
-							>
-								{message.message}
-							</h2>
+							/>
 							<h3
 								style={{ marginTop: 0, textAlign: 'center' }}
 							>

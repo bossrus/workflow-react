@@ -156,7 +156,7 @@ const InvitesAppComponent = () => {
 										<strong>{value.title}</strong>
 									</Box>
 									<Box
-										className={'flex-grow1'}
+										className={'flex-grow-1'}
 									>
 										<small>
 											(<i>

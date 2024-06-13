@@ -71,7 +71,7 @@ function AppHeaderComponent(props: IAppHeaderProps) {
 						</FormControl>
 					</Box>
 					<Box
-						className={'display-flex flex-grow1 justify-content-center align-items-center'}
+						className={'display-flex flex-grow-1 justify-content-center align-items-center'}
 					>
 					</Box>
 					<Box

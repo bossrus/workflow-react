@@ -444,39 +444,25 @@ function CreateMainComponent() {
 	}, []);
 
 	return (
-		<Box display="flex" py={2} height="100%" boxSizing={'border-box'} gap={2}>
-			<Box display={'flex'} flexDirection={'column'} flexGrow={1}>
-				<Box display="flex" flexDirection="column" height={'100%!important'} flexGrow={1}>
+		<Box
+			className={'display-flex padding-y-2su height-100 box-sizing-border-box gap-2su'}
+		>
+			<Box
+				className={'display-flex flex-direction-column flex-grow-1'}
+			>
+				<Box
+					className={'display-flex flex-direction-column height-100 flex-grow-1'}
+				>
 					<table
 						className={'table-container-pb10px'}
 					>
 						<tbody>
 						<tr>
-							<td style={{
-								display: 'flex',
-								height: '100%',
-								width: '100%',
-								overflow: 'auto',
-							}}>
+							<td
+								className={'display-flex height-100 width-100 overflow-auto'}
+							>
 								<TextField
-									fullWidth
-									className={'in-depth'}
-									sx={{
-										display: 'flex',
-										flexGrow: 1,
-										borderRadius: '1em',
-										border: 'none',
-										'& .MuiInputBase-root': {
-											border: 'none',
-											borderRadius: '1em!important',
-											height: '100%',
-											display: 'flex',
-											flexDirection: 'column',
-										},
-										'& textarea': {
-											overflow: 'auto!important',
-										},
-									}}
+									className={'text-field-on-create '}
 									inputRef={descriptionRef}
 									id="description"
 									label="Описание заказа (alt+V)"
@@ -494,10 +480,8 @@ function CreateMainComponent() {
 					<Button
 						variant="contained"
 						size="small"
-						fullWidth
-						sx={{ borderRadius: '10px' }}
 						color={'success'}
-						className={'up-shadow'}
+						className={'up-shadow width-100 border-radius-10px'}
 						disabled={!canAutoConvert}
 						onClick={() => convertText(workState.description)}
 					>
@@ -513,20 +497,17 @@ function CreateMainComponent() {
 			{/*ВТОРАЯ КОЛОНКА*/}
 
 
-			<Box minWidth={250} display={'flex'} flexDirection={'column'} pt={1}>
+			<Box
+				className={'min-width-250px display-flex flex-direction-column padding-1su'}
+			>
 				<table
 					className={'table-container-pb10px'}
 				>
 					<tbody>
 					<tr>
-						<td style={{
-							display: 'flex',
-							height: '100%',
-							width: '100%',
-							overflow: 'auto',
-							flexDirection: 'column',
-							gap: '2em',
-						}}>
+						<td
+							className={'display-flex height-100 width-100 overflow-auto flex-direction-column gap-2su'}
+						>
 							<FormControl variant="standard" fullWidth>
 								<InputLabel id="firms">Клиент</InputLabel>
 								<Select
@@ -566,13 +547,12 @@ function CreateMainComponent() {
 								</Select>
 							</FormControl>
 							<TextField
-								fullWidth
 								id="title"
 								label="Название заказа "
 								variant="standard"
 								value={workState.title}
 								onChange={(e) => changeField('title', e.target.value)}
-								className={`${showAnotherName ? 'opacity-30' : ''}`}
+								className={`width-100 ${showAnotherName ? 'opacity-30' : ''}`}
 							/>
 							{
 								namesToShortList &&
@@ -583,12 +563,11 @@ function CreateMainComponent() {
 								workState.title.length > 0 &&
 								<FormControl variant="standard" fullWidth>
 									<Select
-										className={`${showAnotherName ? '' : 'opacity-30'}`}
+										className={`padding-left-5px ${showAnotherName ? '' : 'opacity-30'}`}
 										value={workState.mainId}
 										onChange={(event) => {
 											changeField('mainId', event.target.value);
 										}}
-										sx={{ pl: '5px' }}
 									>
 										{
 											namesToShortList.map((item) => {
@@ -606,7 +585,7 @@ function CreateMainComponent() {
 									onChange={(event) => {
 										changeField('type', event.target.value);
 									}}
-									sx={{ pl: '5px' }}
+									className={'padding-left-5px'}
 									labelId="typesOfWork"
 								>
 									{typesOfWorkArray && typesOfWorkArray.length > 0 && (
@@ -620,7 +599,7 @@ function CreateMainComponent() {
 								</Select>
 							</FormControl>
 							<TextField
-								fullWidth
+								className={'width-100'}
 								id="countPages"
 								label="Количество страниц"
 								variant="standard"
@@ -629,7 +608,7 @@ function CreateMainComponent() {
 								onChange={(e) => changeField('countPages', +e.target.value)}
 							/>
 							<TextField
-								fullWidth
+								className={'width-100'}
 								id="countPictures"
 								label="Количество картинок"
 								variant="standard"
@@ -638,7 +617,7 @@ function CreateMainComponent() {
 								onChange={(e) => changeField('countPictures', +e.target.value)}
 							/>
 							<TextField
-								fullWidth
+								className={'width-100'}
 								id="urgency"
 								label="Срочность"
 								variant="standard"
@@ -686,32 +665,30 @@ function CreateMainComponent() {
 					<Button
 						variant="contained"
 						size="small"
-						fullWidth
+						className={'width-100 border-radius-10px'}
 						disabled={!canSave}
-						sx={{ borderRadius: '10px' }}
 						onClick={() => saveWork()}
 						color={id ? 'success' : 'primary'}
 					>
 						{
 							id
-								? <span>Сохранить правку <small style={{ color: 'white' }}>(ALT+Enter)</small></span>
+								? <span>Сохранить правку <small className={'color-white'}>(ALT+Enter)</small></span>
 								:
-								<span>Создать новое задание <small style={{ color: 'white' }}>(ALT+Enter)</small></span>
+								<span>Создать новое задание <small className={'color-white'}>(ALT+Enter)</small></span>
 						}
 					</Button>
 					<Button
 						variant="outlined"
 						size="small"
-						fullWidth
-						sx={{ borderRadius: '10px' }}
+						className={'width-100 border-radius-10px'}
 						onClick={() => clearFields()}
 						color={'warning'}
 					>
 
 						{
 							id
-								? <span>Отменить правку <small style={{ color: 'gray' }}>(ESC)</small></span>
-								: <span>Сбросить форму <small style={{ color: 'gray' }}>(ESC)</small></span>
+								? <span>Отменить правку <small className={'color-my-gray'}>(ESC)</small></span>
+								: <span>Сбросить форму <small className={'color-my-gray'}>(ESC)</small></span>
 						}
 					</Button></Box>
 			</Box>

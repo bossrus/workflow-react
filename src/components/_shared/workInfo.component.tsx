@@ -96,12 +96,12 @@ function WorkInfoComponent({
 						{creator}
 					</Box>
 					<Box
-						className={'flex-grow1'}
+						className={'flex-grow-1'}
 					>
 						<strong>{workflowTitle}</strong>
 					</Box>
 					<Box
-						className={'flex-grow1'}
+						className={'flex-grow-1'}
 					>
 						<Box>
 							{workflowFirmTitle}
@@ -111,7 +111,7 @@ function WorkInfoComponent({
 						</Box>
 					</Box>
 					<Box
-						className={'flex-grow1'}
+						className={'flex-grow-1'}
 					>
 						<Box>
 							<i>{workflowTypeTitle}</i>
@@ -123,7 +123,7 @@ function WorkInfoComponent({
 					{
 						workflowShowDepartment &&
 						<Box
-							className={'flex-grow1'}
+							className={'flex-grow-1'}
 						>
 							{
 								workflowAdditionalInformationToDepartment &&

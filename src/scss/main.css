@@ -49,6 +49,33 @@ body {
   border-radius: 24px !important;
 }
 
+.border-none {
+  border: none !important;
+}
+
+.text-field-on-create {
+  transform: scale(0.99) translateY(1px) !important;
+  box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.3) !important;
+  width: 100%;
+  border: none !important;
+  display: flex;
+  flex-grow: 1;
+  border-radius: 16px;
+  background-color: #f7f7f7 !important;
+}
+
+.text-field-on-create .MuiInputBase-root {
+  border: none;
+  border-radius: 16px !important;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.text-field-on-create textarea {
+  overflow: auto !important;
+}
+
 .border-1su {
   border: 8px !important;
 }
@@ -101,7 +128,7 @@ body {
   background-color: white !important;
 }
 
-.flex-grow1 {
+.flex-grow-1 {
   flex-grow: 1 !important;
 }
 
@@ -177,6 +204,10 @@ body {
 
 .min-width-120px {
   min-width: 120px !important;
+}
+
+.min-width-250px {
+  min-width: 250px !important;
 }
 
 .padding-left-5px {
@@ -268,6 +299,11 @@ body {
 
 .margin-top-2em {
   margin-top: 2em !important;
+}
+
+.padding-y-2su {
+  padding-top: 16px !important;
+  padding-bottom: 16px !important;
 }
 
 .margin-top-0 {
@@ -387,6 +423,10 @@ body {
 
 .justify-content-center {
   justify-content: center !important;
+}
+
+.overflow-auto {
+  overflow: auto !important;
 }
 
 .color-my-gray {

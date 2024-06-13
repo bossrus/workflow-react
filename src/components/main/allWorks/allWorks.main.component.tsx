@@ -41,24 +41,18 @@ function AllWorksMainComponent() {
 		<>
 			{
 				canShow &&
-				<Box height={'100%'} py={2} boxSizing={'border-box'} width={'100%'} display="flex"
-					 flexDirection="column">
+				<Box
+					className={'height-100 padding-y-2su box-sizing-border-box width-100 display-flex flex-direction-column'}
+				>
 					<Box
-						display="flex"
-						flexDirection="column"
-						height="100%"
-						borderRadius={2}
-						className={'shadow-inner background'}
-						boxSizing={'border-box'}
+						className={'display-flex flex-direction-column height-100 border-radius-2su box-sizing-border-box shadow-inner background'}
 					>
 						<table className={'table-container'}>
 							<tbody>
 							<tr>
 								<td className={'vertical-align-top'}>
-									<Box flexGrow={1} p={1} display="flex" gap={1}
-										 overflow="auto"
-										 flexDirection="column"
-										 height={'100%'}
+									<Box
+										className={'height-100 padding-1su display-flex gap-1su overflow-auto flex-direction-column flex-grow-1'}
 									>
 										{
 											workflowsPublishedArray.length > 0 &&
