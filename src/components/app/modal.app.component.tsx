@@ -15,6 +15,11 @@ const FullScreenOverlay = styled(Box)({
 });
 
 const ModalBox = styled(Box)({
+	display: 'flex',
+	flexDirection: 'column',
+	justifyContent: 'center',
+	alignItems: 'center',
+	width: '65%',
 	backgroundColor: 'white',
 	padding: '12px',
 	borderRadius: '8px',

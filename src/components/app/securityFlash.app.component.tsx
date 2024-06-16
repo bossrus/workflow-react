@@ -43,21 +43,23 @@ const SecurityFlashAppComponent = () => {
 					Внимание!
 				</h2>
 				<Box
-					className={'display-flex flex-direction-column max-height-300px max-width-300px text-align-center'}
+					className={'display-flex flex-direction-column max-height-300px text-align-center'}
 				>
-					<i>Из-за правил безопасности браузера, автоматическое воспроизведение аудио возможно только
-						после того, как вы взаимодействуете с сайтом.</i>
+					В связи с&nbsp;правилами безопасности браузера, автоматическое воспроизведение аудио возможно
+					только
+					после вашего&nbsp;взаимодействия с&nbsp;сайтом.
 					<br />
-					<strong>Что делать?</strong>
+					<strong className={'padding-top2su'}>Что нужно сделать?</strong>
 					<br />
-					Просто нажмите любую кнопку или кликните в&nbsp;любом месте окна.
+					Просто нажмите любую кнопку или&nbsp;кликните в&nbsp;любом месте окна.
 					<br />
-					Это мгновенно разблокирует все аудиофункции и&nbsp;позволит вам наслаждаться полным звуковым
-					сопровождением.
+					<i className={'padding-top2su'}>Это сразу разблокирует все аудиофункции и&nbsp;позволит вам
+						наслаждаться полным звуковым
+						сопровождением.</i>
 				</Box>
 				<Button
 					variant="contained"
-					color={'warning'}
+					color={'info'}
 					className={'size-small width-100 margin-top-2su border-radius-10px up-shadow'}
 					onClick={() => switchOff()}
 				>

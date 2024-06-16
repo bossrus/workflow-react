@@ -1,18 +1,17 @@
-import { Box, Button } from '@mui/material';
+import { Box } from '@mui/material';
 import ModalAppComponent from '@/components/app/modal.app.component.tsx';
 import { useDispatch } from 'react-redux';
 import { TAppDispatch } from '@/store/_store.ts';
 import { setState } from '@/store/_currentStates.slice.ts';
 import { useEffect } from 'react';
 import { IDeleteMessage } from '@/interfaces/currentStates.interface.ts';
+import ContainedSmallButtonComponent from '@/components/_shared/contained.smallButton.component.tsx';
 
 interface IDeleteFlashProps {
 	message?: IDeleteMessage;
 }
 
 const DeleteFlashAppComponent = ({ message }: IDeleteFlashProps) => {
-
-	console.log('зашли в делете модал');
 
 	const dispatch = useDispatch<TAppDispatch>();
 
@@ -57,24 +56,24 @@ const DeleteFlashAppComponent = ({ message }: IDeleteFlashProps) => {
 							</h3>
 						</Box>
 						<Box
-							className={'display-flex justify-content-space-between'}
+							className={'display-flex gap-2su'}
 						>
-							<Button
-								variant="contained"
-								color={'warning'}
-								className={'padding-6px-16px font-size-0875rem up-shadow width-100 margin-top-2su border-radius-10px flex-1 margin-right-1su'}
-								onClick={() => switchOff(true)}
-							>
-								Да, удалите.
-							</Button>
-							<Button
-								variant="contained"
-								color={'success'}
-								className={'flex-1 margin-left-1su border-radius-10px margin-top-2su up-shadow width-100 padding-6px-16px font-size-0875rem'}
-								onClick={() => switchOff(false)}
-							>
-								Ни в коем случае! Оставьте как есть.
-							</Button>
+							<Box className={'flex-1 display-flex'}>
+								<ContainedSmallButtonComponent
+									color={'warning'}
+									onClick={() => switchOff(true)}
+								>
+									Да, удалите.
+								</ContainedSmallButtonComponent>
+							</Box>
+							<Box className={'flex-1'}>
+								<ContainedSmallButtonComponent
+									color={'success'}
+									onClick={() => switchOff(false)}
+								>
+									Ни в коем случае! Оставьте как есть.
+								</ContainedSmallButtonComponent>
+							</Box>
 						</Box>
 					</ModalAppComponent>
 				</Box>

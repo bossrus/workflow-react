@@ -77,7 +77,6 @@ function WorkInfoComponent({
 		<>
 			<Box
 				className={'display-flex flex-direction-column border-radius-2su border-color-my-gray-light background-color-white'}
-				onClick={() => changeShowDescr()}
 				textAlign={'center'}
 			>
 				<Box
@@ -96,7 +95,8 @@ function WorkInfoComponent({
 						{creator}
 					</Box>
 					<Box
-						className={'flex-grow-1'}
+						className={'flex-grow-1 cursor-pointer'}
+						onClick={() => changeShowDescr()}
 					>
 						<strong>{workflowTitle}</strong>
 					</Box>

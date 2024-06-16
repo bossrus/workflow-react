@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardContent, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
+import { Box, Card, CardContent, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { MouseEvent, useEffect, useState } from 'react';
 import { createOne } from '@/store/_shared.thunks.ts';
@@ -9,6 +9,7 @@ import { setAuth } from '@/_security/auth.ts';
 import { useNavigate } from 'react-router-dom';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { clearErrors } from '@/_hooks/errors.hook.ts';
+import ContainedSmallButtonComponent from '@/components/_shared/contained.smallButton.component.tsx';
 
 function LoginComponent() {
 	const [showPassword, setShowPassword] = useState(false);
@@ -114,15 +115,14 @@ function LoginComponent() {
 							}
 						}}
 					/>
-					<Button
-						variant="contained"
+					<ContainedSmallButtonComponent
 						color="primary"
-						className={'margin-top-2em width-100'}
+						className={'width-100'}
 						onClick={clickLoginButton}
 						disabled={login == '' || password == ''}
 					>
 						Войти
-					</Button>
+					</ContainedSmallButtonComponent>
 				</CardContent>
 			</Card>
 			<Card className={`errorCard ${showError !== '' ? 'show' : ''}`}>

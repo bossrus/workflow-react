@@ -1,17 +1,16 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axiosCreate from '@/_api/axiosCreate.ts';
 import { ITakeWorkflowThunk, IWorkflowSlice } from '@/interfaces/workflow.interface.ts';
-import { TAppState } from '@/store/_store.ts';
+import { TAppState, workflows } from '@/store/_store.ts';
 
 
 export const closeWorkflowThunk = createAsyncThunk(
 	'workflows/closeWorkflowThunk',
 	async ({ workflow }: IWorkflowSlice, { dispatch, getState }) => {
 
-		const { workflows } = (getState() as TAppState).workflows.data;
-		const me = (getState() as TAppState).me.data.values;
-
-		const executors = workflows[workflow._id as string].executors;
+		const { data: workflowsObject } = (getState() as TAppState).workflows;
+		const me = Object.values((getState() as TAppState).me.data)[0];
+		const executors = workflowsObject[workflow._id as string].executors;
 		if (executors && executors.includes(me._id)) {
 			const newExecutors: string[] = executors.filter((executor: string) => executor !== me._id);
 
@@ -31,12 +30,12 @@ export const takeWorkflowThunk = createAsyncThunk(
 	'workflows/takeWorkflowThunk',
 	async ({ ids }: ITakeWorkflowThunk, { dispatch, getState }) => {
 
-		const { data: workflows } = (getState() as TAppState).workflows;
+		const { data: workflowsObject } = (getState() as TAppState).workflows;
 
 		const { _id: myId = '' } = (getState() as TAppState).me.data?.[Object.keys((getState() as TAppState).me.data ?? {})[0]] ?? {};
 
 		ids.forEach((id: string) => {
-			const workflow = workflows[id];
+			const workflow = workflowsObject[id];
 
 			if (workflow) {
 				let executors: string[];
@@ -54,7 +53,6 @@ export const takeWorkflowThunk = createAsyncThunk(
 				}));
 			}
 		});
-
 		axiosCreate.patch('/workflows/take', { ids }).then();
 	},
 );
@@ -63,10 +61,10 @@ export const publishWorkflowThunk = createAsyncThunk(
 	'workflows/takeWorkflowThunk',
 	async ({ ids }: ITakeWorkflowThunk, { dispatch, getState }) => {
 
-		const { data: workflows } = (getState() as TAppState).workflows;
+		const { data: workflowsObject } = (getState() as TAppState).workflows;
 
 		ids.forEach((id: string) => {
-			const workflow = workflows[id];
+			const workflow = workflowsObject[id];
 
 			if (workflow) {
 				dispatch(workflows.actions.updateElement({

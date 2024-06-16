@@ -48,15 +48,15 @@ export function createEntitySlice<T extends IHasId>(entityNameString: string): {
 		name: sliceName,
 		initialState,
 		reducers: {
+			clearErrors: (state: Draft<IEntityStore<T>>) => {
+				state.error = undefined;
+			},
 			updateElement: (state: Draft<IEntityStore<T>>, action: PayloadAction<T>) => {
 				const id: string = action.payload._id as string;
 				state.data[id] = {
 					...state.data[id],
 					...action.payload,
 				};
-			},
-			clearErrors: (state: Draft<IEntityStore<T>>) => {
-				state.error = undefined;
 			},
 			deleteElement: (state: Draft<IEntityStore<T>>, action: PayloadAction<string>) => {
 				delete state.data[action.payload];

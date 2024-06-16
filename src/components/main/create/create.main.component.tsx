@@ -12,7 +12,6 @@ import useWorksSelectors from '@/_hooks/useWorksSelectors.hook.ts';
 import { FALSE_COLOR } from '@/_constants/colors.ts';
 import SwitchButtonComponent from '@/components/_shared/switchButton.component.tsx';
 import { getTitleByID } from '@/_services/getTitleByID.service.ts';
-import { debounce } from '@/_services/debonce.service.ts';
 
 function CreateMainComponent() {
 	const {
@@ -267,10 +266,10 @@ function CreateMainComponent() {
 		setShowAnotherNameHandler(currentType);
 	}, [workState.type]);
 
-	const debounceSetShortList = debounce(setShortList);
+
 	useEffect(() => {
 		if (workState.firm !== '' && workState.modification !== '' && namesToShortList && namesToShortList.length > 0) {
-			debounceSetShortList(namesToShortList, workState.type as string);
+			setShortList(namesToShortList, workState.type as string);
 		}
 	}, [workState.title]);
 

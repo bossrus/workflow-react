@@ -1,5 +1,5 @@
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
-import { Box, Button } from '@mui/material';
+import { Box } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { assignColor } from '@/_constants/urgencyColors.ts';
@@ -10,6 +10,8 @@ import { useDispatch } from 'react-redux';
 import { takeWorkflowThunk } from '@/store/workflows.thunks.ts';
 import RoundButtonComponent from '@/components/_shared/roundButton.component.tsx';
 import { getTitleByID } from '@/_services/getTitleByID.service.ts';
+import OutlinedSmallButtonComponent from '@/components/_shared/outlined.smallButton.component.tsx';
+import ContainedSmallButtonComponent from '@/components/_shared/contained.smallButton.component.tsx';
 
 function InMyDepartmentMainComponent() {
 	const {
@@ -136,24 +138,18 @@ function InMyDepartmentMainComponent() {
 		<>
 			{
 				canShowPage() &&
-				<Box height={'100%'} py={2} boxSizing={'border-box'} width={'100%'} display="flex"
-					 flexDirection="column">
+				<Box
+					className={'height-100 padding-y-2su box-sizing-border-box width-100 display-flex flex-direction-column'}
+				>
 					<Box
-						display="flex"
-						flexDirection="column"
-						height="100%"
-						borderRadius={2}
-						className={'shadow-inner background'}
-						boxSizing={'border-box'}
+						className={'display-flex flex-direction-column height-100 border-radius-2su box-sizing-border-box shadow-inner background'}
 					>
 						<table className={'table-container'}>
 							<tbody>
 							<tr>
 								<td className={'vertical-align-top'}>
-									<Box flexGrow={1} p={1} display="flex" gap={1}
-										 overflow="auto"
-										 flexDirection="column"
-										 height={'100%'}
+									<Box
+										className={'flex-grow-1 padding-1su display-flex gap-1su overflow-auto flex-direction-column height-100'}
 									>
 										{
 											workflowsInMyDepartment.length > 0 &&
@@ -187,59 +183,39 @@ function InMyDepartmentMainComponent() {
 							</tr>
 							</tbody>
 						</table>
-						<Box display="flex"
-							 flexDirection="row"
-							 width={'100%'}
-							 boxSizing={'border-box'}
-							 gap={1}
-							 p={2}
-							 alignItems={'center'}
-							 flexWrap={'wrap'}>
-							<Button
-								variant="outlined"
-								size="small"
-								sx={{ mt: 2, borderRadius: '10px', flexGrow: 1 }}
+						<Box
+							className={'display-flex flex-direction-row width-100 box-sizing-border-box gap-1su padding-2su align-items-center flex-wrap'}
+						>
+							<OutlinedSmallButtonComponent
 								color={'primary'}
-								className={'up-shadow'}
 								disabled={countChecked === Object.keys(workflowsInMyDepartment).length}
 								onClick={() => selectWorkflowsByFirm('')}
 							>
 								<span>Выделить все заказы <small style={{ color: 'gray' }}>(ALT+A)</small></span>
-							</Button>
+							</OutlinedSmallButtonComponent>
 							{listOfFirms.length > 1 &&
 								listOfFirms.map((firm) => (
-									<Button
+									<OutlinedSmallButtonComponent
 										key={firm}
-										variant="outlined"
-										size="small"
-										sx={{ mt: 2, borderRadius: '10px', flexGrow: 1 }}
 										color={'inherit'}
-										className={'up-shadow'}
 										disabled={countChecked === Object.keys(workflowsInMyDepartment).length}
 										onClick={() => selectWorkflowsByFirm(firm)}
 									>
 										Выделить все заказы «{getTitleByID(firmsObject, firm)}»
-									</Button>
+									</OutlinedSmallButtonComponent>
 								))
 							}
-							<Button
-								variant="outlined"
-								size="small"
-								sx={{ mt: 2, borderRadius: '10px', flexGrow: 1 }}
+							<OutlinedSmallButtonComponent
 								color={'secondary'}
-								className={'up-shadow'}
 								disabled={!anyChecked}
 								onClick={uncheckAll}
 							>
 								<span>Снять выделение со всех заказов <small
-									style={{ color: 'gray' }}>(ESC)</small></span>
-							</Button>
-							<Button
-								variant="contained"
-								size="small"
-								sx={{ mt: 2, borderRadius: '10px', flexGrow: 1 }}
+									className={'color-my-gray'}
+								>(ESC)</small></span>
+							</OutlinedSmallButtonComponent>
+							<ContainedSmallButtonComponent
 								color={'success'}
-								className={'up-shadow'}
 								disabled={!anyChecked}
 								onClick={() => takeWorks()}
 							>
@@ -248,8 +224,7 @@ function InMyDepartmentMainComponent() {
 									{countChecked > 1 ? 'е' : 'й'} заказ
 									{countChecked > 1 && 'ы'} <small
 									style={{ color: 'white' }}>(ALT+Enter)</small></span>
-							</Button>
-
+							</ContainedSmallButtonComponent>
 						</Box>
 					</Box>
 				</Box>}

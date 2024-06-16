@@ -26,14 +26,6 @@ function rightButtonsGroupComponent(props: IRightButtonsGroupProps) {
 				/>
 			</FormGroup>
 
-			{/*//а нужна ли поддержка? :)*/}
-
-			{/*<RoundButtonComponent*/}
-			{/*	id={''}*/}
-			{/*	dis={false}*/}
-			{/*	onClickHere={logout}*/}
-			{/*	mode={'support'}*/}
-			{/*/>*/}
 			<RoundButtonComponent
 				id={''}
 				dis={false}

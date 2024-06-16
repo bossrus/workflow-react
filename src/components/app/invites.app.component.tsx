@@ -1,4 +1,4 @@
-import { Box, Button } from '@mui/material';
+import { Box } from '@mui/material';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { useEffect, useRef, useState } from 'react';
 import ModalAppComponent from '@/components/app/modal.app.component.tsx';
@@ -10,6 +10,7 @@ import axios from 'axios';
 import SwitchButtonComponent from '@/components/_shared/switchButton.component.tsx';
 import { FALSE_COLOR } from '@/_constants/colors.ts';
 import { getTitleByID } from '@/_services/getTitleByID.service.ts';
+import OutlinedSmallButtonComponent from '@/components/_shared/outlined.smallButton.component.tsx';
 
 
 interface IOrderElement {
@@ -62,7 +63,7 @@ const InvitesAppComponent = () => {
 
 			const workflow = workflowsObject[order.workflow];
 
-			if (newOrders[order.workflow] === undefined && order.department === workflow.currentDepartment) {
+			if (workflow && newOrders[order.workflow] === undefined && order.department === workflow.currentDepartment) {
 
 				newChecks[order.workflow] = true;
 				const description = getTitleByID(firmsObject, workflow.firm)
@@ -82,7 +83,11 @@ const InvitesAppComponent = () => {
 		}
 		setOrders(newOrders);
 		setChecks(newChecks);
-	}, [inviteToJoin]);
+	}, [inviteToJoin,
+		workflowsObject,
+		usersObject,
+		firmsObject,
+		typesOfWorkObject]);
 
 	const checksRef = useRef(checks);
 	useEffect(() => {
@@ -182,14 +187,13 @@ const InvitesAppComponent = () => {
 						}
 
 					</Box>
-					<Button
-						variant="outlined"
-						color={'success'}
-						className={'border-radius-10px width-100 margin-top-2su font-size-0875rem padding-6px-16px up-shadow'}
+					<OutlinedSmallButtonComponent
+						className={'width-100 margin-bottom-5px'}
 						onClick={() => takeWorks('byChecks')}
+						color={'success'}
 					>
-						Ок
-					</Button>
+						Ok
+					</OutlinedSmallButtonComponent>
 					<small>
 						<strong>
 							[ENTER]
