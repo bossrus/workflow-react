@@ -75,20 +75,21 @@ function MyMainComponent() {
 				workflowsInMyProcess.length > 0 &&
 				tabs.length > 0 &&
 				paramsId &&
-				<Box height={'100%'} pt={2} boxSizing={'border-box'} width={'100%'} display="flex"
-					 flexDirection="column">
+				<Box
+					className={'height-100 padding-top2su box-sizing-border-box width-100 display-flex flex-direction-column'}
+				>
 					<Box
-						display="flex"
-						flexDirection="column"
-						height="100%"
-						borderRadius={2}
-						className={'shadow-inner background'}
+						className={'display-flex flex-direction-column height-100 border-radius-2su shadow-inner background'}
 						boxSizing={'border-box'}
 					>
-						<Box justifyContent="center" id={'test'} display={'flex'}>
+						<Box
+							className={'justify-content-center display-flex'}
+						>
 							<TabsLineComponent tabs={tabs} chapter={paramsId} section={'main/my'} />
 						</Box>
-						<Box flexGrow={1} p={2}>
+						<Box
+							className={'flex-grow-1 padding-2su'}
+						>
 							<WorkMyMainComponent incomingWorkID={paramsId!} />
 						</Box>
 					</Box>

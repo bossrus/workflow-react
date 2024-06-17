@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, FormGroup, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { Box, FormControl, FormGroup, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { useEffect, useRef, useState } from 'react';
 import { getIDByTitle } from '@/_services/getIDByTitle.service.ts';
@@ -12,6 +12,8 @@ import useWorksSelectors from '@/_hooks/useWorksSelectors.hook.ts';
 import { FALSE_COLOR } from '@/_constants/colors.ts';
 import SwitchButtonComponent from '@/components/_shared/switchButton.component.tsx';
 import { getTitleByID } from '@/_services/getTitleByID.service.ts';
+import ContainedSmallButtonComponent from '@/components/_shared/contained.smallButton.component.tsx';
+import OutlinedSmallButtonComponent from '@/components/_shared/outlined.smallButton.component.tsx';
 
 function CreateMainComponent() {
 	const {
@@ -476,17 +478,15 @@ function CreateMainComponent() {
 					</table>
 				</Box>
 				<Box>
-					<Button
-						variant="contained"
-						size="small"
+					<ContainedSmallButtonComponent
 						color={'success'}
-						className={'up-shadow width-100 border-radius-10px'}
+						className={'width-100'}
 						disabled={!canAutoConvert}
 						onClick={() => convertText(workState.description)}
 					>
 						<span>Автоматическое заполнение полей <small
 							style={{ color: 'gray' }}>(ALT+A)</small></span>
-					</Button>
+					</ContainedSmallButtonComponent>
 				</Box>
 			</Box>
 
@@ -497,7 +497,7 @@ function CreateMainComponent() {
 
 
 			<Box
-				className={'min-width-250px display-flex flex-direction-column padding-1su'}
+				className={'min-width-250px display-flex flex-direction-column'}
 			>
 				<table
 					className={'table-container-pb10px'}
@@ -660,11 +660,10 @@ function CreateMainComponent() {
 					</tr>
 					</tbody>
 				</table>
-				<Box display={'flex'} flexDirection={'column'} gap={1}>
-					<Button
-						variant="contained"
-						size="small"
-						className={'width-100 border-radius-10px'}
+				<Box
+					className={'display-flex flex-direction-column'}
+				>
+					<ContainedSmallButtonComponent
 						disabled={!canSave}
 						onClick={() => saveWork()}
 						color={id ? 'success' : 'primary'}
@@ -675,11 +674,8 @@ function CreateMainComponent() {
 								:
 								<span>Создать новое задание <small className={'color-white'}>(ALT+Enter)</small></span>
 						}
-					</Button>
-					<Button
-						variant="outlined"
-						size="small"
-						className={'width-100 border-radius-10px'}
+					</ContainedSmallButtonComponent>
+					<OutlinedSmallButtonComponent
 						onClick={() => clearFields()}
 						color={'warning'}
 					>
@@ -689,7 +685,8 @@ function CreateMainComponent() {
 								? <span>Отменить правку <small className={'color-my-gray'}>(ESC)</small></span>
 								: <span>Сбросить форму <small className={'color-my-gray'}>(ESC)</small></span>
 						}
-					</Button></Box>
+					</OutlinedSmallButtonComponent>
+				</Box>
 			</Box>
 		</Box>
 	);

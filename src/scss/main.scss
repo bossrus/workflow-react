@@ -39,11 +39,12 @@ body {
 .border-radius-3su {
   border-radius: $spacingUnit * 3 !important;
 }
+
 .border-none {
   border: none !important;
 }
 
-.text-field-on-create{
+.text-field-on-create {
   @include in-depth;
   width: 100%;
   border: none !important;
@@ -54,15 +55,15 @@ body {
 }
 
 .text-field-on-create .MuiInputBase-root {
-    border: none;
-    border-radius: $spacingUnit *2 !important;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+  border: none;
+  border-radius: $spacingUnit *2 !important;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .text-field-on-create textarea {
-    overflow: auto !important;
+  overflow: auto !important;
 }
 
 .border-1su {
@@ -101,6 +102,10 @@ body {
   background-color: $myGrayLight !important;
 }
 
+.background-color-white {
+  background-color: white !important;
+}
+
 .border-color-my-gray-light {
   border-color: $myGrayLight !important;
 }
@@ -111,10 +116,6 @@ body {
 
 .background-color-main {
   background-color: $mainBackgroundColor !important;
-}
-
-.background-color-white {
-  background-color: white !important;
 }
 
 .flex-grow-1 {
@@ -184,6 +185,10 @@ body {
   margin-bottom: 20px !important;
 }
 
+.margin-bottom-2su {
+  margin-bottom: $spacingUnit*2 !important;
+}
+
 .margin-bottom-5px {
   margin-bottom: 5px !important;
 }
@@ -207,6 +212,10 @@ body {
 
 .padding-left-5px {
   padding-left: 5px !important;
+}
+
+.padding-right-1su {
+  padding-right: $spacingUnit !important;
 }
 
 .margin-right-20px {
@@ -290,6 +299,10 @@ body {
   margin-top: $spacingUnit*2 !important;
 }
 
+.margin-top-0 {
+  margin-top: 0 !important;
+}
+
 .margin-auto {
   margin: auto !important;
 }
@@ -298,13 +311,9 @@ body {
   margin-top: 2em !important;
 }
 
-.padding-y-2su{
+.padding-y-2su {
   padding-top: $spacingUnit * 2 !important;
   padding-bottom: $spacingUnit * 2 !important;
-}
-
-.margin-top-0 {
-  margin-top: 0 !important;
 }
 
 .padding-3px {
@@ -335,6 +344,18 @@ body {
   padding: $spacingUnit *2 !important;
 }
 
+.outline-none {
+  outline: none !important;
+}
+
+.resize-none {
+  resize: none !important;
+}
+
+.padding-10px {
+  padding: 10px !important;
+}
+
 .padding-6px-16px {
   padding: 6px 10px !important;
 }
@@ -349,6 +370,14 @@ body {
 
 .align-items-center {
   align-items: center !important;
+}
+
+.gap-4su {
+  gap: $spacingUnit * 4 !important;
+}
+
+.gap-3su {
+  gap: $spacingUnit * 3 !important;
 }
 
 .gap-2su {
@@ -439,12 +468,16 @@ body {
   justify-content: center !important;
 }
 
-.overflow-auto{
+.overflow-auto {
   overflow: auto !important;
 }
 
 .color-my-gray {
   color: $myGray !important;
+}
+
+.color-my-light-gray {
+  color: $myGrayLight !important;
 }
 
 .color-black {
@@ -498,6 +531,10 @@ body {
 
 .height-32px {
   height: 32px !important;
+}
+
+.justify-content-flex-end {
+  justify-content: flex-end !important;
 }
 
 .justify-content-space-between {

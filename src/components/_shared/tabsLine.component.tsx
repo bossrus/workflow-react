@@ -22,7 +22,7 @@ function TabsLineComponent({ section, chapter, tabs }: IProps) {
 	const [hotkeys, setHotkeys] = useState<IHotkey[]>([]);
 	const [resultTabs, setResultTabs] = useState<ITabs[]>([]);
 
-	const [needShift, setNeedShift] = useState(false);
+	const [notNeedHotkeys, setNotNeedHotkeys] = useState(false);
 
 	const goToNewTab = (_event: SyntheticEvent, newValue: number) => {
 		navigate(`/${section}/${tabs[newValue].url}`);
@@ -38,13 +38,13 @@ function TabsLineComponent({ section, chapter, tabs }: IProps) {
 			}
 		}
 		const splitResult = newHotKeys[0].path.split('/main/my/');
-		setNeedShift(splitResult.length > 1);
+		setNotNeedHotkeys(splitResult.length > 1);
 		setHotkeys(newHotKeys);
 		setResultTabs(newTabs);
 	}, [tabs, me]);
 
 
-	useHotkeysNavigation(hotkeys, needShift);
+	useHotkeysNavigation(hotkeys, notNeedHotkeys);
 
 	const showTab = (access?: IUserKeys[]) => {
 		if (!access) {
@@ -77,12 +77,15 @@ function TabsLineComponent({ section, chapter, tabs }: IProps) {
 						>
 							<span>
 								<span className={activeTab !== index ? 'color-black' : ''}>{label}</span>
-								{' '}
-								<small
-									className={'color-my-gray'}
-								>
-									(ALT&nbsp;+&nbsp;{needShift && <>SHIFT&nbsp;+&nbsp;</>}{index + 1})
-								</small>
+								{!notNeedHotkeys &&
+									<>
+										{' '}
+										<small
+											className={'color-my-gray'}
+										>
+											(ALT&nbsp;+&nbsp;{notNeedHotkeys && <>SHIFT&nbsp;+&nbsp;</>}{index + 1})
+										</small>
+									</>}
 							</span>
 							{count ? (
 								<Box

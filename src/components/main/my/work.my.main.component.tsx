@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, MenuItem, Select, Typography } from '@mui/material';
+import { Box, FormControl, MenuItem, Select, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { useEffect, useRef, useState } from 'react';
@@ -8,6 +8,7 @@ import { TAppDispatch } from '@/store/_store.ts';
 import { useDispatch } from 'react-redux';
 import { closeWorkflowThunk } from '@/store/workflows.thunks.ts';
 import { getTitleByID } from '@/_services/getTitleByID.service.ts';
+import ContainedSmallButtonComponent from '@/components/_shared/contained.smallButton.component.tsx';
 
 interface IProps {
 	incomingWorkID: string;
@@ -162,19 +163,12 @@ function WorkMyMainComponent({ incomingWorkID }: IProps) {
 				modificationsObject &&
 				typesOfWorkObject &&
 				selectedDepartment !== '' &&
-				<Box display="flex" flexDirection="column" height="100%">
+				<Box
+					className={'display-flex flex-direction-column height-100'}
+				>
 					<Box
-						width={'100%'}
-						p={1}
-						boxSizing={'border-box'}
-						mb={2}
-						boxShadow={3} borderRadius={2}
-						bgcolor={'white'}
-						justifyContent={'center'}
-						display={'flex'}
-						flexDirection={'row'}
-						flexWrap={'wrap'}
-						gap={1}
+						boxShadow={3}
+						className={'width-100 padding-1su box-sizing-border-box margin-bottom-2su border-radius-2su background-color-white justify-content-center display-flex flex-direction-row flex-wrap gap-1su'}
 					>
 						<Box>
 							{getTitleByID(firmsObject, workflowsObject[incomingWorkID].firm)}
@@ -194,15 +188,20 @@ function WorkMyMainComponent({ incomingWorkID }: IProps) {
 						</Box>
 
 					</Box>
-					<Box display="flex" flexDirection="row" height="100%" boxShadow={3} borderRadius={2}
-						 bgcolor={'white'} p={2} boxSizing={'border-box'}>
-						<Box flexGrow={1} pr={1}>
+					<Box
+						boxShadow={3}
+						className={'display-flex flex-direction-row height-100 border-radius-2su background-color-white padding-2su box-sizing-border-box'}
+					>
+						<Box
+							className={'flex-grow-1 padding-right-1su'}
+						>
 							<table className={'table-container'}>
 								<tbody>
 								<tr>
 									<td className={'vertical-align-top'}>
-							<pre className={'text-warp table-container'}
-								 style={{ boxSizing: 'border-box', marginTop: 0 }}>
+							<pre
+								className={'text-warp table-container box-sizing-border-box margin-top-0'}
+							>
 							{workflowsObject[incomingWorkID].description}
 							</pre>
 									</td>
@@ -210,53 +209,42 @@ function WorkMyMainComponent({ incomingWorkID }: IProps) {
 								</tbody>
 							</table>
 						</Box>
-						<Box minWidth={'300px'} height={'100%'} display={'flex'}
-							 flexDirection={'column'}>
+						<Box
+							className={'min-width-250px height-100 display-flex flex-direction-column'}
+						>
 							<table className={'just-table-container-pb0'}>
 								<tbody>
 								<tr>
 									<td className={'vertical-align-top'}>
 
 										<Box
-											height={'100%'}
-											display={'flex'}
-											flexDirection={'column'}
-											gap={3}
+											className={'height-100 display-flex flex-direction-column gap-4su'}
 										>
 											<Box
-												flexGrow={1} display={'flex'}
-												flexDirection={'column'}>
+												className={'flex-grow-1 display-flex flex-direction-column'}
+											>
 											<textarea
-												className={'shadow-inner'}
+												className={'outline-none shadow-inner height-100 width-100 border-none border-radius-10px padding-10px resize-none box-sizing-border-box'}
 												value={description}
 												onChange={(e) => setDescription(e.target.value)}
-												style={{
-													height: '100%',
-													width: '100%',
-													border: 'none',
-													borderRadius: '10px',
-													padding: '10px',
-													resize: 'none',
-													boxSizing: 'border-box',
-													outline: 'none',
-												}}
 											/>
-												<Button
-													variant="contained"
-													size="small"
-													sx={{ mt: 2, borderRadius: '10px' }}
-													fullWidth
+												<ContainedSmallButtonComponent
+													className={'margin-top-0'}
 													color={'primary'}
-													className={'up-shadow'}
 													disabled={description.length < 1}
 													onClick={saveToDescription}
 												>
 													Добавить информацию в описание
-												</Button>
+												</ContainedSmallButtonComponent>
 											</Box>
-											<Box className={'shadow'} p={2} bgcolor={'#fafafa'} borderRadius={2}>
+											<Box
+												className={'shadow background-color-main padding-2su border-radius-2su'}
+											>
 												Пригласить присоединиться к работе<br />
-												<FormControl variant="standard" fullWidth>
+												<FormControl
+													variant="standard"
+													className={'width-100'}
+												>
 													<Select
 														value={selectedUser}
 														onChange={(event) => {
@@ -276,25 +264,24 @@ function WorkMyMainComponent({ incomingWorkID }: IProps) {
 														}
 													</Select>
 												</FormControl>
-												<Button
-													variant="contained"
-													size="small"
-													sx={{ mt: 2, borderRadius: '10px' }}
-													fullWidth
+												<ContainedSmallButtonComponent
+													className={'width-100'}
 													color={'success'}
-													className={'up-shadow'}
 													disabled={selectedUser == ''}
 													onClick={inviteUser}
 												>
 													Пригласить
-												</Button>
+												</ContainedSmallButtonComponent>
 											</Box>
 											<Box>
 												{
 													selectedDepartment != 'justClose'
 														? (<>
 															Передать работу в:<br />
-															<FormControl variant="standard" fullWidth>
+															<FormControl
+																variant="standard"
+																className={'width-100'}
+															>
 																<Select
 																	value={selectedDepartment}
 																	onChange={(event) => {
@@ -336,19 +323,18 @@ function WorkMyMainComponent({ incomingWorkID }: IProps) {
 															</Box>
 														</>)
 												}
-												<Button
-													variant="contained"
-													size="small"
-													sx={{ mt: 2, borderRadius: '10px' }}
-													fullWidth
+												<ContainedSmallButtonComponent
 													color={'error'}
-													className={'up-shadow'}
+													className={'width-100'}
 													onClick={closeWorkflow}
 												>
 													<span>Завершить работу <small
-														style={{ color: 'white' }}>(ALT+Enter)</small></span>
-												</Button>
-											</Box></Box>
+														style={{ color: 'white' }}
+														className={'color-my-light-gray'}
+													>(ALT+Enter)</small></span>
+												</ContainedSmallButtonComponent>
+											</Box>
+										</Box>
 									</td>
 								</tr>
 								</tbody>
