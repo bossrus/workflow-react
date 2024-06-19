@@ -1,5 +1,5 @@
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
-import { Box, Button } from '@mui/material';
+import { Box } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useWorksSelectors from '@/_hooks/useWorksSelectors.hook.ts';
@@ -9,6 +9,8 @@ import { useDispatch } from 'react-redux';
 import { TAppDispatch } from '@/store/_store.ts';
 import { publishWorkflowThunk } from '@/store/workflows.thunks.ts';
 import { getTitleByID } from '@/_services/getTitleByID.service.ts';
+import OutlinedSmallButtonComponent from '@/components/_shared/outlinedSmallButtonComponent.tsx';
+import ContainedSmallButtonComponent from '@/components/_shared/contained.smallButton.component.tsx';
 
 function NotPublishedMainComponent() {
 	const {
@@ -176,24 +178,18 @@ function NotPublishedMainComponent() {
 		<>
 			{
 				canShowPage() &&
-				<Box height={'100%'} py={2} boxSizing={'border-box'} width={'100%'} display="flex"
-					 flexDirection="column">
+				<Box
+					className={'height-100 padding-y-2su box-sizing-border-box width-100 display-flex flex-direction-column'}
+				>
 					<Box
-						display="flex"
-						flexDirection="column"
-						height="100%"
-						borderRadius={2}
-						className={'shadow-inner background'}
-						boxSizing={'border-box'}
+						className={'display-flex flex-direction-column height-100 border-radius-2su box-sizing-border-box shadow-inner background'}
 					>
 						<table className={'table-container'}>
 							<tbody>
 							<tr>
 								<td className={'vertical-align-top'}>
-									<Box flexGrow={1} p={1} display="flex" gap={1}
-										 overflow="auto"
-										 flexDirection="column"
-										 height={'100%'}
+									<Box
+										className={'flex-grow-1 padding-1su display-flex gap-1su overflow-auto flex-direction-column height-100'}
 									>
 										{
 											Object.keys(workflowsNotPublishedObject).length > 0 &&
@@ -221,33 +217,20 @@ function NotPublishedMainComponent() {
 							</tr>
 							</tbody>
 						</table>
-						<Box display="flex"
-							 flexDirection="row"
-							 width={'100%'}
-							 boxSizing={'border-box'}
-							 gap={2}
-							 p={2}
-							 alignItems={'center'}
-							 flexWrap={'wrap'}>
-							<Button
-								variant="outlined"
-								size="small"
-								sx={{ mt: 2, borderRadius: '10px', flexGrow: 1 }}
+						<Box
+							className={'display-flex flex-direction-row width-100 box-sizing-border-box gap-2su padding-2su align-items-center flex-wrap'}
+						>
+							<OutlinedSmallButtonComponent
 								color={'inherit'}
-								className={'up-shadow'}
 								onClick={checkUncheckAllWorks}
 							>
 								<span>{allTrueChecks ? 'Снять выделение со всех работ' : 'Выделить все работы'} <small
-									style={{ color: 'gray' }}>(ALT+A)</small></span>
-							</Button>
+									className={'color-my-gray'}>(ALT+A)</small></span>
+							</OutlinedSmallButtonComponent>
 							{
 								Object.keys(myChecks).length > 0 &&
-								<Button
-									variant="outlined"
-									size="small"
-									sx={{ mt: 2, borderRadius: '10px', flexGrow: 1 }}
+								<OutlinedSmallButtonComponent
 									color={'inherit'}
-									className={'up-shadow'}
 									onClick={checkUncheckMyWorks}
 								>
 									<span>{
@@ -255,23 +238,18 @@ function NotPublishedMainComponent() {
 											? 'Снять выделение со всех ваших работ'
 											: 'Выделить все ваши работы'
 									} <small
-										style={{ color: 'gray' }}>(ALT+Y)</small>
+										className={'color-my-gray'}>(ALT+Y)</small>
 									</span>
-								</Button>
+								</OutlinedSmallButtonComponent>
 							}
-							<Button
-								variant="contained"
-								size="small"
-								sx={{ mt: 2, borderRadius: '10px', flexGrow: 1 }}
+							<ContainedSmallButtonComponent
 								color={'success'}
-								className={'up-shadow'}
 								disabled={!anyTrueChecks}
 								onClick={publishWorks}
 							>
 								<span>Опубликовать выделенные работы <small
-									style={{ color: 'white' }}>(ALT+ENTER)</small></span>
-							</Button>
-
+									className={'color-my-light-gray'}>(ALT+ENTER)</small></span>
+							</ContainedSmallButtonComponent>
 						</Box>
 					</Box>
 				</Box>}

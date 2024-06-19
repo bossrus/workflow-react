@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
@@ -8,6 +8,8 @@ import { IFirmUpdate } from '@/interfaces/firm.interface.ts';
 import { patchOne } from '@/store/_shared.thunks.ts';
 import useEscapeKey from '@/_hooks/useEscapeKey.hook.ts';
 import makeSlug from '@/_services/makeSlug.service.ts';
+import HeaderEditFormSettingsCompnent from '@/components/settings/_shared/header.editForm.settings.component.tsx';
+import ContainedSmallButtonComponent from '@/components/_shared/contained.smallButton.component.tsx';
 
 function EditFirmFormComponent() {
 	const { firmsObject, states: { currentFirm } } = useReduxSelectors();
@@ -61,7 +63,6 @@ function EditFirmFormComponent() {
 		const canSave = shouldAllowSave(title, basicPriority, currentFirm, firmsObject);
 		setStopSave(!canSave);
 	}, [title, basicPriority, currentFirm, firmsObject]);
-	;
 
 	const dispatch = useDispatch<TAppDispatch>();
 
@@ -93,24 +94,17 @@ function EditFirmFormComponent() {
 	};
 
 	return (
-		<Box p={2} m={2} className={'in-depth border-round-1em'}>
+		<Box
+			className={'padding-2su margin-2su in-depth border-round-1em'}
+		>
 			{titleOfEditedFirm !== '' && (
-				<Typography
-					variant="h5"
-					component="h2"
-					color={'yellow'}
-					sx={{
-						mb: '1em',
-						backgroundColor: '#0288d1',
-						textAlign: 'center',
-						borderRadius: '10px',
-					}}
-				>
-					Редактирование клиента «<strong>{titleOfEditedFirm}</strong>»
-				</Typography>
+				<HeaderEditFormSettingsCompnent
+					title={'Редактирование клиента'}
+					stronger={titleOfEditedFirm}
+				/>
 			)}
 			<TextField
-				fullWidth
+				className={'width-100'}
 				id="title"
 				label="Название клиента"
 				variant="standard"
@@ -126,7 +120,7 @@ function EditFirmFormComponent() {
 				type={'number'}
 				value={basicPriority}
 				onChange={(e) => setBasicPriority(+e.target.value)}
-				fullWidth
+				className={'width-100'}
 				id="number-in-line"
 				label="Базовый приоритет клиента"
 				variant="standard"
@@ -136,33 +130,26 @@ function EditFirmFormComponent() {
 					}
 				}}
 			/>
-			<Button
-				variant="contained"
-				size="small"
-				fullWidth
-				sx={{ mt: 2, borderRadius: '10px' }}
+
+			<ContainedSmallButtonComponent
 				color={'success'}
-				className={'up-shadow'}
+				className={'width-100'}
 				disabled={stopSave}
 				onClick={saveFirm}
 			>
 				{titleOfEditedFirm === ''
 					? 'Добавить нового клиента'
 					: `Сохранить изменения в клиенте «${titleOfEditedFirm}»`}
-			</Button>
+			</ContainedSmallButtonComponent>
 
 			{titleOfEditedFirm !== '' && (
-				<Button
-					variant="contained"
-					size="small"
-					fullWidth
-					sx={{ mt: 2, borderRadius: '10px' }}
+				<ContainedSmallButtonComponent
 					color={'info'}
-					className={'up-shadow'}
+					className={'width-100'}
 					onClick={clearFields}
 				>
 					отменить редактирование клиента «{titleOfEditedFirm}»
-				</Button>
+				</ContainedSmallButtonComponent>
 			)}
 		</Box>
 	);

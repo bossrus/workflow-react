@@ -76,7 +76,7 @@ function MyMainComponent() {
 				tabs.length > 0 &&
 				paramsId &&
 				<Box
-					className={'height-100 padding-top2su box-sizing-border-box width-100 display-flex flex-direction-column'}
+					className={'height-100 padding-top-2su box-sizing-border-box width-100 display-flex flex-direction-column'}
 				>
 					<Box
 						className={'display-flex flex-direction-column height-100 border-radius-2su shadow-inner background'}

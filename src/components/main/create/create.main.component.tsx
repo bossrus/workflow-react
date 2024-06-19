@@ -13,7 +13,7 @@ import { FALSE_COLOR } from '@/_constants/colors.ts';
 import SwitchButtonComponent from '@/components/_shared/switchButton.component.tsx';
 import { getTitleByID } from '@/_services/getTitleByID.service.ts';
 import ContainedSmallButtonComponent from '@/components/_shared/contained.smallButton.component.tsx';
-import OutlinedSmallButtonComponent from '@/components/_shared/outlined.smallButton.component.tsx';
+import OutlinedSmallButtonComponent from '@/components/_shared/outlinedSmallButtonComponent.tsx';
 
 function CreateMainComponent() {
 	const {

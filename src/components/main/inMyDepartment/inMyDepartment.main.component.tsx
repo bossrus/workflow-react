@@ -10,7 +10,7 @@ import { useDispatch } from 'react-redux';
 import { takeWorkflowThunk } from '@/store/workflows.thunks.ts';
 import RoundButtonComponent from '@/components/_shared/roundButton.component.tsx';
 import { getTitleByID } from '@/_services/getTitleByID.service.ts';
-import OutlinedSmallButtonComponent from '@/components/_shared/outlined.smallButton.component.tsx';
+import OutlinedSmallButtonComponent from '@/components/_shared/outlinedSmallButtonComponent.tsx';
 import ContainedSmallButtonComponent from '@/components/_shared/contained.smallButton.component.tsx';
 
 function InMyDepartmentMainComponent() {

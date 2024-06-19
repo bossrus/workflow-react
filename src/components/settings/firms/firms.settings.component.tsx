@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
-import OneFirmFirmsComponent from '@/components/settings/firms/oneFirm.firms.component.tsx';
-import EditFirmFormComponent from '@/components/settings/firms/editFirmForm.firms.component.tsx';
+import OneFirmFirmsComponent from '@/components/settings/firms/oneFirm.firms.settings.component.tsx';
+import EditFirmFormComponent from '@/components/settings/firms/editFirmForm.firms.settings.component.tsx';
 import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,15 +21,21 @@ function FirmsComponents() {
 	}, [firms]);
 
 	return (
-		<Box display="flex" flexDirection="column" height="100%">
+		<Box
+			className={'display-flex flex-direction-column height-100'}
+		>
 			<table className={'table-container'}>
 				<tbody>
 				<tr>
 					<td className={'vertical-align-top'}>
-						<Box display="flex" flexWrap="wrap" flexGrow={1} overflow="auto" p={2}
-							 sx={{ height: '100%', alignContent: 'flex-start' }}>
+						<Box
+							className={'padding-2su height-100 align-content-flex-start display-flex flex-wrap flex-grow-1 overflow-auto'}
+						>
 							{sortedFirms.map((firm) => (
-								<Box key={firm._id} flexBasis={0} flexGrow={1} minWidth={250}>
+								<Box
+									key={firm._id}
+									className={'flex-basis-0 flex-grow-1 min-width-250px'}
+								>
 									<OneFirmFirmsComponent firm={firm} />
 								</Box>
 							))}

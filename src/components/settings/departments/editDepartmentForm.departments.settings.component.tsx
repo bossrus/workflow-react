@@ -1,6 +1,6 @@
-// src/components/settings/departments/editDepartmentForm.departments.component.tsx
+// src/components/settings/departments/editDepartmentForm.departments.settings.component.tsx
 
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { TAppDispatch } from '@/store/_store.ts';
@@ -8,10 +8,12 @@ import { setState } from '@/store/_currentStates.slice.ts';
 import { IDepartmentUpdate } from '@/interfaces/department.interface.ts';
 import { patchOne } from '@/store/_shared.thunks.ts';
 import SwitchButtonComponent from '@/components/_shared/switchButton.component.tsx';
-import { FALSE_COLOR } from '@/_constants/colors.ts';
+import { FALSE_COLOR, MY_GREEN_COLOR } from '@/_constants/colors.ts';
 import makeSlug from '@/_services/makeSlug.service.ts';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import useEscapeKey from '@/_hooks/useEscapeKey.hook.ts';
+import ContainedSmallButtonComponent from '@/components/_shared/contained.smallButton.component.tsx';
+import HeaderEditFormSettingsCompnent from '@/components/settings/_shared/header.editForm.settings.component.tsx';
 
 const EditDepartmentFormComponent = () => {
 	const { departmentsObject, states: { currentDepartment } } = useReduxSelectors();
@@ -89,24 +91,17 @@ const EditDepartmentFormComponent = () => {
 	};
 
 	return (
-		<Box p={2} m={2} className={'in-depth border-round-1em'}>
+		<Box
+			className={'padding-2su margin-2su in-depth border-round-1em'}
+		>
 			{titleOfEditedDepartment !== '' && (
-				<Typography
-					variant="h5"
-					component="h2"
-					color={'yellow'}
-					sx={{
-						mb: '1em',
-						backgroundColor: '#0288d1',
-						textAlign: 'center',
-						borderRadius: '10px',
-					}}
-				>
-					Редактирование отдела «<strong>{titleOfEditedDepartment}</strong>»
-				</Typography>
+				<HeaderEditFormSettingsCompnent
+					title={'Редактирование отдела'}
+					stronger={titleOfEditedDepartment}
+				/>
 			)}
 			<TextField
-				fullWidth
+				className={'width-100'}
 				id="title"
 				label="Название отдела"
 				variant="standard"
@@ -125,14 +120,14 @@ const EditDepartmentFormComponent = () => {
 				trueTitle={'Принимает участие в технологической цепочке'}
 				falseTitle={'Не принимает участие в технологической цепочке'}
 				falseBackgroundColor={FALSE_COLOR}
-				trueBackgroundColor={'green'}
+				trueBackgroundColor={MY_GREEN_COLOR}
 			/>
 			{isUsedInWorkflow && (
 				<TextField
 					type={'number'}
 					value={numberInWorkflow}
 					onChange={(e) => setNumberInWorkflow(e.target.value)}
-					fullWidth
+					className={'width-100'}
 					id="number-in-line"
 					label="Номер отдела в технологической цепочке"
 					variant="standard"
@@ -143,31 +138,24 @@ const EditDepartmentFormComponent = () => {
 					}}
 				/>
 			)}
-			<Button
-				variant="contained"
-				size="small"
-				fullWidth
-				sx={{ mt: 2, borderRadius: '10px' }}
+			<ContainedSmallButtonComponent
+				className={'width-100'}
 				color={'success'}
-				className={'up-shadow'}
 				disabled={stopSave}
 				onClick={saveDepartment}
 			>
 				{titleOfEditedDepartment === '' ? 'Добавить новый отдел' : `Сохранить отдел «${titleOfEditedDepartment}»`}
-			</Button>
-
+			</ContainedSmallButtonComponent>
 			{titleOfEditedDepartment !== '' && (
-				<Button
-					variant="contained"
-					size="small"
-					fullWidth
-					sx={{ mt: 2, borderRadius: '10px' }}
+				<ContainedSmallButtonComponent
 					color={'info'}
-					className={'up-shadow'}
+					className={'width-100'}
 					onClick={clearFields}
 				>
-					отменить редактирование отдела «{titleOfEditedDepartment}»
-				</Button>
+					<span>отменить редактирование отдела «{titleOfEditedDepartment}» <small
+						className={'color-my-light-gray'}>(ESC)</small></span>
+
+				</ContainedSmallButtonComponent>
 			)}
 		</Box>
 	);

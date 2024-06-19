@@ -65,7 +65,7 @@ function TabsLineComponent({ section, chapter, tabs }: IProps) {
 			scrollButtons="auto"
 			allowScrollButtonsMobile
 			aria-label="scrollable auto tabs example"
-			className={'min-height-33px padding-top2su'}
+			className={'min-height-33px padding-top-2su'}
 		>
 			{resultTabs.map(({ label, badge, count }, index) => (
 				<Tab

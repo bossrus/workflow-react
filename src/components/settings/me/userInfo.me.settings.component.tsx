@@ -12,7 +12,9 @@ const UserInfoComponent = () => {
 	const title = 'отдел' + (me.departments?.length as number > 1 ? 'ы' : '');
 
 	return (
-		<Box className={'shadow'} borderRadius={'10px'} p={2} bgcolor={'white'}>
+		<Box
+			className={'shadow border-radius-10px padding-2su background-color-white'}
+		>
 			<RowUserInfoMeSettingsComponent title={'имя'}>
 				{me.name}
 			</RowUserInfoMeSettingsComponent>

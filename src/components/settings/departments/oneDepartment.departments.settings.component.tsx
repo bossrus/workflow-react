@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 import { deleteOne } from '@/store/_shared.thunks.ts';
 import { isNotValidDeleteMessage } from '@/_services/isValidDeleteMessage.ts';
 import useDeleteRecord from '@/_hooks/useDeleteRecord.hook.ts';
+import LabelWithCaptionSettingsCompnent from '@/components/settings/_shared/titleWithCaption.settings.component.tsx';
 
 interface IOneDepartmentProps {
 	department: IDepartment;
@@ -43,45 +44,39 @@ const OneDepartmentDepartmentsComponent = ({
 
 	return (
 		<Box
-			display="flex" p={1} m={2}
-			className={`${disabled ? 'in-depth' : 'shadow'}`}
-			borderRadius={'10px'}
+			className={`display-flex padding-1su margin-2su border-radius-10px ${disabled ? 'in-depth' : 'shadow'}`}
 		>
 			<Box
-				flexGrow={1}
-				p={1}
+				className={'flex-grow-1 padding-1su'}
 			>
-				<Typography variant="caption" sx={{ color: '#989a9b' }}>
-					название
-				</Typography>
-				<Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-					{title}
-				</Typography>
-
+				<LabelWithCaptionSettingsCompnent
+					caption={'название'}
+					title={title}
+				/>
 				{
 					isUsedInWorkflow && (<>
-						<Box display="flex" alignItems="center">
-							<Typography variant="body1" sx={{ p: '5px 0' }}>
+						<Box
+							className={'display-flex align-items-center'}
+						>
+							<Typography
+								variant="body1"
+								className={'padding-5px-0'}
+							>
 								принимает участие в технологической цепочке
 							</Typography>
 							<CheckBoxOutlinedIcon
-								sx={{ color: 'green', width: 'auto', height: '2em' }} />
+								className={'color-my-green width-auto height-32px'}
+							/>
 						</Box>
-						<Typography variant="caption" sx={{ color: '#989a9b' }}>
-							номер в технологической цепочке
-						</Typography>
-						<Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-							{numberInWorkflow}
-						</Typography>
-
-
+						<LabelWithCaptionSettingsCompnent
+							title={numberInWorkflow}
+							caption={'номер в технологической цепочке'}
+						/>
 					</>)
 				}
-
-
 			</Box>
-			<Box display="flex" flexDirection="column" justifyContent="space-between"
-				// p={1}
+			<Box
+				className={'display-flex flex-direction-column justify-content-space-between'}
 			>
 				<RoundButtonComponent mode={'delete'} id={_id} dis={disabled} onClickHere={deleteDepartment} />
 				<RoundButtonComponent mode={'edit'} id={_id} dis={disabled} onClickHere={changeEditedDepartment} />

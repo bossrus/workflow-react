@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box, TextField, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { validateEmail } from '@/_services/emailValidation.service.ts';
 import { IUser } from '@/interfaces/user.interface.ts';
@@ -10,6 +10,7 @@ import { changeMeEmail } from '@/store/me.slice.ts';
 import { patchOne } from '@/store/_shared.thunks.ts';
 import SwitchButtonComponent from '@/components/_shared/switchButton.component.tsx';
 import { FALSE_COLOR } from '@/_constants/colors.ts';
+import ContainedSmallButtonComponent from '@/components/_shared/contained.smallButton.component.tsx';
 
 const EmailSettingsComponent = () => {
 
@@ -50,26 +51,26 @@ const EmailSettingsComponent = () => {
 				type={'email'}
 				value={email}
 				onChange={(e) => setEmail(e.target.value)}
-				fullWidth
+				className={'width-100'}
 				id="email"
 				label="электронная почта"
 				variant="standard"
 			/>
-			{(!me.emailConfirmed || me.email !== email) && email && (
+			{(!me.emailConfirmed || me.email !== email) && (
 				<>
 					{email && me.email === email && (
-						<Typography variant="caption" sx={{ textAlign: 'center', color: '#989a9b' }}>
+						<Typography
+							variant="caption"
+							className={'text-align-center color-my-gray display-flex line-height-1 margin-top-05su'}
+						>
 							<i>
-								мы послали вам письмо.<br />
-								для подтверждения почтового ящика необходимо пройти по ссылке из письма
+								мы&nbsp;послали вам&nbsp;письмо.<br />
+								для&nbsp;подтверждения почтового ящика необходимо пройти по&nbsp;ссылке из&nbsp;письма
 							</i>
 						</Typography>
 					)}
-					<Button
-						variant="contained"
-						size="small"
-						fullWidth
-						sx={{ mt: 2, borderRadius: '10px' }}
+					<ContainedSmallButtonComponent
+						className={'width-100'}
 						color={'info'}
 						disabled={disableButton}
 						onClick={changeEmail}
@@ -81,19 +82,22 @@ const EmailSettingsComponent = () => {
 								: email === ''
 									? 'Стереть почту'
 									: 'Сменить почту'}
-					</Button>
+					</ContainedSmallButtonComponent>
 				</>
 			)}
 			{me.emailConfirmed &&
-				<SwitchButtonComponent
-					checkState={canSendLetters}
-					changeChecked={changeSubscribe}
-					mode={'usual'}
-					falseTitle={'Не присылать мне никаких сообщений на почту'}
-					trueTitle={'Присылать сообщения о появлении новых работ в моём отделе'}
-					falseBackgroundColor={FALSE_COLOR}
-					trueBackgroundColor={'green'}
-				/>}
+				<Box className={'padding-top-1su width-100 height-100'}>
+					<SwitchButtonComponent
+						checkState={canSendLetters}
+						changeChecked={changeSubscribe}
+						mode={'usual'}
+						falseTitle={'Не присылать мне никаких сообщений на почту'}
+						trueTitle={'Присылать сообщения о появлении новых работ в моём отделе'}
+						falseBackgroundColor={FALSE_COLOR}
+						trueBackgroundColor={'green'}
+					/>
+				</Box>
+			}
 		</Box>
 	);
 };

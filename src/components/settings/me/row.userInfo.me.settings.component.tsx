@@ -9,13 +9,18 @@ interface IProps {
 function RowUserInfoMeSettingsComponent({ children, title }: IProps) {
 	return (
 		<Box
-			paddingBottom={1}
-			paddingLeft={'30%'}
+			className={'padding-bottom-1su padding-left-15'}
 		>
-			<Typography variant="caption" sx={{ color: '#989a9b' }}>
+			<Typography
+				variant="caption"
+				className={'color-my-gray'}
+			>
 				{title}
 			</Typography>
-			<Typography variant="h5" sx={{ fontWeight: 'bold', pl: 2 }}>
+			<Typography
+				variant="h5"
+				className={'font-weight-bold padding-left-2su'}
+			>
 				{children}
 			</Typography>
 		</Box>

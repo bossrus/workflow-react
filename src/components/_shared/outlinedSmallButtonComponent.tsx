@@ -9,7 +9,7 @@ interface IProps {
 	className?: string;
 }
 
-const outlinedSmallButtonComponent = ({ color, disabled = false, onClick, children, className = '' }: IProps) => {
+const OutlinedSmallButtonComponent = ({ color, disabled = false, onClick, children, className = '' }: IProps) => {
 	return (
 		<SmallButtonComponent
 			className={className}
@@ -23,4 +23,4 @@ const outlinedSmallButtonComponent = ({ color, disabled = false, onClick, childr
 	);
 };
 
-export default outlinedSmallButtonComponent;
+export default OutlinedSmallButtonComponent;

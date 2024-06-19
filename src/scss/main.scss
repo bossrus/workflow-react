@@ -110,12 +110,20 @@ body {
   border-color: $myGrayLight !important;
 }
 
-.padding-top2su {
+.padding-top-2su {
   padding-top: $spacingUnit * 2 !important;
+}
+
+.padding-top-1su {
+  padding-top: $spacingUnit !important;
 }
 
 .background-color-main {
   background-color: $mainBackgroundColor !important;
+}
+
+.background-color-edit-color {
+  background-color: $editColor !important;
 }
 
 .flex-grow-1 {
@@ -128,6 +136,14 @@ body {
 
 .align-items-end {
   align-items: end !important;
+}
+
+.align-content-flex-start {
+  align-content: flex-start !important;
+}
+
+.flex-basis-0 {
+  flex-basis: 0 !important;
 }
 
 .margin-right-minus30px {
@@ -189,6 +205,10 @@ body {
   margin-bottom: $spacingUnit*2 !important;
 }
 
+.margin-bottom-1su {
+  margin-bottom: $spacingUnit !important;
+}
+
 .margin-bottom-5px {
   margin-bottom: 5px !important;
 }
@@ -212,6 +232,14 @@ body {
 
 .padding-left-5px {
   padding-left: 5px !important;
+}
+
+.padding-left-15 {
+  padding-left: 15% !important;
+}
+
+.padding-left-2su {
+  padding-left: $spacingUnit*2 !important;
 }
 
 .padding-right-1su {
@@ -299,6 +327,14 @@ body {
   margin-top: $spacingUnit*2 !important;
 }
 
+.margin-top-05su {
+  margin-top: $spacingUnit*.5 !important;
+}
+
+.margin-2su {
+  margin: $spacingUnit*2 !important;
+}
+
 .margin-top-0 {
   margin-top: 0 !important;
 }
@@ -316,6 +352,11 @@ body {
   padding-bottom: $spacingUnit * 2 !important;
 }
 
+.padding-x-2su {
+  padding-left: $spacingUnit * 2 !important;
+  padding-right: $spacingUnit * 2 !important;
+}
+
 .padding-3px {
   padding: 3px !important;
 }
@@ -326,6 +367,10 @@ body {
 
 .padding-1su {
   padding: $spacingUnit !important;
+}
+
+.padding-5px-0 {
+  padding: 5px 0 !important;
 }
 
 .small-button {
@@ -342,6 +387,18 @@ body {
 
 .padding-2su {
   padding: $spacingUnit *2 !important;
+}
+
+.padding-bottom-2su {
+  padding-bottom: $spacingUnit *2 !important;
+}
+
+.padding-bottom-1su {
+  padding-bottom: $spacingUnit !important;
+}
+
+.padding-5su {
+  padding: $spacingUnit *5 !important;
 }
 
 .outline-none {
@@ -362,6 +419,10 @@ body {
 
 .display-flex {
   display: flex !important;
+}
+
+.display-webkit-box {
+  display: -webkit-box !important;
 }
 
 .justify-content-flex-start {
@@ -501,12 +562,20 @@ body {
   opacity: 30%
 }
 
+.opacity-50 {
+  opacity: 50%
+}
+
 .color-red {
   color: red !important;
 }
 
 .color-green {
   color: green !important;
+}
+
+.color-my-green {
+  color: $myGreen !important;
 }
 
 .width-20px {
@@ -521,6 +590,10 @@ body {
   width: 100% !important;
 }
 
+.width-auto {
+  width: auto !important;
+}
+
 .width-70 {
   width: 70% !important;
 }
@@ -533,6 +606,10 @@ body {
   height: 32px !important;
 }
 
+.height-2su {
+  height: $spacingUnit*2 !important;
+}
+
 .justify-content-flex-end {
   justify-content: flex-end !important;
 }
@@ -543,6 +620,18 @@ body {
 
 .text-align-center {
   text-align: center !important;
+}
+
+.line-height-05 {
+  line-height: 0.5 !important;
+}
+
+.line-height-09 {
+  line-height: 0.9 !important;
+}
+
+.line-height-1 {
+  line-height: 1 !important;
 }
 
 .box-shadow {

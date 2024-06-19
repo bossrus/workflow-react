@@ -1,11 +1,12 @@
-import { Box, Button, IconButton, InputAdornment, TextField } from '@mui/material';
+import { Box, IconButton, InputAdornment, TextField } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { useState } from 'react';
+import { useState, MouseEvent } from 'react';
 import { useDispatch } from 'react-redux';
 import { TAppDispatch } from '@/store/_store.ts';
 import { IUser } from '@/interfaces/user.interface.ts';
 import { patchOne } from '@/store/_shared.thunks.ts';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
+import ContainedSmallButtonComponent from '@/components/_shared/contained.smallButton.component.tsx';
 
 const PasswordSettingsComponent = () => {
 	const { me } = useReduxSelectors();
@@ -13,7 +14,7 @@ const PasswordSettingsComponent = () => {
 	const [showPassword, setShowPassword] = useState(false);
 	const [password, setPassword] = useState('');
 
-	const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+	const handleMouseDownPassword = (event: MouseEvent<HTMLButtonElement>) => {
 		event.preventDefault();
 	};
 
@@ -26,12 +27,11 @@ const PasswordSettingsComponent = () => {
 	return (
 		<Box>
 			<TextField
-				sx={{ pt: 2 }}
+				className={'padding-top-2su width-100'}
 				label="Пароль"
 				id="password"
 				type={showPassword ? 'text' : 'password'}
 				variant="standard"
-				fullWidth
 				InputProps={{
 					endAdornment: (
 						<InputAdornment position="end">
@@ -48,11 +48,8 @@ const PasswordSettingsComponent = () => {
 				value={password}
 				onChange={(e) => setPassword(e.target.value)}
 			/>
-			<Button
-				variant="contained"
-				size="small"
-				fullWidth
-				sx={{ mt: 2, borderRadius: '10px' }}
+			<ContainedSmallButtonComponent
+				className={'width-100'}
 				color={'info'}
 				disabled={password.length === 0}
 				onClick={() => {
@@ -62,7 +59,7 @@ const PasswordSettingsComponent = () => {
 				}}
 			>
 				Обновить пароль
-			</Button>
+			</ContainedSmallButtonComponent>
 		</Box>
 	);
 };

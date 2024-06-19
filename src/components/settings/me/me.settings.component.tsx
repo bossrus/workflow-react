@@ -12,29 +12,33 @@ const MeSettingsComponent: FC = () => {
 	return (
 		<>
 			{Object.keys(me).length > 0 && Object.keys(departmentsObject).length > 0 && (
-				<Box display="flex" flexDirection="column" height="100%" boxSizing={'border-box'}>
+				<Box
+					className={'display-flex flex-direction-column height-100 box-sizing-border-box'}
+				>
 					<table className={'table-container'}>
 						<tbody>
 						<tr>
 							<td>
 
 								<Box
-									display={'-webkit-box'}
-									justifyContent={'center'}
-									p={5}
-									borderRadius={2}
-									overflow={'auto'}
-									height={'100%'}
-									boxSizing={'border-box'}
+									className={'margin-bottom-2su display-flex justify-content-center padding-5su border-radius-2su overflow-auto height-100 box-sizing-border-box'}
 								>
-									<Box style={{ width: '70%' }}>
+									<Box
+										className={'width-70'}
+									>
 										<UserInfoComponent />
-										<Box className={'shadow'} bgcolor={'white'} borderRadius={2} p={2} mt={2}>
+										<Box
+											className={'shadow background-color-white border-radius-2su padding-2su margin-top-2su'}
+										>
 											<EmailSettingsComponent />
 										</Box>
-										<Box className={'shadow'} bgcolor={'white'} borderRadius={2} p={2} mt={2}>
+										<Box
+											className={'padding-2su margin-top-2su shadow background-color-white border-radius-2su'}
+										>
 											<PasswordSettingsComponent />
-										</Box></Box>
+										</Box>
+										<Box className={'height-32px'} />
+									</Box>
 								</Box>
 							</td>
 						</tr>

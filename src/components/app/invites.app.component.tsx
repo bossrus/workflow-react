@@ -10,7 +10,7 @@ import axios from 'axios';
 import SwitchButtonComponent from '@/components/_shared/switchButton.component.tsx';
 import { FALSE_COLOR } from '@/_constants/colors.ts';
 import { getTitleByID } from '@/_services/getTitleByID.service.ts';
-import OutlinedSmallButtonComponent from '@/components/_shared/outlined.smallButton.component.tsx';
+import OutlinedSmallButtonComponent from '@/components/_shared/outlinedSmallButtonComponent.tsx';
 
 
 interface IOrderElement {

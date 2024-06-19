@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { IFirm } from '@/interfaces/firm.interface.ts';
 import RoundButtonComponent from '@/components/_shared/roundButton.component.tsx';
 import { useDispatch } from 'react-redux';
@@ -9,6 +9,7 @@ import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { useEffect } from 'react';
 import { isNotValidDeleteMessage } from '@/_services/isValidDeleteMessage.ts';
 import useDeleteRecord from '@/_hooks/useDeleteRecord.hook.ts';
+import TitleWithCaptionSettingsComponent from '@/components/settings/_shared/titleWithCaption.settings.component.tsx';
 
 interface IOneFirmProps {
 	firm: IFirm;
@@ -42,29 +43,19 @@ function OneFirmFirmsComponent({
 
 	return (
 		<Box
-			display="flex" p={1} m={2}
-			className={`${disabled ? 'in-depth' : 'shadow'}`}
-			borderRadius={'10px'}
+			className={`border-radius-10px display-flex padding-1su margin-2su ${disabled ? 'in-depth' : 'shadow'}`}
 		>
 			<Box
-				flexGrow={1}
-				p={1}
+				className={'flex-grow-1 padding-1su'}
 			>
-				<Typography variant="caption" sx={{ color: '#989a9b' }}>
-					название
-				</Typography>
-				<Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-					{title}
-				</Typography>
-
-				<Typography variant="caption" sx={{ color: '#989a9b' }}>
-					базовый приоритет
-				</Typography>
-				<Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-					{basicPriority}
-				</Typography>
-
-
+				<TitleWithCaptionSettingsComponent
+					caption={'название'}
+					title={title}
+				/>
+				<TitleWithCaptionSettingsComponent
+					caption={'базовый приоритет'}
+					title={basicPriority.toString()}
+				/>
 			</Box>
 			<Box
 				display="flex"

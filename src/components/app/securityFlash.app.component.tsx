@@ -49,11 +49,11 @@ const SecurityFlashAppComponent = () => {
 					только
 					после вашего&nbsp;взаимодействия с&nbsp;сайтом.
 					<br />
-					<strong className={'padding-top2su'}>Что нужно сделать?</strong>
+					<strong className={'padding-top-2su'}>Что нужно сделать?</strong>
 					<br />
 					Просто нажмите любую кнопку или&nbsp;кликните в&nbsp;любом месте окна.
 					<br />
-					<i className={'padding-top2su'}>Это сразу разблокирует все аудиофункции и&nbsp;позволит вам
+					<i className={'padding-top-2su'}>Это сразу разблокирует все аудиофункции и&nbsp;позволит вам
 						наслаждаться полным звуковым
 						сопровождением.</i>
 				</Box>

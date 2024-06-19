@@ -124,15 +124,21 @@ function MainComponent() {
 	return (
 		<>
 			{
-				<Box display="flex" flexDirection="column" height="100%" boxShadow={3} borderRadius={2}
-					 bgcolor={'white'} px={2} pb={2} boxSizing={'border-box'}>
+				<Box
+					className={'box-sizing-border-box display-flex flex-direction-column height-100 box-sizing-border-box border-radius-2su background-color-white padding-x-2su'}
+					boxShadow={3}
+				>
 					{tabs.length > 0 && path && path != 'create' &&
-						<Box justifyContent="center" id={'test'} display={'flex'}>
+						<Box
+							className={'justify-content-center display-flex'}
+						>
 							<TabsLineComponent tabs={tabs} chapter={path} section={'main'} />
 						</Box>
 					}
 					{path && path != '' ?
-						<Box flexGrow={1} boxSizing={'border-box'}>
+						<Box
+							className={'flex-grow-1 box-sizing-border-box'}
+						>
 							{components[path] && components[path]}
 						</Box>
 						: <Box className={'table-container'}>
