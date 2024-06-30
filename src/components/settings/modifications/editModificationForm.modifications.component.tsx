@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { TAppDispatch } from '@/store/_store.ts';
@@ -8,6 +8,9 @@ import { patchOne } from '@/store/_shared.thunks.ts';
 import makeSlug from '@/_services/makeSlug.service.ts';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import useEscapeKey from '@/_hooks/useEscapeKey.hook.ts';
+import HeaderEditFormSettingsComponent from '@/components/settings/_shared/header.editForm.settings.component.tsx';
+import ContainedSmallButtonComponent from '@/components/_shared/contained.smallButton.component.tsx';
+import TitleWithHotkeyComponent from '@/components/_shared/titleWithHotkey.component.tsx';
 
 const EditModificationFormModificationsComponent = () => {
 	const { modificationsObject, states: { currentModification } } = useReduxSelectors();
@@ -21,6 +24,11 @@ const EditModificationFormModificationsComponent = () => {
 			setTitle(modificationsObject[currentModification].title);
 			setTitleOfEditedModification(modificationsObject[currentModification].title);
 		}
+		return () => {
+			dispatch(setState({
+				currentModification: undefined,
+			}));
+		};
 	}, [currentModification]);
 
 	useEffect(() => {
@@ -69,29 +77,17 @@ const EditModificationFormModificationsComponent = () => {
 
 	return (
 		<Box
-			p={2}
-			m={2}
-			className={'in-depth border-round-1em'}
+			className={'padding-2su margin-2su in-depth border-round-1em'}
 		>
 			{
 				titleOfEditedModification !== '' && <>
-					<Typography
-						variant="h5"
-						component="h2"
-						color={'yellow'}
-						sx={{
-							mb: '1em',
-							backgroundColor: '#0288d1',
-							textAlign: 'center',
-							borderRadius: '10px',
-						}}>
+					<HeaderEditFormSettingsComponent
 
-						Редактирование номера журнала «<strong>{titleOfEditedModification}</strong>»
-					</Typography>
+						stronger={titleOfEditedModification} title={'Редактирование номера журнала'} />
 				</>
 			}
 			<TextField
-				fullWidth
+				className={'width-100'}
 				id="title"
 				label="Номер журнала"
 				variant="standard"
@@ -103,35 +99,31 @@ const EditModificationFormModificationsComponent = () => {
 					}
 				}}
 			/>
-			<Button
-				variant="contained"
-				size="small"
-				fullWidth
-				sx={{ mt: 2, borderRadius: '10px' }}
-				color={'success'}
-				className={'up-shadow'}
-				disabled={stopSave}
-				onClick={saveModification}
-			>
-				{titleOfEditedModification === ''
-					? 'Добавить новый номер журнала'
-					: `Сохранить номер журнала «${titleOfEditedModification}»`
-				}
-			</Button>
-
-			{titleOfEditedModification !== '' &&
-				<Button
-					variant="contained"
-					size="small"
-					fullWidth
-					sx={{ mt: 2, borderRadius: '10px' }}
+			{title && <>
+				<ContainedSmallButtonComponent
+					color={'success'}
+					className={'width-100'}
+					disabled={stopSave}
+					onClick={saveModification}
+				>
+					{titleOfEditedModification === ''
+						? 'Добавить новый номер журнала'
+						: `Сохранить номер журнала «${titleOfEditedModification}»`
+					}
+				</ContainedSmallButtonComponent>
+				<ContainedSmallButtonComponent
 					color={'info'}
-					className={'up-shadow'}
+					className={'width-100'}
 					onClick={() => changeEditedModification(undefined)}
 				>
-					отменить редактирование номера журнала «{titleOfEditedModification}»
-				</Button>}
-		</Box>
+					<TitleWithHotkeyComponent
+						title={titleOfEditedModification !== '' ? `отменить редактирование номера журнала «${titleOfEditedModification}»` : 'очистить поля'}
+						hotkey={'ESC'}
+					/>
+
+				</ContainedSmallButtonComponent>
+			</>
+			}        </Box>
 	);
 };
 

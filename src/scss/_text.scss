@@ -1,0 +1,66 @@
+@import "./_consts.scss";
+
+.fake-link {
+  cursor: pointer !important;
+  color: blue !important;
+  text-decoration: underline !important;
+}
+
+.font-size-0875rem {
+  font-size: 0.875rem !important;
+}
+
+.font-weight-bold {
+  font-weight: bold !important;
+}
+
+.text-align-left {
+  text-align: left !important;
+}
+
+.text-bold {
+  font-weight: bold !important;
+}
+
+.text-align-center {
+  text-align: center !important;
+}
+
+.text-field-on-create {
+  @include in-depth;
+  width: 100%;
+  border: none !important;
+  display: flex;
+  flex-grow: 1;
+  border-radius: $spacingUnit * 2;
+  background-color: $mainBackgroundColor !important;
+}
+
+.text-field-on-create .MuiInputBase-root {
+  border: none;
+  border-radius: $spacingUnit * 2 !important;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.text-field-on-create textarea {
+  overflow: auto !important;
+}
+
+.text-underline {
+  text-decoration: underline !important;
+}
+
+.text-warp {
+  white-space: pre-wrap !important;
+}
+
+.text-warp-font-weight-bold {
+  white-space: pre-wrap !important;
+  font-weight: bold !important;
+}
+
+.font-weight-bolder {
+  font-weight: bolder !important;
+}

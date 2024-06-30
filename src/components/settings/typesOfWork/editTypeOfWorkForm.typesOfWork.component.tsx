@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { TAppDispatch } from '@/store/_store.ts';
@@ -8,6 +8,9 @@ import { patchOne } from '@/store/_shared.thunks.ts';
 import makeSlug from '@/_services/makeSlug.service.ts';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import useEscapeKey from '@/_hooks/useEscapeKey.hook.ts';
+import HeaderEditFormSettingsComponent from '@/components/settings/_shared/header.editForm.settings.component.tsx';
+import ContainedSmallButtonComponent from '@/components/_shared/contained.smallButton.component.tsx';
+import TitleWithHotkeyComponent from '@/components/_shared/titleWithHotkey.component.tsx';
 
 const EditTypeOfWorkFormTypesOfWorkComponent: React.FC = () => {
 	const { typesOfWorkArray: typesOfWork, typesOfWorkObject, states: { currentTypeOfWork } } = useReduxSelectors();
@@ -22,6 +25,9 @@ const EditTypeOfWorkFormTypesOfWorkComponent: React.FC = () => {
 			setTitle(typesOfWorkObject[currentTypeOfWork].title);
 			setTitleOfEditedTypeOfWork(typesOfWorkObject[currentTypeOfWork].title);
 		}
+		return () => {
+			dispatch(setState({ currentTypeOfWork: undefined }));
+		};
 	}, [currentTypeOfWork]);
 
 	useEffect(() => {
@@ -52,24 +58,17 @@ const EditTypeOfWorkFormTypesOfWorkComponent: React.FC = () => {
 	};
 
 	return (
-		<Box p={2} m={2} className={'in-depth border-round-1em'}>
+		<Box
+			className={'padding-2su margin-2su in-depth border-round-1em'}
+		>
 			{titleOfEditedTypeOfWork !== '' && (
-				<Typography
-					variant="h5"
-					component="h2"
-					color={'yellow'}
-					sx={{
-						mb: '1em',
-						backgroundColor: '#0288d1',
-						textAlign: 'center',
-						borderRadius: '10px',
-					}}
-				>
-					Редактирование типа работ «<strong>{titleOfEditedTypeOfWork}</strong>»
-				</Typography>
+				<HeaderEditFormSettingsComponent
+					title={`Редактирование типа работ`}
+					stronger={titleOfEditedTypeOfWork}
+				/>
 			)}
 			<TextField
-				fullWidth
+				className={'width-100'}
 				id="title"
 				label="Название типа работ"
 				variant="standard"
@@ -81,32 +80,26 @@ const EditTypeOfWorkFormTypesOfWorkComponent: React.FC = () => {
 					}
 				}}
 			/>
-			<Button
-				variant="contained"
-				size="small"
-				fullWidth
-				sx={{ mt: 2, borderRadius: '10px' }}
-				color={'success'}
-				className={'up-shadow'}
-				disabled={stopSave}
-				onClick={saveTypeOfWork}
-			>
-				{titleOfEditedTypeOfWork === '' ? 'Добавить новый тип работ' : `Сохранить изменения в «${titleOfEditedTypeOfWork}»`}
-			</Button>
-			{titleOfEditedTypeOfWork !== '' && (
-				<Button
-					variant="contained"
-					size="small"
-					fullWidth
-					sx={{ mt: 2, borderRadius: '10px' }}
+			{title && <>
+				<ContainedSmallButtonComponent
+					color={'success'}
+					className={'width-100'}
+					disabled={stopSave}
+					onClick={saveTypeOfWork}
+				>
+					{titleOfEditedTypeOfWork === '' ? 'Добавить новый тип работ' : `Сохранить изменения в «${titleOfEditedTypeOfWork}»`}
+				</ContainedSmallButtonComponent>
+				<ContainedSmallButtonComponent
 					color={'info'}
-					className={'up-shadow'}
+					className={'width-100'}
 					onClick={clearFields}
 				>
-					отменить редактирование типа работ «{titleOfEditedTypeOfWork}»
-				</Button>
-			)}
-		</Box>
+					<TitleWithHotkeyComponent
+						title={titleOfEditedTypeOfWork !== '' ? `отменить редактирование типа работ «${titleOfEditedTypeOfWork}»` : 'очистить поля'}
+						hotkey={'ESC'} />
+				</ContainedSmallButtonComponent>
+			</>
+			}        </Box>
 	);
 };
 

@@ -7,10 +7,16 @@ interface IProps {
 
 function CheckedStringOneUserUsersComponent({ title }: IProps) {
 	return (
-		<Box display="flex" alignItems="center">
+		<Box
+			className={'display-flex align-items-center'}
+		>
 			<CheckBoxOutlinedIcon
-				sx={{ color: 'green', width: 'auto', height: '1em', pr: 0.5 }} />
-			<Typography variant="body1" sx={{ p: '5px 0' }}>
+				className={'color-my-green width-auto height-2su padding-right-05su'}
+			/>
+			<Typography
+				variant="body1"
+				className={'padding-5px-0'}
+			>
 				{title}
 			</Typography>
 

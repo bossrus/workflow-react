@@ -204,7 +204,9 @@ function AllWorkflowsStatComponent() {
 
 	return (
 		<>
-			<Box display="flex" flexDirection="column" height="100%" boxShadow={3} borderRadius={2} bgcolor={'white'}>
+			<Box
+				className={'box-shadow-3 display-flex flex-direction-column height-100 border-radius-2su background-color-white'}
+			>
 				<FiltersStatComponent
 					useFirm={useFirm}
 					setUseFirm={setUseFirm}
@@ -231,11 +233,7 @@ function AllWorkflowsStatComponent() {
 				/>
 				<Box flexGrow={1} overflow="auto" p={2}>
 					<Box
-						height="100%"
-						className={'shadow-inner background'}
-						borderRadius={2}
-						p={2}
-						boxSizing={'border-box'}
+						className={'shadow-inner background border-radius-2su padding-2su box-sizing-border-box height-100'}
 					>
 						<BodyTableStatComponent
 							checkSelected={saveChecked}

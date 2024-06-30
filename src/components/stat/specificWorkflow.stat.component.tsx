@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import axiosCreate from '@/_api/axiosCreate.ts';
 import { IWorkflow } from '@/interfaces/workflow.interface.ts';
@@ -8,6 +8,7 @@ import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { useNavigate } from 'react-router-dom';
 import { TAppDispatch, workflows } from '@/store/_store.ts';
 import { useDispatch } from 'react-redux';
+import ContainedSmallButtonComponent from '@/components/_shared/contained.smallButton.component.tsx';
 
 interface ISpecificWorkflowStatComponentProps {
 	propsId: string;
@@ -70,14 +71,14 @@ function specificWorkflowStatComponent({
 
 	return (
 		<>
-			<Box display="flex" flexDirection="column" height="100%" boxShadow={3} borderRadius={2} bgcolor={'white'}>
-				<Box flexGrow={1} p={2} height={'100%'}>
+			<Box
+				className={'box-shadow-3 display-flex flex-direction-column height-100 border-radius-2su background-color-white'}
+			>
+				<Box
+					className={'flex-grow-1 padding-2su height-100'}
+				>
 					<Box
-						height="100%"
-						className={'shadow-inner background'}
-						borderRadius={2}
-						p={2}
-						boxSizing={'border-box'}
+						className={'height-100 shadow-inner background border-radius-2su padding-2su box-sizing-border-box'}
 					>
 						{
 							(
@@ -93,13 +94,10 @@ function specificWorkflowStatComponent({
 									типа загрузка
 								</>
 								: <Box
-									width={'100%'}
-									height={'100%'}
-									boxSizing={'border-box'}
-									display="flex" flexDirection="column"
+									className={'width-100 height-100 box-sizing-border-box display-flex flex-direction-column '}
 								>
 									<Box
-										textAlign={'center'}
+										className={'text-align-center'}
 									>
 										<h3>
 											{firmsObject[workflowsList[0].firm as string].title}
@@ -109,16 +107,15 @@ function specificWorkflowStatComponent({
 											«{workflowsList[0].title}»
 										</h3>
 									</Box>
-									<Box flexGrow={1}>
+									<Box
+										className={'flex-grow-1'}
+									>
 										<table className={'table-container'}>
 											<tbody>
 											<tr>
 												<td className={'vertical-align-top just-table-container-pb0'}>
-													<Box flexGrow={1} p={1} display="flex" gap={1}
-														 overflow="auto"
-														 flexDirection="column"
-														 height={'100%'}
-														 boxSizing={'border-box'}
+													<Box
+														className={'height-100 box-sizing-border-box flex-grow-1 padding-1su display-flex gap-1su overflow-auto flex-direction-column'}
 													>
 														{
 															workflowsList.map((workflow) => (
@@ -126,18 +123,8 @@ function specificWorkflowStatComponent({
 																	key={workflow._id}
 																>
 																	<AccordionSummary
+																		className={'accordion'}
 																		expandIcon={<ExpandMoreIcon />}
-																		sx={{
-																			backgroundColor: '#b0f0fd',
-																			'&.Mui-expanded': {
-																				backgroundColor: '#b0f0fd',
-																				margin: '0! important',
-																			},
-																			'&:hover': {
-																				backgroundColor: '#a2f0fd',
-																			},
-																			margin: '0! important',
-																		}}
 																	>
 																		{new Date(workflow.isPublished as number).toLocaleString('ru-RU', {
 																			day: '2-digit',
@@ -157,16 +144,10 @@ function specificWorkflowStatComponent({
 																	<AccordionDetails
 																	>
 																		<Box
-																			paddingBottom={1}
+																			className={'padding-bottom-1su'}
 																		>
 																			<Accordion
-																				sx={{
-																					backgroundColor: '#f3fdff',
-																					'&:hover': {
-																						backgroundColor: '#e9f9fb',
-																					},
-																					margin: '0! important',
-																				}}
+																				className={'accordion-inner'}
 																			>
 																				<AccordionSummary
 																					expandIcon={<ExpandMoreIcon />}
@@ -186,29 +167,19 @@ function specificWorkflowStatComponent({
 																			</Accordion>
 																		</Box>
 																		<Box
-																			flexGrow={1}
-																			// p={1}
-																			display="flex"
-																			gap={1}
-																			flexDirection="column"
+																			className={'flex-grow-1 display-flex gap-1su flex-direction-column'}
 																		>
 																			{
 																				loglist[workflow._id as string] &&
 																				loglist[workflow._id as string].map((logItem, index) => {
 																					return (
 																						<Box
-																							key={logItem._id} // Assuming logItem has a unique identifier _id
-																							// flexGrow={1}
-																							display="flex"
-																							gap={2}
-																							flexDirection="row"
-																							bgcolor={
-																								index % 2 === 0
-																									? '#f1f1f1'
-																									: 'white'
-																							}
+																							key={logItem._id}
+																							className={`display-flex gap-2su flex-direction-row ${index % 2 === 0 ? 'background-color-my-gray-very-light' : 'background-color-white'}`}
 																						>
-																							<Box width={'20%'}>
+																							<Box
+																								className={'width-20'}
+																							>
 																								{new Date(logItem.date as number).toLocaleString('ru-RU', {
 																									day: '2-digit',
 																									month: '2-digit',
@@ -217,10 +188,14 @@ function specificWorkflowStatComponent({
 																									minute: '2-digit',
 																								})}
 																							</Box>
-																							<Box width={'10%'}>
+																							<Box
+																								className={'width-10'}
+																							>
 																								{usersObject[logItem.idWorker].name}
 																							</Box>
-																							<Box flexGrow={1}>
+																							<Box
+																								className={'flex-grow-1'}
+																							>
 																								{
 																									logItem.operation === 'publish' &&
 																									'Создание заказа'
@@ -236,7 +211,6 @@ function specificWorkflowStatComponent({
 																							</Box>
 																						</Box>
 																					);
-																					return null;
 																				})
 																			}
 																		</Box>
@@ -254,18 +228,16 @@ function specificWorkflowStatComponent({
 						}
 					</Box>
 				</Box>
-				<Box px={2} pb={2}>
-					<Button
-						variant="contained"
-						size="small"
-						fullWidth
-						sx={{ borderRadius: '10px' }}
+				<Box
+					className={'padding-x-2su padding-bottom-2su'}
+				>
+					<ContainedSmallButtonComponent
 						color={'info'}
-						className={'up-shadow'}
+						className={'width-100'}
 						onClick={() => goToStatMain()}
 					>
 						Вернуться
-					</Button>
+					</ContainedSmallButtonComponent>
 				</Box>
 			</Box>
 		</>

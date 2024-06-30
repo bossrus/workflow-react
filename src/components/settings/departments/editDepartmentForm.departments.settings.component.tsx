@@ -14,6 +14,7 @@ import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import useEscapeKey from '@/_hooks/useEscapeKey.hook.ts';
 import ContainedSmallButtonComponent from '@/components/_shared/contained.smallButton.component.tsx';
 import HeaderEditFormSettingsCompnent from '@/components/settings/_shared/header.editForm.settings.component.tsx';
+import TitleWithHotkeyComponent from '@/components/_shared/titleWithHotkey.component.tsx';
 
 const EditDepartmentFormComponent = () => {
 	const { departmentsObject, states: { currentDepartment } } = useReduxSelectors();
@@ -33,6 +34,9 @@ const EditDepartmentFormComponent = () => {
 			setNumberInWorkflow(localDepartment.numberInWorkflow);
 			setIsUsedInWorkflow(localDepartment.isUsedInWorkflow);
 		}
+		return () => {
+			dispatch(setState({ currentDepartment: undefined }));
+		};
 	}, [currentDepartment, departmentsObject]);
 
 	useEffect(() => {
@@ -113,50 +117,52 @@ const EditDepartmentFormComponent = () => {
 					}
 				}}
 			/>
-			<SwitchButtonComponent
-				checkState={isUsedInWorkflow}
-				changeChecked={setIsUsedInWorkflow}
-				mode={'usual'}
-				trueTitle={'Принимает участие в технологической цепочке'}
-				falseTitle={'Не принимает участие в технологической цепочке'}
-				falseBackgroundColor={FALSE_COLOR}
-				trueBackgroundColor={MY_GREEN_COLOR}
-			/>
-			{isUsedInWorkflow && (
-				<TextField
-					type={'number'}
-					value={numberInWorkflow}
-					onChange={(e) => setNumberInWorkflow(e.target.value)}
-					className={'width-100'}
-					id="number-in-line"
-					label="Номер отдела в технологической цепочке"
-					variant="standard"
-					onKeyDown={(e) => {
-						if (e.key === 'Enter') {
-							saveDepartment();
-						}
-					}}
+			{title && <>
+				<SwitchButtonComponent
+					checkState={isUsedInWorkflow}
+					changeChecked={setIsUsedInWorkflow}
+					mode={'usual'}
+					trueTitle={'Принимает участие в технологической цепочке'}
+					falseTitle={'Не принимает участие в технологической цепочке'}
+					falseBackgroundColor={FALSE_COLOR}
+					trueBackgroundColor={MY_GREEN_COLOR}
 				/>
-			)}
-			<ContainedSmallButtonComponent
-				className={'width-100'}
-				color={'success'}
-				disabled={stopSave}
-				onClick={saveDepartment}
-			>
-				{titleOfEditedDepartment === '' ? 'Добавить новый отдел' : `Сохранить отдел «${titleOfEditedDepartment}»`}
-			</ContainedSmallButtonComponent>
-			{titleOfEditedDepartment !== '' && (
+				{isUsedInWorkflow && (
+					<TextField
+						type={'number'}
+						value={numberInWorkflow}
+						onChange={(e) => setNumberInWorkflow(e.target.value)}
+						className={'width-100'}
+						id="number-in-line"
+						label="Номер отдела в технологической цепочке"
+						variant="standard"
+						onKeyDown={(e) => {
+							if (e.key === 'Enter') {
+								saveDepartment();
+							}
+						}}
+					/>
+				)}
+
+				<ContainedSmallButtonComponent
+					className={'width-100'}
+					color={'success'}
+					disabled={stopSave}
+					onClick={saveDepartment}
+				>
+					{titleOfEditedDepartment === '' ? 'Добавить новый отдел' : `Сохранить отдел «${titleOfEditedDepartment}»`}
+				</ContainedSmallButtonComponent>
 				<ContainedSmallButtonComponent
 					color={'info'}
 					className={'width-100'}
 					onClick={clearFields}
 				>
-					<span>отменить редактирование отдела «{titleOfEditedDepartment}» <small
-						className={'color-my-light-gray'}>(ESC)</small></span>
-
+					<TitleWithHotkeyComponent
+						title={titleOfEditedDepartment !== '' ? `отменить редактирование отдела «${titleOfEditedDepartment}»` : 'очистить поля'}
+						hotkey={'ESC'}
+					/>
 				</ContainedSmallButtonComponent>
-			)}
+			</>}
 		</Box>
 	);
 };

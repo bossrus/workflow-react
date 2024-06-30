@@ -1,0 +1,53 @@
+@import "./_consts.scss";
+
+.border-1px {
+  border: 1px !important;
+}
+
+.border-1su {
+  border: $spacingUnit !important;
+}
+
+.border-none {
+  border: none !important;
+}
+
+.border-radius-10px {
+  border-radius: 10px !important;
+}
+
+.border-radius-2su {
+  border-radius: $spacingUnit * 2 !important;
+}
+
+.border-radius-3su {
+  border-radius: $spacingUnit * 3 !important;
+}
+
+.border-radius-50 {
+  border-radius: 50% !important;
+}
+
+.border-radius-50-display-inline-flex-align-items-center-margin-left-1su-padding-3px {
+  border-radius: 50% !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  margin-left: $spacingUnit !important;
+  padding: 3px !important;
+}
+
+.border-round-1em {
+  border-radius: $one-em !important;
+}
+
+.border-round-2em {
+  border-radius: $two-em !important;
+}
+
+.border-round-3em {
+  border-radius: $three-em !important;
+}
+
+.error-border {
+  border: 1px solid $darkError !important;
+}

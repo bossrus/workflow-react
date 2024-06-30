@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box, TextField, Typography } from '@mui/material';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -10,6 +10,9 @@ import CheckListUsersComponent from '@/components/settings/users/checkList.users
 import { USER_RIGHTS } from '@/_constants/userRights.ts';
 import useEscapeKey from '@/_hooks/useEscapeKey.hook.ts';
 import { getTitleByID } from '@/_services/getTitleByID.service.ts';
+import HeaderEditFormSettingsComponent from '@/components/settings/_shared/header.editForm.settings.component.tsx';
+import ContainedSmallButtonComponent from '@/components/_shared/contained.smallButton.component.tsx';
+import TitleWithHotkeyComponent from '@/components/_shared/titleWithHotkey.component.tsx';
 
 interface IEditUserFormProps {
 	currentUser: string | undefined;
@@ -135,30 +138,23 @@ const EditUserFormUsersComponent = ({ currentUser, usersObject, saveUser }: IEdi
 
 	return (
 		<Box
-			p={2}
-			m={2}
-			className={'in-depth border-round-1em'}
+			className={'padding-2su margin-2su in-depth border-round-1em'}
 		>
 			{
 				nameOfEditedUser !== '' && <>
-					<Typography
-						variant="h5"
-						component="h2"
-						color={'yellow'}
-						sx={{
-							mb: '1em',
-							backgroundColor: '#0288d1',
-							textAlign: 'center',
-							borderRadius: '10px',
-						}}>
-
-						Редактирование пользователя «<strong>{nameOfEditedUser}</strong>»
-					</Typography>
+					<HeaderEditFormSettingsComponent title={'Редактирование пользователя'} stronger={nameOfEditedUser} />
 				</>
 			}
-			<Box display="flex" flexWrap="wrap" flexGrow={1} gap={2} sx={{ alignContent: 'flex-start' }}>
-				<Box display={'flex'} flexDirection={'column'}>
-					<Typography variant="caption" sx={{ color: '#989a9b' }}>
+			<Box
+				className={'display-flex flex-wrap flex-grow-1 gap-2su align-content-flex-start'}
+			>
+				<Box
+					className={'display-flex flex-direction-column'}
+				>
+					<Typography
+						variant="caption"
+						className={'color-my-gray'}
+					>
 						отделы:
 					</Typography>
 					<CheckListUsersComponent
@@ -167,15 +163,16 @@ const EditUserFormUsersComponent = ({ currentUser, usersObject, saveUser }: IEdi
 						changeUsingElements={setUsersDepartments}
 					/>
 				</Box>
-				<Box width="100%" minWidth={200} flexBasis={0} flexGrow={1}>
+				<Box
+					className={'width-100 min-width-200px flex-basis-0 flex-grow-1'}
+				>
 					<TextField
-						fullWidth
+						className={'width-100 padding-bottom-1su'}
 						id="name"
 						label="Имя"
 						variant="standard"
 						value={name}
 						onChange={(e) => setName(e.target.value)}
-						sx={{ pb: 1 }}
 						onKeyDown={(e) => {
 							if (e.key === 'Enter') {
 								predSaveUser();
@@ -183,13 +180,12 @@ const EditUserFormUsersComponent = ({ currentUser, usersObject, saveUser }: IEdi
 						}}
 					/>
 					<TextField
-						fullWidth
+						className={'width-100 padding-bottom-1su'}
 						id="login"
 						label="Логин"
 						variant="standard"
 						value={login}
 						onChange={(e) => setLogin(e.target.value)}
-						sx={{ pb: 1 }}
 						onKeyDown={(e) => {
 							if (e.key === 'Enter') {
 								predSaveUser();
@@ -197,7 +193,7 @@ const EditUserFormUsersComponent = ({ currentUser, usersObject, saveUser }: IEdi
 						}}
 					/>
 					<TextField
-						fullWidth
+						className={'width-100'}
 						id="password"
 						label="Пароль"
 						variant="standard"
@@ -210,8 +206,13 @@ const EditUserFormUsersComponent = ({ currentUser, usersObject, saveUser }: IEdi
 						}}
 					/>
 				</Box>
-				<Box display={'flex'} flexDirection={'column'}>
-					<Typography variant="caption" sx={{ color: '#989a9b' }}>
+				<Box
+					className={'display-flex flex-direction-column'}
+				>
+					<Typography
+						variant="caption"
+						className={'color-my-gray'}
+					>
 						права:
 					</Typography>
 					<CheckListUsersComponent
@@ -221,36 +222,33 @@ const EditUserFormUsersComponent = ({ currentUser, usersObject, saveUser }: IEdi
 					/>
 				</Box>
 			</Box>
-			<Button
-				variant="contained"
-				size="small"
-				fullWidth
-				sx={{ mt: 2, borderRadius: '10px' }}
-				color={'success'}
-				className={'up-shadow'}
-				disabled={stopSave}
-				onClick={predSaveUser}
-			>
-				{nameOfEditedUser === ''
-					? 'Добавить нового сотрудника'
-					: `Сохранить изменения в сотруднике «${nameOfEditedUser}»`
+			{(name || login || password) && <>
+				<ContainedSmallButtonComponent
+					color={'success'}
+					className={'width-100'}
+					disabled={stopSave}
+					onClick={predSaveUser}
+				>
+					{nameOfEditedUser === ''
+						? 'Добавить нового сотрудника'
+						: `Сохранить изменения в сотруднике «${nameOfEditedUser}»`
 
-				}
-			</Button>
+					}
+				</ContainedSmallButtonComponent>
 
-			{nameOfEditedUser !== '' &&
-				<Button
-					variant="contained"
-					size="small"
-					fullWidth
-					sx={{ mt: 2, borderRadius: '10px' }}
+				<ContainedSmallButtonComponent
 					color={'info'}
-					className={'up-shadow'}
+					className={'width-100'}
 					onClick={() => clearEditedUser()}
 				>
-					отменить редактирование отдела «{nameOfEditedUser}»
-				</Button>}
-		</Box>
+					<TitleWithHotkeyComponent
+						title={nameOfEditedUser !== '' ? `отменить редактирование сотрудника «${nameOfEditedUser}»` : 'Очистить поля'}
+						hotkey={'ESC'}
+					/>
+
+				</ContainedSmallButtonComponent>
+			</>
+			}        </Box>
 	);
 };
 

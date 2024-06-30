@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -12,8 +13,7 @@ import { visuallyHidden } from '@mui/utils';
 import { IWorkflow } from '@/interfaces/workflow.interface.ts';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import { IOrder } from '@/interfaces/databases.interface.ts';
-import { Button } from '@mui/material';
-import { useEffect } from 'react';
+import ContainedSmallButtonComponent from '@/components/_shared/contained.smallButton.component.tsx';
 
 interface IBodyTableProps {
 	rows: IWorkflow[];
@@ -233,7 +233,9 @@ export default function BodyTableStatComponent({
 	}
 
 	return (
-		<Box sx={{ width: '100%', height: '100%' }}>
+		<Box
+			className={'width-100 height-100'}
+		>
 			{
 				visibleRows.length > 0 &&
 				Object.keys(firmsObject).length > 0 &&
@@ -244,8 +246,7 @@ export default function BodyTableStatComponent({
 				<TableContainer>
 					<Table
 						aria-labelledby="tableTitle"
-						className={'table-container'}
-						sx={{ maxHeight: '100% !important' }}
+						className={'table-container max-height-100'}
 						// border={1}
 					>
 						<EnhancedTableHead
@@ -269,9 +270,7 @@ export default function BodyTableStatComponent({
 										tabIndex={-1}
 										key={row._id}
 										selected={isItemSelected}
-										sx={{ cursor: 'pointer' }}
-
-
+										className={'cursor-pointer'}
 									>
 										<TableCell padding="checkbox">
 
@@ -296,20 +295,17 @@ export default function BodyTableStatComponent({
 											}
 										</TableCell>
 										<TableCell
-											align="left"
-											sx={{ padding: '0 0 0 10px !important' }}
+											className={'text-align-left padding-0-0-0-10px'}
 										>
 											{firmsObject[row.firm].title}
 										</TableCell>
 										<TableCell
-											align="left"
-											sx={{ padding: '0 0 0 10px !important' }}
+											className={'text-align-left padding-0-0-0-10px'}
 										>
 											{modificationsObject[row.modification].title}
 										</TableCell>
 										<TableCell
-											align="left"
-											sx={{ padding: '0 0 0 10px !important' }}
+											className={'text-align-left padding-0-0-0-10px'}
 										>
 											<span className={'fake-link'}
 												  onClick={() => showSpecificWorkflows(row.mainId as string)}>
@@ -317,14 +313,12 @@ export default function BodyTableStatComponent({
 											</span>
 										</TableCell>
 										<TableCell
-											align="left"
-											sx={{ padding: '0 0 0 10px !important' }}
+											className={'text-align-left padding-0-0-0-10px'}
 										>
 											{row.countPages}
 										</TableCell>
 										<TableCell
-											align="left"
-											sx={{ padding: '0 0 0 10px !important' }}
+											className={'text-align-left padding-0-0-0-10px'}
 										>
 											{new Date(row.isPublished as number).toLocaleString('ru-RU', {
 												day: '2-digit',
@@ -335,14 +329,12 @@ export default function BodyTableStatComponent({
 											})}
 										</TableCell>
 										<TableCell
-											align="left"
-											sx={{ padding: '0 0 0 10px !important' }}
+											className={'text-align-left padding-0-0-0-10px'}
 										>
 											{usersObject[row.whoAddThisWorkflow].name}
 										</TableCell>
 										<TableCell
-											align="left"
-											sx={{ padding: '0 0 0 10px !important' }}
+											className={'text-align-left padding-0-0-0-10px'}
 										>
 											{typesOfWorkObject[row.type].title}
 										</TableCell>
@@ -352,18 +344,14 @@ export default function BodyTableStatComponent({
 						</TableBody>
 					</Table>
 					<Box px={2} pb={2}>
-						<Button
+						<ContainedSmallButtonComponent
 							disabled={selected.length === 0}
-							variant="contained"
-							size="small"
-							fullWidth
-							sx={{ borderRadius: '10px', marginTop: '10px' }}
+							className={'width-100'}
 							color={'info'}
-							className={'up-shadow'}
 							onClick={() => sendCheckedInfo()}
 						>
 							Отметить выделенное
-						</Button>
+						</ContainedSmallButtonComponent>
 					</Box>
 				</TableContainer>
 			}

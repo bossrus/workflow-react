@@ -21,7 +21,7 @@ const routes = [
 		Component: StatComponent,
 	},
 	{
-		path: '/',
+		path: '*',
 		Component: MainComponent,
 	},
 

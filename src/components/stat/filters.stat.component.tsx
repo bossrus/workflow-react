@@ -1,6 +1,7 @@
-import { Box, Button, FormControl, FormControlLabel, FormGroup, MenuItem, Select } from '@mui/material';
+import { Box, FormControl, FormControlLabel, FormGroup, MenuItem, Select } from '@mui/material';
 import Checkbox from '@mui/material/Checkbox';
 import { ICheckboxNames } from '@/components/stat/stat.component.tsx';
+import ContainedSmallButtonComponent from '@/components/_shared/contained.smallButton.component.tsx';
 
 interface FilterStatComponentProps {
 	useFirm: boolean;
@@ -55,9 +56,15 @@ function FilterStatComponent({
 
 	return (
 		<>
-			<Box display="flex" flexDirection="column">
-				<Box p={2} display={'flex'} flexDirection={'row'} justifyContent={'space-around'}>
-					<Box display={'flex'} flexDirection={'column'}>
+			<Box
+				className={'display-flex flex-direction-column'}
+			>
+				<Box
+					className={'padding-2su display-flex flex-direction-row justify-content-space-around'}
+				>
+					<Box
+						className={'display-flex flex-direction-column'}
+					>
 						<FormGroup>
 							<FormControlLabel control={
 								<Checkbox checked={useFirm} onChange={(event) => {
@@ -66,7 +73,10 @@ function FilterStatComponent({
 							} label="Журнал:" />
 						</FormGroup>
 						{useFirm &&
-							<FormControl variant="standard" sx={{ m: 1, minWidth: 120, pl: 2 }}>
+							<FormControl
+								variant="standard"
+								className={'margin-1su min-width-120px padding-left-2su'}
+							>
 								<Select
 									value={firm}
 									onChange={(event) => {
@@ -83,7 +93,9 @@ function FilterStatComponent({
 								</Select>
 							</FormControl>}
 					</Box>
-					<Box display={'flex'} flexDirection={'column'}>
+					<Box
+						className={'display-flex flex-direction-column'}
+					>
 						<FormGroup>
 							<FormControlLabel control={
 								<Checkbox checked={useModification} onChange={(event) => {
@@ -92,7 +104,10 @@ function FilterStatComponent({
 							} label="Номер журнала:" />
 						</FormGroup>
 						{useModification &&
-							<FormControl variant="standard" sx={{ m: 1, minWidth: 120, pl: 2 }}>
+							<FormControl
+								variant="standard"
+								className={'margin-1su min-width-120px padding-left-2su'}
+							>
 								<Select
 									value={modification}
 									onChange={(event) => {
@@ -101,7 +116,9 @@ function FilterStatComponent({
 								>
 									{firmsArray &&
 										modificationsArray.map((item) => (
-											<MenuItem key={item._id} value={item._id}>
+											<MenuItem
+												key={item._id}
+												value={item._id}>
 												{item.title}
 											</MenuItem>
 										))
@@ -109,7 +126,9 @@ function FilterStatComponent({
 								</Select>
 							</FormControl>}
 					</Box>
-					<Box display={'flex'} flexDirection={'column'}>
+					<Box
+						className={'display-flex flex-direction-column'}
+					>
 						<FormGroup>
 							<FormControlLabel control={
 								<Checkbox checked={showChecked} onChange={(event) => {
@@ -123,18 +142,28 @@ function FilterStatComponent({
 							} label="Показать не отмеченные" />
 						</FormGroup>
 					</Box>
-					<Box display={'flex'} flexDirection={'row'}>
-						<Box flexDirection={'column'} display={'flex'}>
+					<Box
+						className={'display-flex flex-direction-row'}
+					>
+						<Box
+							className={'display-flex flex-direction-column'}
+						>
 							<Checkbox checked={useDate} onChange={(event) => {
 								changeUseDateChecked(event.target.checked);
 							}} />
 						</Box>
-						<Box display={'flex'} flexDirection={'column'} pt={'10px'} gap={'17px'}>
+						<Box
+							className={'display-flex flex-direction-column padding-top-1su gap-2su'}
+						>
 							{useDate
 								?
 								<>
-									<Box display="flex" justifyContent="space-between">
-										<span style={{ paddingTop: '2px', color: 'gray' }}>дата, с</span>
+									<Box
+										className={'display-flex justify-content-space-between'}
+									>
+										<span
+											className={'padding-top-2px color-my-gray'}
+										>дата, с</span>
 										<input
 											type="date"
 											className={'date-picker'}
@@ -142,8 +171,12 @@ function FilterStatComponent({
 											onChange={(event) => setDateFrom(event.target.value)}
 										/>
 									</Box>
-									<Box display="flex" justifyContent="space-between">
-										<span style={{ paddingTop: '2px', color: 'gray' }}>дата, по</span>
+									<Box
+										className={'display-flex justify-content-space-between'}
+									>
+										<span
+											className={'padding-top-2px color-my-gray'}
+										>дата, по</span>
 										<input
 											type="date"
 											className={'date-picker'}
@@ -153,7 +186,9 @@ function FilterStatComponent({
 									</Box>
 
 								</>
-								: <span style={{ paddingTop: '2px' }}>
+								: <span
+									className={'padding-top-2px'}
+								>
 								Сделать выборку по дате
 							</span>
 							}
@@ -161,8 +196,12 @@ function FilterStatComponent({
 					</Box>
 				</Box>
 				{showWarning &&
-					<Box px={2} textAlign={'center'}>
-						<p style={{ color: 'red' }}>
+					<Box
+						className={'padding-x-2su text-align-center'}
+					>
+						<p
+							className={'color-red'}
+						>
 							Если необходимо <strong>«Показать отмеченные»</strong>, выборка становится слишком
 							большой.
 							<br />
@@ -173,18 +212,16 @@ function FilterStatComponent({
 					</Box>
 				}
 				{canUpdateTable &&
-					<Box px={2}>
-						<Button
-							variant="contained"
-							size="small"
-							fullWidth
-							sx={{ borderRadius: '10px' }}
+					<Box
+						className={'padding-x-2su'}
+					>
+						<ContainedSmallButtonComponent
 							color={'success'}
-							className={'up-shadow'}
+							className={'width-100'}
 							onClick={() => loadData()}
 						>
 							Обновить таблицу
-						</Button>
+						</ContainedSmallButtonComponent>
 					</Box>
 				}
 			</Box>

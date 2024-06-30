@@ -167,8 +167,7 @@ function WorkMyMainComponent({ incomingWorkID }: IProps) {
 					className={'display-flex flex-direction-column height-100'}
 				>
 					<Box
-						boxShadow={3}
-						className={'width-100 padding-1su box-sizing-border-box margin-bottom-2su border-radius-2su background-color-white justify-content-center display-flex flex-direction-row flex-wrap gap-1su'}
+						className={'box-shadow-3 width-100 padding-1su box-sizing-border-box margin-bottom-2su border-radius-2su background-color-white justify-content-center display-flex flex-direction-row flex-wrap gap-1su'}
 					>
 						<Box>
 							{getTitleByID(firmsObject, workflowsObject[incomingWorkID].firm)}
@@ -189,8 +188,7 @@ function WorkMyMainComponent({ incomingWorkID }: IProps) {
 
 					</Box>
 					<Box
-						boxShadow={3}
-						className={'display-flex flex-direction-row height-100 border-radius-2su background-color-white padding-2su box-sizing-border-box'}
+						className={'box-shadow-3 display-flex flex-direction-row height-100 border-radius-2su background-color-white padding-2su box-sizing-border-box'}
 					>
 						<Box
 							className={'flex-grow-1 padding-right-1su'}

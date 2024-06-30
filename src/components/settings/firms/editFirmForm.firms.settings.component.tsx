@@ -10,6 +10,7 @@ import useEscapeKey from '@/_hooks/useEscapeKey.hook.ts';
 import makeSlug from '@/_services/makeSlug.service.ts';
 import HeaderEditFormSettingsCompnent from '@/components/settings/_shared/header.editForm.settings.component.tsx';
 import ContainedSmallButtonComponent from '@/components/_shared/contained.smallButton.component.tsx';
+import TitleWithHotkeyComponent from '@/components/_shared/titleWithHotkey.component.tsx';
 
 function EditFirmFormComponent() {
 	const { firmsObject, states: { currentFirm } } = useReduxSelectors();
@@ -28,6 +29,9 @@ function EditFirmFormComponent() {
 
 	useEffect(() => {
 		setStates();
+		return () => {
+			dispatch(setState({ currentFirm: undefined }));
+		};
 	}, [currentFirm, firmsObject]);
 
 	const shouldAllowSave = (
@@ -116,41 +120,45 @@ function EditFirmFormComponent() {
 					}
 				}}
 			/>
-			<TextField
-				type={'number'}
-				value={basicPriority}
-				onChange={(e) => setBasicPriority(+e.target.value)}
-				className={'width-100'}
-				id="number-in-line"
-				label="Базовый приоритет клиента"
-				variant="standard"
-				onKeyDown={(e) => {
-					if (e.key === 'Enter') {
-						saveFirm();
-					}
-				}}
-			/>
+			{title && <>
+				<TextField
+					type={'number'}
+					value={basicPriority}
+					onChange={(e) => setBasicPriority(+e.target.value)}
+					className={'width-100'}
+					id="number-in-line"
+					label="Базовый приоритет клиента"
+					variant="standard"
+					onKeyDown={(e) => {
+						if (e.key === 'Enter') {
+							saveFirm();
+						}
+					}}
+				/>
 
-			<ContainedSmallButtonComponent
-				color={'success'}
-				className={'width-100'}
-				disabled={stopSave}
-				onClick={saveFirm}
-			>
-				{titleOfEditedFirm === ''
-					? 'Добавить нового клиента'
-					: `Сохранить изменения в клиенте «${titleOfEditedFirm}»`}
-			</ContainedSmallButtonComponent>
+				<ContainedSmallButtonComponent
+					color={'success'}
+					className={'width-100'}
+					disabled={stopSave}
+					onClick={saveFirm}
+				>
+					{titleOfEditedFirm === ''
+						? 'Добавить нового клиента'
+						: `Сохранить изменения в клиенте «${titleOfEditedFirm}»`}
+				</ContainedSmallButtonComponent>
 
-			{titleOfEditedFirm !== '' && (
 				<ContainedSmallButtonComponent
 					color={'info'}
 					className={'width-100'}
 					onClick={clearFields}
+					disabled={title == ''}
 				>
-					отменить редактирование клиента «{titleOfEditedFirm}»
+					<TitleWithHotkeyComponent
+						title={titleOfEditedFirm !== '' ? `отменить редактирование клиента «${titleOfEditedFirm}»` : 'очистить поля'}
+						hotkey={'ESC'}
+					/>
 				</ContainedSmallButtonComponent>
-			)}
+			</>}
 		</Box>
 	);
 }

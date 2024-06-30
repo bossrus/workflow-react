@@ -35,12 +35,21 @@ function SettingsComponent() {
 
 	return (
 		<>
-			<Box display="flex" flexDirection="column" height="100%" boxShadow={3} borderRadius={2}
-				 bgcolor={'white'} px={2}>
-				<Box justifyContent="center" id={'test'} display={'flex'}>
-					<TabsLineComponent tabs={tabs} chapter={path || 'me'} section={'settings'} />
+			<Box
+				className={'box-shadow-3 display-flex flex-direction-column height-100 border-radius-2su background-color-white padding-x-2su'}
+			>
+				<Box
+					className={'justify-content-center display-flex'}
+				>
+					<TabsLineComponent
+						tabs={tabs}
+						chapter={path || 'me'}
+						section={'settings'}
+					/>
 				</Box>
-				<Box flexGrow={1}>
+				<Box
+					className={'flex-grow-1'}
+				>
 					<SelectedComponent />
 				</Box>
 			</Box>

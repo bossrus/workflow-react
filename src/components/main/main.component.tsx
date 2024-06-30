@@ -7,12 +7,12 @@ import InMyDepartmentMainComponent from '@/components/main/inMyDepartment/inMyDe
 import NotPublishedMainComponent from '@/components/main/notPublished/notPublished.main.component.tsx';
 import AllWorksMainComponent from '@/components/main/allWorks/allWorks.main.component.tsx';
 import MyMainComponent from '@/components/main/my/my.main.component.tsx';
-import { useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import useWorksSelectors from '@/_hooks/useWorksSelectors.hook.ts';
 import { ITabs } from '@/interfaces/appSupport.interface.ts';
 
-const components: { [key: string]: JSX.Element } = {
+const components: { [key: string]: ReactElement } = {
 	'create': <CreateMainComponent />,
 	'my-department': <InMyDepartmentMainComponent />,
 	'publish': <NotPublishedMainComponent />,
@@ -125,8 +125,7 @@ function MainComponent() {
 		<>
 			{
 				<Box
-					className={'box-sizing-border-box display-flex flex-direction-column height-100 box-sizing-border-box border-radius-2su background-color-white padding-x-2su'}
-					boxShadow={3}
+					className={'box-shadow-3 box-sizing-border-box display-flex flex-direction-column height-100 box-sizing-border-box border-radius-2su background-color-white padding-x-2su'}
 				>
 					{tabs.length > 0 && path && path != 'create' &&
 						<Box

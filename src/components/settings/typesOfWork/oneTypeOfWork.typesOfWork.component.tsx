@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { ITypeOfWork } from '@/interfaces/worktype.interface.ts';
 import RoundButtonComponent from '@/components/_shared/roundButton.component.tsx';
 import { useDispatch } from 'react-redux';
@@ -9,6 +9,7 @@ import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import useDeleteRecord from '@/_hooks/useDeleteRecord.hook.ts';
 import { useEffect } from 'react';
 import { isNotValidDeleteMessage } from '@/_services/isValidDeleteMessage.ts';
+import TitleWithCaptionSettingsComponent from '@/components/settings/_shared/titleWithCaption.settings.component.tsx';
 
 interface IOneTypeOfWorkProps {
 	typeOfWork: ITypeOfWork;
@@ -44,23 +45,15 @@ function OneTypeOfWorkTypesOfWorkComponent({
 
 	return (
 		<Box
-			display="flex" p={1} m={2}
-			className={`${disabled ? 'in-depth' : 'shadow'}`}
-			borderRadius={'10px'}
+			className={`border-radius-10px display-flex padding-1su margin-2su ${disabled ? 'in-depth' : 'shadow'}`}
 		>
 			<Box
-				flexGrow={1}
-				p={1}
+				className={'flex-grow-1 padding-1su'}
 			>
-				<Typography variant="caption" sx={{ color: '#989a9b' }}>
-					название
-				</Typography>
-				<Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-					{title}
-				</Typography>
-
+				<TitleWithCaptionSettingsComponent caption={'название'} title={title} />
 			</Box>
-			<Box display="flex" flexDirection="column" justifyContent="space-between"
+			<Box
+				className={'display-flex flex-direction-column justify-content-space-between'}
 			>
 				<RoundButtonComponent mode={'delete'} id={_id} dis={disabled} onClickHere={deleteTypeOfWork} />
 				<RoundButtonComponent mode={'edit'} id={_id} dis={disabled} onClickHere={changeEditedTypeOfWork} />

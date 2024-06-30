@@ -86,20 +86,21 @@ function UsersComponents() {
 
 	return (
 		<>
-			<Box display="flex" flexDirection="column" height="100%">
+			<Box
+				className={'display-flex flex-direction-column height-100'}
+			>
 				<table className={'table-container'}>
 					<tbody>
 					<tr>
 						<td className={'vertical-align-top'}>
-							<Box display="flex" flexWrap="wrap" flexGrow={1} overflow="auto" p={2}
-								 sx={{ height: '100%', alignContent: 'flex-start' }}>
+							<Box
+								className={'display-flex flex-wrap flex-grow-1 overflow-auto padding-2su height-100 align-content-flex-start'}
+							>
 								{
 									users.map((user) =>
 										<Box
 											key={user._id}
-											flexBasis={0}
-											flexGrow={1}
-											minWidth={250}
+											className={'flex-basis-0 flex-grow-1 min-width-250px'}
 										>
 											<OneUserUsersComponent
 												deleteUser={deleteUser}

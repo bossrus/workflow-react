@@ -7,6 +7,7 @@ import { setState } from '@/store/_currentStates.slice.ts';
 import { useDispatch } from 'react-redux';
 import { TAppDispatch } from '@/store/_store.ts';
 import { getTitleByID } from '@/_services/getTitleByID.service.ts';
+import TitleWithCaptionSettingsComponent from '@/components/settings/_shared/titleWithCaption.settings.component.tsx';
 
 interface IOneUserProps {
 	user: IUser;
@@ -22,7 +23,6 @@ function OneUserUsersComponent({
 									   canSeeStatistics,
 									   isAdmin,
 									   canStartStopWorks,
-									   canWriteToSupport,
 									   login,
 								   },
 								   deleteUser,
@@ -43,40 +43,39 @@ function OneUserUsersComponent({
 
 	return (
 		<Box
-			display="flex" p={1} m={2}
-			className={`${disabled ? 'in-depth' : 'shadow'}`}
-			borderRadius={'10px'}
+			className={`border-radius-10px display-flex padding-1su margin-2su ${disabled ? 'in-depth' : 'shadow'}`}
 		>
 			<Box
-				flexGrow={1}
-				p={1}
+				className={'flex-grow-1 padding-1su'}
 			>
-				<Typography variant="caption" sx={{ color: '#989a9b' }}>
-					имя
-				</Typography>
-				<Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-					{name}
-				</Typography>
+				<TitleWithCaptionSettingsComponent caption={'имя'} title={name} />
+				<TitleWithCaptionSettingsComponent caption={'логин'} title={login} />
 
-				<Typography variant="caption" sx={{ color: '#989a9b' }}>
-					логин
-				</Typography>
-				<Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-					{login}
-				</Typography>
-
-				<Typography variant="caption" sx={{ color: '#989a9b' }}>
+				<Typography
+					variant="caption"
+					className={'color-my-gray'}
+				>
 					входит в отдел{departments.length > 1 && 'ы'}:
 				</Typography>
 				{departments.map(department => (
-					<Typography key={department} variant="h5" sx={{ fontWeight: 'bold' }}>
+					<Typography
+						key={department}
+						variant="h5"
+						className={'font-weight-bold'}>
 						{getTitleByID(listOfDepartments, department)}
 					</Typography>
 				))}
-				<Box sx={{ pt: 2 }}>
-					<Typography variant="caption" sx={{ color: '#989a9b' }}>
-						имеющиеся права:
-					</Typography>
+				<Box
+					className={'padding-top-2su'}
+				>
+					{(canMakeModification || canSeeStatistics ||
+							canStartStopWorks || isAdmin) &&
+						<Typography
+							variant="caption"
+							className={'color-my-gray'}
+						>
+							дополнительные права:
+						</Typography>}
 					{
 						canMakeModification && <CheckedStringOneUserUsersComponent title={'создать новые номера'} />
 					}
@@ -88,17 +87,14 @@ function OneUserUsersComponent({
 						<CheckedStringOneUserUsersComponent title={'начинать и завершать работу'} />
 					}
 					{
-						canWriteToSupport && <CheckedStringOneUserUsersComponent title={'писать в поддержку'} />
-					}
-					{
 						isAdmin && <CheckedStringOneUserUsersComponent title={'администрировать'} />
 					}
 				</Box>
 
 
 			</Box>
-			<Box display="flex" flexDirection="column" justifyContent="space-between"
-				// p={1}
+			<Box
+				className={'display-flex flex-direction-column justify-content-space-between'}
 			>
 				<RoundButtonComponent mode={'delete'} id={_id} dis={disabled} onClickHere={deleteUser} />
 				<RoundButtonComponent mode={'edit'} id={_id} dis={disabled} onClickHere={changeEditedUser} />

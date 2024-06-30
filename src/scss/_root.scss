@@ -1,0 +1,13 @@
+#root {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+body {
+  padding: 10px !important;
+  font-family: $font !important;
+  box-sizing: border-box !important;
+  width: calc(100vw - 20px) !important;
+  height: calc(100vh - 20px) !important;
+  background-color: $mainBackgroundColor !important;
+}
