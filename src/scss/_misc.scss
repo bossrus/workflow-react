@@ -65,14 +65,6 @@
   padding-bottom: 0 !important;
 }
 
-.line-height-05 {
-  line-height: 0.5 !important;
-}
-
-.line-height-09 {
-  line-height: 0.9 !important;
-}
-
 .line-height-1 {
   line-height: 1 !important;
 }
@@ -110,7 +102,7 @@
   @include table-container;
 }
 
-.tabs {
-  min-height: 33px !important;
-  padding-top: $spacingUnit * 2 !important;
+.table-container-pb10px {
+  @include table-container;
+  padding-bottom: 10px !important;
 }

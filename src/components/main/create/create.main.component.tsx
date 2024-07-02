@@ -54,6 +54,7 @@ function CreateMainComponent() {
 
 	useEffect(() => {
 		if (!departmentsArray || departmentsArray.length === 0) return;
+		document.title = 'Создание заказа';
 		changeField('currentDepartment', departmentsArray[0]._id);
 	}, [departmentsArray]);
 
@@ -125,6 +126,7 @@ function CreateMainComponent() {
 		workStateRef.current = workState;
 	}, [workState]);
 
+	// noinspection SpellCheckingInspection
 	const tagsMappings = {
 		'[<FRM>]': (value: string, state: IWorkflowUpdate) => ({
 			...state,
@@ -385,6 +387,7 @@ function CreateMainComponent() {
 		if (!id || Object.keys(workflowsObject).length <= 0) return;
 		const work = workflowsObject[id];
 		if (!work) return;
+		document.title = `«${work.title}» - редактирование`;
 		setWorkState({
 			firm: work.firm,
 			modification: work.modification,

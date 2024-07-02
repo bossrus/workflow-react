@@ -46,6 +46,7 @@ function LoginComponent() {
 
 	const navigate = useNavigate();
 	useEffect(() => {
+		document.title = 'Work-Flow вход';
 		if (Object.keys(loginData).length > 0) {
 			setAuth(loginData._id as string, loginData.loginToken as string);
 			navigate('/');

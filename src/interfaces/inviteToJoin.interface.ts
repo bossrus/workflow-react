@@ -13,7 +13,3 @@ export interface IInviteToJoinObject {
 	[_id: string]: IInviteToJoin;
 }
 
-export interface IFlashStore {
-	data: IInviteToJoinObject;
-	error: IError | undefined;
-}

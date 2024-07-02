@@ -93,8 +93,4 @@ export const selectMe = createSelector(
 	});
 export const selectMeError = (state: TAppState) => state.me.error;
 
-export const selectMeVersionById = (state: TAppState, _id: string) => {
-	if (!state.me.data || Object.values(state.me.data).length === 0)
-		return;
-	return state.me.data.version;
-};
+

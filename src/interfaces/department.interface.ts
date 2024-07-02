@@ -14,9 +14,4 @@ export interface IDepartmentsObject {
 	[_id: string]: IDepartment;
 }
 
-export interface IDepartmentStore {
-	data: IDepartmentsObject;
-	error: IError | undefined;
-}
-
 export type IDepartmentUpdate = Partial<IDepartment>

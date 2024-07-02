@@ -12,9 +12,4 @@ export interface ITypesOfWorkObject {
 	[_id: string]: ITypeOfWork;
 }
 
-export interface ITypeOfWorkStore {
-	data: ITypesOfWorkObject;
-	error: IError | undefined;
-}
-
 export type ITypeOfWorkUpdate = Partial<ITypeOfWork>

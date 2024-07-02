@@ -27,11 +27,6 @@ export interface IWorkflowsObject {
 	[_id: string]: IWorkflow;
 }
 
-export interface IWorkflowStore {
-	data: IWorkflowsObject;
-	error: IError | undefined;
-}
-
 
 export type IWorkflowsKeys = keyof IWorkflow;
 

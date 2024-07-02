@@ -9,4 +9,3 @@ export interface IError {
 	store?: string;
 }
 
-export type IErrorUpdate = Partial<IError>;

@@ -3,11 +3,14 @@ import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import UserInfoComponent from './userInfo.me.settings.component.tsx';
 import EmailSettingsComponent from '@/components/settings/me/email.me.settings.component.tsx';
 import PasswordSettingsComponent from '@/components/settings/me/password.me.settings.component.tsx';
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 
 const MeSettingsComponent: FC = () => {
 
 	const { me, departmentsObject } = useReduxSelectors();
+	useEffect(() => {
+		document.title = 'Мои настройки';
+	}, []);
 
 	return (
 		<>

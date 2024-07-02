@@ -23,6 +23,7 @@ function AllWorksMainComponent() {
 
 
 	useEffect(() => {
+		document.title = 'Все заказы';
 		const newColors: Record<string, string> = {};
 		for (let work of workflowsPublishedArray) {
 			newColors[work._id!] = assignColor(work.urgency);

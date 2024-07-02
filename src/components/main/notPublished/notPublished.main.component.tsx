@@ -38,6 +38,7 @@ function NotPublishedMainComponent() {
 	const [colors, setColors] = useState<Record<string, string>>({});
 	useEffect(() => {
 		if (!workflowsNotPublishedObject) return;
+		document.title = 'Публикация заказов';
 		const keys = Object.keys(workflowsNotPublishedObject);
 		if (keys.length <= 0) return;
 		const allChecks: Record<string, boolean> = {};

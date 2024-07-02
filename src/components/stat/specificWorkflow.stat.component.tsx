@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { TAppDispatch, workflows } from '@/store/_store.ts';
 import { useDispatch } from 'react-redux';
 import ContainedSmallButtonComponent from '@/components/_shared/contained.smallButton.component.tsx';
+import { getTitleByID } from '@/_services/getTitleByID.service.ts';
 
 interface ISpecificWorkflowStatComponentProps {
 	propsId: string;
@@ -19,7 +20,8 @@ function specificWorkflowStatComponent({
 									   }: ISpecificWorkflowStatComponentProps) {
 	const [workflowsList, setWorkflowsList] = useState<IWorkflow[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
-	const [loglist, setLoglist] = useState<ILogObject>({});
+	const [logList, setLogList] = useState<ILogObject>({});
+	const [nameOfMaterial, setNameOfMaterial] = useState<string>('');
 
 	const {
 		firmsObject,
@@ -44,7 +46,7 @@ function specificWorkflowStatComponent({
 			});
 			newList[id] = tempElement;
 		});
-		setLoglist(newList);
+		setLogList(newList);
 	};
 
 	const dispatch = useDispatch<TAppDispatch>();
@@ -69,6 +71,14 @@ function specificWorkflowStatComponent({
 		navigate('/stat');
 	};
 
+	useEffect(() => {
+		if (workflowsList.length <= 0) return;
+		const newNameOfMaterial = `«${workflowsList[0].title}» (${getTitleByID(firmsObject, workflowsList[0].firm)} №${getTitleByID(modificationsObject, workflowsList[0].modification)})`;
+		console.log('nameOfMaterial = ,nameOfMaterial');
+		setNameOfMaterial(newNameOfMaterial);
+		document.title = newNameOfMaterial;
+	}, [workflowsList]);
+
 	return (
 		<>
 			<Box
@@ -84,7 +94,7 @@ function specificWorkflowStatComponent({
 							(
 								isLoading
 								|| workflowsList.length < 1
-								|| Object.keys(loglist).length < 1
+								|| Object.keys(logList).length < 1
 								|| Object.keys(firmsObject).length < 1
 								|| Object.keys(departmentsObject).length < 1
 								|| Object.keys(typesOfWorkObject).length < 1
@@ -100,11 +110,7 @@ function specificWorkflowStatComponent({
 										className={'text-align-center'}
 									>
 										<h3>
-											{firmsObject[workflowsList[0].firm as string].title}
-											{', '}
-											№{modificationsObject[workflowsList[0].modification as string].title}
-											{', '}
-											«{workflowsList[0].title}»
+											{nameOfMaterial}
 										</h3>
 									</Box>
 									<Box
@@ -170,8 +176,8 @@ function specificWorkflowStatComponent({
 																			className={'flex-grow-1 display-flex gap-1su flex-direction-column'}
 																		>
 																			{
-																				loglist[workflow._id as string] &&
-																				loglist[workflow._id as string].map((logItem, index) => {
+																				logList[workflow._id as string] &&
+																				logList[workflow._id as string].map((logItem, index) => {
 																					return (
 																						<Box
 																							key={logItem._id}

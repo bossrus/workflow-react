@@ -19,6 +19,8 @@ function InMyDepartmentMainComponent() {
 		firmsObject,
 		modificationsObject,
 		usersObject,
+		me,
+		departmentsObject,
 	} = useReduxSelectors();
 
 	const {
@@ -58,9 +60,10 @@ function InMyDepartmentMainComponent() {
 	};
 
 	useEffect(() => {
-		if (workflowsInMyDepartment.length <= 0) return;
+		if (workflowsInMyDepartment.length <= 0 || !me.currentDepartment) return;
 		uncheckAll();
-	}, [workflowsInMyDepartment]);
+		document.title = 'Очередь «' + departmentsObject[me.currentDepartment].title + '»';
+	}, [workflowsInMyDepartment, me.currentDepartment]);
 
 	const updateAnyChecked = () => {
 		const count = Object.values(checks).filter(value => value).length;

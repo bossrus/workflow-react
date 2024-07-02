@@ -22,7 +22,7 @@ function UsersComponents() {
 		if (Object.keys(me).length > 0 && !me.isAdmin) {
 			navigate('/settings/me');
 		}
-
+		document.title = 'Сотрудники';
 	}, [me]);
 
 	const [users, setUsers] = useState<IUser[]>([]);

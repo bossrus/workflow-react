@@ -13,7 +13,7 @@ import makeSlug from '@/_services/makeSlug.service.ts';
 import { useReduxSelectors } from '@/_hooks/useReduxSelectors.hook.ts';
 import useEscapeKey from '@/_hooks/useEscapeKey.hook.ts';
 import ContainedSmallButtonComponent from '@/components/_shared/contained.smallButton.component.tsx';
-import HeaderEditFormSettingsCompnent from '@/components/settings/_shared/header.editForm.settings.component.tsx';
+import HeaderEditFormSettingsComponent from '@/components/settings/_shared/header.editForm.settings.component.tsx';
 import TitleWithHotkeyComponent from '@/components/_shared/titleWithHotkey.component.tsx';
 
 const EditDepartmentFormComponent = () => {
@@ -99,7 +99,7 @@ const EditDepartmentFormComponent = () => {
 			className={'padding-2su margin-2su in-depth border-round-1em'}
 		>
 			{titleOfEditedDepartment !== '' && (
-				<HeaderEditFormSettingsCompnent
+				<HeaderEditFormSettingsComponent
 					title={'Редактирование отдела'}
 					stronger={titleOfEditedDepartment}
 				/>

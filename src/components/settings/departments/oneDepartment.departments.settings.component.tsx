@@ -10,7 +10,7 @@ import { useEffect } from 'react';
 import { deleteOne } from '@/store/_shared.thunks.ts';
 import { isNotValidDeleteMessage } from '@/_services/isValidDeleteMessage.ts';
 import useDeleteRecord from '@/_hooks/useDeleteRecord.hook.ts';
-import LabelWithCaptionSettingsCompnent from '@/components/settings/_shared/titleWithCaption.settings.component.tsx';
+import LabelWithCaptionSettingsComponent from '@/components/settings/_shared/titleWithCaption.settings.component.tsx';
 
 interface IOneDepartmentProps {
 	department: IDepartment;
@@ -49,7 +49,7 @@ const OneDepartmentDepartmentsComponent = ({
 			<Box
 				className={'flex-grow-1 padding-1su'}
 			>
-				<LabelWithCaptionSettingsCompnent
+				<LabelWithCaptionSettingsComponent
 					caption={'название'}
 					title={title}
 				/>
@@ -68,7 +68,7 @@ const OneDepartmentDepartmentsComponent = ({
 								className={'color-my-green width-auto height-32px'}
 							/>
 						</Box>
-						<LabelWithCaptionSettingsCompnent
+						<LabelWithCaptionSettingsComponent
 							title={numberInWorkflow}
 							caption={'номер в технологической цепочке'}
 						/>

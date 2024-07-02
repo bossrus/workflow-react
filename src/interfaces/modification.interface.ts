@@ -12,9 +12,4 @@ export interface IModificationsObject {
 	[_id: string]: IModification;
 }
 
-export interface IModificationStore {
-	data: IModificationsObject;
-	error: IError | undefined;
-}
-
 export type IModificationUpdate = Partial<IModification>

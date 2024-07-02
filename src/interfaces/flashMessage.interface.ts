@@ -16,7 +16,3 @@ export interface IFlashMessagesObject {
 	[_id: string]: IFlashMessages;
 }
 
-export interface IFlashStore {
-	data: IFlashMessagesObject;
-	error: IError | undefined;
-}

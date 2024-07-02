@@ -15,7 +15,7 @@ function MainTypesOfWorkComponents() {
 		if (Object.keys(me).length > 0 && !me.isAdmin) {
 			navigate('/settings/me');
 		}
-
+		document.title = 'Типы работ';
 	}, [me]);
 
 	return (

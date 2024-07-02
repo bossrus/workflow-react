@@ -76,8 +76,7 @@ function WorkInfoComponent({
 	return (
 		<>
 			<Box
-				className={'display-flex flex-direction-column border-radius-2su border-color-my-gray-light background-color-white'}
-				textAlign={'center'}
+				className={'display-flex flex-direction-column border-radius-2su border-color-my-gray-light background-color-white text-align-center width-100'}
 			>
 				<Box
 					bgcolor={colorProps}

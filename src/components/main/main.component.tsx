@@ -140,8 +140,10 @@ function MainComponent() {
 						>
 							{components[path] && components[path]}
 						</Box>
-						: <Box className={'table-container'}>
-							<h1>ПУСТО!</h1>
+						: <Box className={'table-container display-flex align-items-center justify-content-center'}>
+							<h2>
+								В работе ничего нет
+							</h2>
 						</Box>
 					}
 				</Box>

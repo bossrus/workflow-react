@@ -142,9 +142,9 @@ function App() {
 	}, [workflowsInMyDepartment]);
 
 	const workQueueNotificationSound = new Audio('/sounds/works_in.mp3');
+	const silentSound = new Audio('/sounds/silents.mp3');
 
 	const checkSocketAndQueueStatus = () => {
-		//если нет коннекта — то коннектим
 		if (socketRef.current) {
 			if (!socketRef.current.connected) {
 				socketRef.current.connect();
@@ -162,6 +162,18 @@ function App() {
 		}
 		timers.current['checkStatuses'] = setTimeout(() => checkSocketAndQueueStatus(), 5 * 60 * 1000);
 	};
+
+	useEffect(() => {
+		if (me && me.isSoundOn) {
+			//пустой звук для определения запрета от политики автозапуска
+			silentSound.play()
+				.catch(() => {
+					dispatch(setState({
+						flashMessage: 'dontPlaySound',
+					}));
+				});
+		}
+	}, [me]);
 
 	useEffect(() => {
 		checkSocketAndQueueStatus();

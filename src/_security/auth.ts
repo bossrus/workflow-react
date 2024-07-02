@@ -1,7 +1,7 @@
 import { IAuthInterface } from '@/interfaces/auth.interface.ts';
 
 export function getAuth(): IAuthInterface | null {
-	let auth: IAuthInterface | null = null;
+	let auth: IAuthInterface | null;
 	try {
 		auth = JSON.parse(localStorage.getItem('workflow-auth') as string);
 	} catch (e) {

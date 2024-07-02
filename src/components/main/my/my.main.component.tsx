@@ -10,14 +10,14 @@ import { patchOne } from '@/store/_shared.thunks.ts';
 import WorkMyMainComponent from '@/components/main/my/work.my.main.component.tsx';
 import useWorksSelectors from '@/_hooks/useWorksSelectors.hook.ts';
 
-interface Itabs {
+interface ITabs {
 	label: string;
 	url: string;
 }
 
 function MyMainComponent() {
 
-	const [tabs, setTabs] = useState<Itabs[]>([]);
+	const [tabs, setTabs] = useState<ITabs[]>([]);
 
 	const { id: paramsId } = useParams();
 

@@ -26,15 +26,17 @@ interface IBodyTableProps {
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-	if (b[orderBy] === undefined || a[orderBy] === undefined) {
-		return 0;
-	}
+	if (b && orderBy && b[orderBy] && a[orderBy]) {
+		if (b[orderBy] === undefined || a[orderBy] === undefined) {
+			return 0;
+		}
 
-	if (b[orderBy] < a[orderBy]) {
-		return -1;
-	}
-	if (b[orderBy] > a[orderBy]) {
-		return 1;
+		if (b[orderBy] < a[orderBy]) {
+			return -1;
+		}
+		if (b[orderBy] > a[orderBy]) {
+			return 1;
+		}
 	}
 	return 0;
 }
@@ -48,10 +50,6 @@ function getComparator<Key extends keyof IWorkflow>(
 		: (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-// Since 2020 all major browsers ensure sort stability with Array.prototype.sort().
-// stableSort() brings sort stability to non-modern browsers (notably IE11). If you
-// only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
-// with exampleArray.slice().sort(exampleComparator)
 function stableSort<T>(array: T[], comparator: (a: T, b: T) => number): T[] {
 	const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
 	stabilizedThis.sort((a, b) => {
@@ -237,123 +235,127 @@ export default function BodyTableStatComponent({
 			className={'width-100 height-100'}
 		>
 			{
-				visibleRows.length > 0 &&
-				Object.keys(firmsObject).length > 0 &&
-				Object.keys(usersObject).length > 0 &&
-				Object.keys(modificationsObject).length > 0 &&
-				Object.keys(typesOfWorkObject).length > 0 &&
-				// <Paper sx={{ width: '100%', height: '100%' }}>
-				<TableContainer>
-					<Table
-						aria-labelledby="tableTitle"
-						className={'table-container max-height-100'}
-						// border={1}
-					>
-						<EnhancedTableHead
-							numSelected={selected.length}
-							order={sortDirection}
-							orderBy={sortByField}
-							onSelectAllClick={handleSelectAllClick}
-							onRequestSort={handleRequestSort}
-							rowCount={rows.length}
-						/>
-						<TableBody>
-							{visibleRows.map((row, index) => {
-								const isItemSelected = isSelected(row._id as string);
-								const labelId = `enhanced-table-checkbox-${index}`;
+				(visibleRows.length > 0 &&
+					Object.keys(firmsObject).length > 0 &&
+					Object.keys(usersObject).length > 0 &&
+					Object.keys(modificationsObject).length > 0 &&
+					Object.keys(typesOfWorkObject).length > 0)
+					? <TableContainer>
+						<Table
+							aria-labelledby="tableTitle"
+							className={'table-container max-height-100'}
+							// border={1}
+						>
+							<EnhancedTableHead
+								numSelected={selected.length}
+								order={sortDirection}
+								orderBy={sortByField}
+								onSelectAllClick={handleSelectAllClick}
+								onRequestSort={handleRequestSort}
+								rowCount={rows.length}
+							/>
+							<TableBody>
+								{visibleRows.map((row, index) => {
+									const isItemSelected = isSelected(row._id as string);
+									const labelId = `enhanced-table-checkbox-${index}`;
 
-								return (
-									<TableRow
-										hover
-										role="checkbox"
-										aria-checked={isItemSelected}
-										tabIndex={-1}
-										key={row._id}
-										selected={isItemSelected}
-										className={'cursor-pointer'}
-									>
-										<TableCell padding="checkbox">
+									return (
+										<TableRow
+											hover
+											role="checkbox"
+											aria-checked={isItemSelected}
+											tabIndex={-1}
+											key={row._id}
+											selected={isItemSelected}
+											className={'cursor-pointer'}
+										>
+											<TableCell padding="checkbox">
 
-											{!row.isCheckedOnStat
-												? <Checkbox
-													color="primary"
-													checked={isItemSelected}
-													inputProps={{
-														'aria-labelledby': labelId,
-													}}
-													onClick={(event) => handleClick(event, row._id as string)}
-												/>
-												: <>
-													{new Date(row.isPublished!).toLocaleString('ru-RU', {
-														day: '2-digit',
-														month: '2-digit',
-														year: '2-digit',
-														hour: '2-digit',
-														minute: '2-digit',
-													})}
-												</>
-											}
-										</TableCell>
-										<TableCell
-											className={'text-align-left padding-0-0-0-10px'}
-										>
-											{firmsObject[row.firm].title}
-										</TableCell>
-										<TableCell
-											className={'text-align-left padding-0-0-0-10px'}
-										>
-											{modificationsObject[row.modification].title}
-										</TableCell>
-										<TableCell
-											className={'text-align-left padding-0-0-0-10px'}
-										>
+												{!row.isCheckedOnStat
+													? <Checkbox
+														color="primary"
+														checked={isItemSelected}
+														inputProps={{
+															'aria-labelledby': labelId,
+														}}
+														onClick={(event) => handleClick(event, row._id as string)}
+													/>
+													: <>
+														{new Date(row.isPublished!).toLocaleString('ru-RU', {
+															day: '2-digit',
+															month: '2-digit',
+															year: '2-digit',
+															hour: '2-digit',
+															minute: '2-digit',
+														})}
+													</>
+												}
+											</TableCell>
+											<TableCell
+												className={'text-align-left padding-0-0-0-10px'}
+											>
+												{firmsObject[row.firm].title}
+											</TableCell>
+											<TableCell
+												className={'text-align-left padding-0-0-0-10px'}
+											>
+												{modificationsObject[row.modification].title}
+											</TableCell>
+											<TableCell
+												className={'text-align-left padding-0-0-0-10px'}
+											>
 											<span className={'fake-link'}
 												  onClick={() => showSpecificWorkflows(row.mainId as string)}>
 												{row.title}
 											</span>
-										</TableCell>
-										<TableCell
-											className={'text-align-left padding-0-0-0-10px'}
-										>
-											{row.countPages}
-										</TableCell>
-										<TableCell
-											className={'text-align-left padding-0-0-0-10px'}
-										>
-											{new Date(row.isPublished as number).toLocaleString('ru-RU', {
-												day: '2-digit',
-												month: '2-digit',
-												year: 'numeric',
-												hour: '2-digit',
-												minute: '2-digit',
-											})}
-										</TableCell>
-										<TableCell
-											className={'text-align-left padding-0-0-0-10px'}
-										>
-											{usersObject[row.whoAddThisWorkflow].name}
-										</TableCell>
-										<TableCell
-											className={'text-align-left padding-0-0-0-10px'}
-										>
-											{typesOfWorkObject[row.type].title}
-										</TableCell>
-									</TableRow>
-								);
-							})}
-						</TableBody>
-					</Table>
-					<Box px={2} pb={2}>
-						<ContainedSmallButtonComponent
-							disabled={selected.length === 0}
-							className={'width-100'}
-							color={'info'}
-							onClick={() => sendCheckedInfo()}
-						>
-							Отметить выделенное
-						</ContainedSmallButtonComponent>
+											</TableCell>
+											<TableCell
+												className={'text-align-left padding-0-0-0-10px'}
+											>
+												{row.countPages}
+											</TableCell>
+											<TableCell
+												className={'text-align-left padding-0-0-0-10px'}
+											>
+												{new Date(row.isPublished as number).toLocaleString('ru-RU', {
+													day: '2-digit',
+													month: '2-digit',
+													year: 'numeric',
+													hour: '2-digit',
+													minute: '2-digit',
+												})}
+											</TableCell>
+											<TableCell
+												className={'text-align-left padding-0-0-0-10px'}
+											>
+												{usersObject[row.whoAddThisWorkflow].name}
+											</TableCell>
+											<TableCell
+												className={'text-align-left padding-0-0-0-10px'}
+											>
+												{typesOfWorkObject[row.type].title}
+											</TableCell>
+										</TableRow>
+									);
+								})}
+							</TableBody>
+						</Table>
+						<Box px={2} pb={2}>
+							<ContainedSmallButtonComponent
+								disabled={selected.length === 0}
+								className={'width-100'}
+								color={'info'}
+								onClick={() => sendCheckedInfo()}
+							>
+								Отметить выделенное
+							</ContainedSmallButtonComponent>
+						</Box>
+					</TableContainer>
+					: <Box
+						className={'height-100 width-100 display-flex align-items-center text-bold justify-content-center'}
+					>
+						По данным фильтрам ничего не найдено
 					</Box>
-				</TableContainer>
 			}
 		</Box>
 	);

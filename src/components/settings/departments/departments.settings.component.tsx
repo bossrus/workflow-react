@@ -17,7 +17,7 @@ function DepartmentsComponents() {
 		if (Object.keys(me).length > 0 && !me.isAdmin) {
 			navigate('/settings/me');
 		}
-
+		document.title = 'Отделы';
 	}, [me]);
 
 

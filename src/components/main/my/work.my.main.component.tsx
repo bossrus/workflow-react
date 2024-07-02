@@ -61,6 +61,7 @@ function WorkMyMainComponent({ incomingWorkID }: IProps) {
 
 	useEffect(() => {
 		if (!me.currentDepartment || departmentsInWorkflowArray.length < 1 || !workflowsObject[incomingWorkID]) return;
+		const currentWorkflow = workflowsObject[incomingWorkID];
 		const newDepartments: IList[] = departmentsInWorkflowArray.map(({ _id, title }) => ({
 			id: _id,
 			title,
@@ -73,11 +74,16 @@ function WorkMyMainComponent({ incomingWorkID }: IProps) {
 		}
 		const index = newDepartments.findIndex(department => department.id === me.currentDepartment);
 		setDepartmentsList(newDepartments);
-		if (workflowsObject[incomingWorkID].executors!.length < 2) {
+		if (currentWorkflow.executors!.length < 2) {
 			setSelectedDepartment(newDepartments[index + 1].id);
 		} else {
 			setSelectedDepartment('justClose');
 		}
+		document.title = currentWorkflow.title + '(' +
+			getTitleByID(firmsObject, currentWorkflow.firm) +
+			' №' +
+			getTitleByID(modificationsObject, currentWorkflow.modification) +
+			')';
 	}, [me.currentDepartment, departmentsInWorkflowArray, workflowsObject, me.currentWorkflowInWork]);
 
 	const descriptionRef = useRef(description);

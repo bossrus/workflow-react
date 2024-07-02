@@ -28,4 +28,3 @@ export interface ILogObject {
 	[_id: string]: ILog[];
 }
 
-export type ILogUpdate = Partial<ILog>

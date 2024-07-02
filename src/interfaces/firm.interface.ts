@@ -13,9 +13,4 @@ export interface IFirmsObject {
 	[_id: string]: IFirm;
 }
 
-export interface IFirmStore {
-	data: IFirmsObject;
-	error: IError | undefined;
-}
-
 export type IFirmUpdate = Partial<IFirm>

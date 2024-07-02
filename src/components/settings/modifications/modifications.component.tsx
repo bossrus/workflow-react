@@ -15,7 +15,7 @@ function ModificationsComponents() {
 		if (Object.keys(me).length > 0 && !me.isAdmin && !me.canMakeModification) {
 			navigate('/settings/me');
 		}
-
+		document.title = 'Номера журналов';
 	}, [me]);
 
 	return (

@@ -83,6 +83,7 @@ function AllWorkflowsStatComponent() {
 	useEffect(() => {
 		if (states.statState == undefined)
 			loadData().then();
+		document.title = 'Статистика';
 	}, []);
 
 	const dispatch = useDispatch<TAppDispatch>();

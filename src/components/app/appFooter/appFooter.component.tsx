@@ -39,7 +39,8 @@ const links: ILinks[] = [
 		skipOnLines: ['publish',
 			'my',
 			'my-department',
-			'all-works'],
+			'all-works',
+			'main'],
 	},
 	{
 		path: '/stat/',

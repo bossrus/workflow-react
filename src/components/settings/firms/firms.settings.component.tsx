@@ -13,7 +13,7 @@ function FirmsComponents() {
 		if (Object.keys(me).length > 0 && !me.isAdmin) {
 			navigate('/settings/me');
 		}
-
+		document.title = 'Клиенты';
 	}, [me]);
 
 	const sortedFirms = useMemo(() => {
