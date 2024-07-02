@@ -1,4 +1,4 @@
-# Workflow Node React
+# Workflow React
 
 Привет! Добро пожаловать в мой проект **Workflow React**.
 Это фронт от общего проекта **Workflow Node React**.
