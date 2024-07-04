@@ -6,16 +6,24 @@ import EditTypeOfWorkFormTypesOfWorkComponent
 	from '@/components/settings/typesOfWork/editTypeOfWorkForm.typesOfWork.component.tsx';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import { setState } from '@/store/_currentStates.slice.ts';
+import { useDispatch } from 'react-redux';
+import { TAppDispatch } from '@/store/_store.ts';
 
 function MainTypesOfWorkComponents() {
 	const { typesOfWorkArray: typesOfWork, me } = useReduxSelectors();
 
 	const navigate = useNavigate();
+	const dispatch = useDispatch<TAppDispatch>();
+	
 	useEffect(() => {
 		if (Object.keys(me).length > 0 && !me.isAdmin) {
 			navigate('/settings/me');
 		}
 		document.title = 'Типы работ';
+		return () => {
+			dispatch(setState({ currentTypeOfWork: undefined }));
+		};
 	}, [me]);
 
 	return (

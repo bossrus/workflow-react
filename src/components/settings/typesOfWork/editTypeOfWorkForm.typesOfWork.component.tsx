@@ -25,9 +25,7 @@ const EditTypeOfWorkFormTypesOfWorkComponent: React.FC = () => {
 			setTitle(typesOfWorkObject[currentTypeOfWork].title);
 			setTitleOfEditedTypeOfWork(typesOfWorkObject[currentTypeOfWork].title);
 		}
-		return () => {
-			dispatch(setState({ currentTypeOfWork: undefined }));
-		};
+
 	}, [currentTypeOfWork]);
 
 	useEffect(() => {

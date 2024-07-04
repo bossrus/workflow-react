@@ -19,6 +19,8 @@ function EditFirmFormComponent() {
 	const [titleOfEditedFirm, setTitleOfEditedFirm] = useState('');
 	const [stopSave, setStopSave] = useState(true);
 
+	const dispatch = useDispatch<TAppDispatch>();
+
 	const setStates = () => {
 		if (currentFirm) {
 			setTitle(firmsObject[currentFirm].title);
@@ -29,9 +31,6 @@ function EditFirmFormComponent() {
 
 	useEffect(() => {
 		setStates();
-		return () => {
-			dispatch(setState({ currentFirm: undefined }));
-		};
 	}, [currentFirm, firmsObject]);
 
 	const shouldAllowSave = (
@@ -68,7 +67,6 @@ function EditFirmFormComponent() {
 		setStopSave(!canSave);
 	}, [title, basicPriority, currentFirm, firmsObject]);
 
-	const dispatch = useDispatch<TAppDispatch>();
 
 	const clearFields = () => {
 		setTitle('');

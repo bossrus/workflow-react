@@ -7,17 +7,25 @@ import { IDepartment } from '@/interfaces/department.interface.ts';
 import EditDepartmentFormComponent
 	from '@/components/settings/departments/editDepartmentForm.departments.settings.component.tsx';
 import { useNavigate } from 'react-router-dom';
+import { setState } from '@/store/_currentStates.slice.ts';
+import { useDispatch } from 'react-redux';
+import { TAppDispatch } from '@/store/_store.ts';
 
 
 function DepartmentsComponents() {
 	const { departmentsArray, me } = useReduxSelectors();
 
 	const navigate = useNavigate();
+	const dispatch = useDispatch<TAppDispatch>();
+	
 	useEffect(() => {
 		if (Object.keys(me).length > 0 && !me.isAdmin) {
 			navigate('/settings/me');
 		}
 		document.title = 'Отделы';
+		return () => {
+			dispatch(setState({ currentDepartment: undefined }));
+		};
 	}, [me]);
 
 

@@ -6,16 +6,26 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import EditModificationFormModificationsComponent
 	from '@/components/settings/modifications/editModificationForm.modifications.component.tsx';
+import { setState } from '@/store/_currentStates.slice.ts';
+import { useDispatch } from 'react-redux';
+import { TAppDispatch } from '@/store/_store.ts';
 
 function ModificationsComponents() {
 	const { modificationsArray: modifications, me } = useReduxSelectors();
 
 	const navigate = useNavigate();
+	const dispatch = useDispatch<TAppDispatch>();
+	
 	useEffect(() => {
 		if (Object.keys(me).length > 0 && !me.isAdmin && !me.canMakeModification) {
 			navigate('/settings/me');
 		}
 		document.title = 'Номера журналов';
+		return () => {
+			dispatch(setState({
+				currentModification: undefined,
+			}));
+		};
 	}, [me]);
 
 	return (

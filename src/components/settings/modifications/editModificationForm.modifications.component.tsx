@@ -24,11 +24,7 @@ const EditModificationFormModificationsComponent = () => {
 			setTitle(modificationsObject[currentModification].title);
 			setTitleOfEditedModification(modificationsObject[currentModification].title);
 		}
-		return () => {
-			dispatch(setState({
-				currentModification: undefined,
-			}));
-		};
+
 	}, [currentModification]);
 
 	useEffect(() => {

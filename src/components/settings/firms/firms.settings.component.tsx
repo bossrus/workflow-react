@@ -4,16 +4,24 @@ import OneFirmFirmsComponent from '@/components/settings/firms/oneFirm.firms.set
 import EditFirmFormComponent from '@/components/settings/firms/editFirmForm.firms.settings.component.tsx';
 import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { setState } from '@/store/_currentStates.slice.ts';
+import { useDispatch } from 'react-redux';
+import { TAppDispatch } from '@/store/_store.ts';
 
 function FirmsComponents() {
 	const { firmsArray: firms, me } = useReduxSelectors();
 
 	const navigate = useNavigate();
+	const dispatch = useDispatch<TAppDispatch>();
+	
 	useEffect(() => {
 		if (Object.keys(me).length > 0 && !me.isAdmin) {
 			navigate('/settings/me');
 		}
 		document.title = 'Клиенты';
+		return () => {
+			dispatch(setState({ currentFirm: undefined }));
+		};
 	}, [me]);
 
 	const sortedFirms = useMemo(() => {

@@ -18,11 +18,16 @@ function UsersComponents() {
 	const { states: { currentUser, deleteMessage }, me, usersObject: lowUsersInfo } = useReduxSelectors();
 
 	const navigate = useNavigate();
+	const dispatch = useDispatch<TAppDispatch>();
+
 	useEffect(() => {
 		if (Object.keys(me).length > 0 && !me.isAdmin) {
 			navigate('/settings/me');
 		}
 		document.title = 'Сотрудники';
+		return () => {
+			dispatch(setState({ currentUser: undefined }));
+		};
 	}, [me]);
 
 	const [users, setUsers] = useState<IUser[]>([]);
@@ -41,8 +46,6 @@ function UsersComponents() {
 		setUsers(Object.values(newUsersObject));
 	};
 
-
-	const dispatch = useDispatch<TAppDispatch>();
 
 	const marker = 'пользователя';
 
