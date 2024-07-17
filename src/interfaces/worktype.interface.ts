@@ -1,5 +1,3 @@
-import { IError } from '@/interfaces/auth.interface.ts';
-
 export interface ITypeOfWork {
 	_id: string;
 	title: string;

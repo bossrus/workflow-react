@@ -1,5 +1,3 @@
-import { IError } from '@/interfaces/auth.interface.ts';
-
 export interface IDepartment {
 	_id: string;
 	title: string;

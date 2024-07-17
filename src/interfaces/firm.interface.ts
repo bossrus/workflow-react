@@ -1,5 +1,3 @@
-import { IError } from '@/interfaces/auth.interface.ts';
-
 export interface IFirm {
 	_id: string;
 	title: string;

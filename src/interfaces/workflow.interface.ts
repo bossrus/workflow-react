@@ -1,5 +1,3 @@
-import { IError } from '@/interfaces/auth.interface.ts';
-
 export interface IWorkflow {
 	_id?: string;
 	mainId?: string;
