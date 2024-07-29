@@ -19,14 +19,14 @@ const links: ILinks[] = [
 	{
 		path: '/settings',
 		title: 'Настройки',
-		letter: ['O', 'Щ'],
+		letter: ['O', 'Щ', 'ø'],
 		color: 'blue',
 		skipOnLines: ['/settings'],
 	},
 	{
 		path: '/main/create',
 		title: 'Создать новый заказ',
-		letter: ['N', 'Т'],
+		letter: ['N', 'Т', '˜'],
 		color: 'red',
 		skipOnLines: ['/create'],
 		requiredField: 'canStartStopWorks',
@@ -34,18 +34,19 @@ const links: ILinks[] = [
 	{
 		path: '/main/',
 		title: 'Главное окно',
-		letter: ['M', 'Ь'],
+		letter: ['M', 'Ь', 'µ'],
 		color: 'black',
 		skipOnLines: ['publish',
 			'my',
 			'my-department',
 			'all-works',
-			'main'],
+			'main',
+		],
 	},
 	{
 		path: '/stat/',
 		title: 'Статистика',
-		letter: ['S', 'Ы'],
+		letter: ['S', 'Ы', 'ß'],
 		color: 'green',
 		skipOnLines: ['/stat'],
 		requiredField: 'canSeeStatistics',
@@ -68,7 +69,11 @@ function AppFooterComponent() {
 	useHotkeysNavigation(hotkeys, false);
 
 	const display = (skipOnLines: string[], requiredField?: keyof IUserUpdate) => {
-		if (skipOnLines.some(skipLine => location.includes(skipLine))) {
+		if (skipOnLines.some(skipLine =>
+			skipLine === 'main'
+				? location.endsWith('main') || location.endsWith('main/') //ну а как без костылей в проекте? :))
+				: location.includes(skipLine),
+		)) {
 			return false;
 		}
 

@@ -74,7 +74,7 @@ function specificWorkflowStatComponent({
 	useEffect(() => {
 		if (workflowsList.length <= 0) return;
 		const newNameOfMaterial = `«${workflowsList[0].title}» (${getTitleByID(firmsObject, workflowsList[0].firm)} №${getTitleByID(modificationsObject, workflowsList[0].modification)})`;
-		console.log('nameOfMaterial = ,nameOfMaterial');
+		// console.log('nameOfMaterial = ,nameOfMaterial');
 		setNameOfMaterial(newNameOfMaterial);
 		document.title = newNameOfMaterial;
 	}, [workflowsList]);

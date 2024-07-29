@@ -1,6 +1,6 @@
 export interface IAuthInterface {
-	auth_login: string;
-	auth_token: string;
+	authLogin: string;
+	authToken: string;
 }
 
 export interface IError {

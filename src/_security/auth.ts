@@ -10,12 +10,11 @@ export function getAuth(): IAuthInterface | null {
 	return auth;
 }
 
-export function setAuth(auth_login: string, auth_token: string): void {
+export function setAuth(authLogin: string, authToken: string): void {
 	const auth: string = JSON.stringify({
-		auth_login,
-		auth_token,
+		authLogin,
+		authToken,
 	});
-	// console.log('set auth = ', auth);
 	localStorage.setItem('workflow-auth', auth);
 }
 

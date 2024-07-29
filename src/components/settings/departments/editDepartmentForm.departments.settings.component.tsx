@@ -27,7 +27,6 @@ const EditDepartmentFormComponent = () => {
 	const dispatch = useDispatch<TAppDispatch>();
 
 	useEffect(() => {
-		console.log('currentDepartment = ', currentDepartment);
 		if (currentDepartment) {
 			const localDepartment = departmentsObject[currentDepartment];
 			setTitle(localDepartment.title);
@@ -42,15 +41,12 @@ const EditDepartmentFormComponent = () => {
 		if (title.trim() !== '') {
 			let isNumber = !isNaN(parseFloat(numberInWorkflow));
 			let titleSlug = makeSlug(title.trim());
-			console.log('зашли в проп=верку', currentDepartment);
 			if (currentDepartment !== undefined) {
 				let currentDepartmentSlug = makeSlug(departmentsObject[currentDepartment].title);
 				let isTitleChanged = titleSlug !== currentDepartmentSlug;
 				let isUsedInWorkflowChanged = isUsedInWorkflow !== departmentsObject[currentDepartment].isUsedInWorkflow;
 				let isNumberInWorkflowChanged = isUsedInWorkflow && isNumber && numberInWorkflow !== departmentsObject[currentDepartment].numberInWorkflow;
 
-				console.log('isUsedInWorkflowChanged = ', isUsedInWorkflowChanged);
-				console.log('isNumberInWorkflowChanged = ', isNumberInWorkflowChanged);
 
 				canSave = isTitleChanged || (isUsedInWorkflowChanged && (!isUsedInWorkflow || (isUsedInWorkflow && isNumber))) || isNumberInWorkflowChanged;
 			} else {

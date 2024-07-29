@@ -37,10 +37,6 @@ function App() {
 		inviteToJoin,
 		states,
 
-		//следующие 3 только для контроля того, что всё загрузилось, и что можно показывать приложение
-		firmsArray,
-		modificationsArray,
-		typesOfWorkArray,
 	} = useReduxSelectors();
 
 	const {
@@ -106,8 +102,10 @@ function App() {
 	const { isConnected, socket } = useWebSocket({ oldMeLength, me, users: usersObject });
 
 	const connectToWebsocket = () => {
-		if (socket && !socket?.connected)
+		if (socket && !socket?.connected) {
+			console.log('вебсокет пытаемсо законнектиццо');
 			(socket as Socket).connect();
+		}
 	};
 
 	const changeSounds = (isSoundProps: boolean) => {
@@ -146,6 +144,7 @@ function App() {
 
 	const checkSocketAndQueueStatus = () => {
 		if (socketRef.current) {
+			// console.log('socket connected?' + socketRef.current.connected);
 			if (!socketRef.current.connected) {
 				socketRef.current.connect();
 			}
@@ -185,10 +184,7 @@ function App() {
 	const canShow = (): boolean => {
 		return Object.keys(me).length > 0
 			&& Object.keys(usersObject).length > 0
-			&& Object.keys(departmentsObject).length > 0
-			&& modificationsArray.length > 0
-			&& firmsArray.length > 0
-			&& typesOfWorkArray.length > 0;
+			&& Object.keys(departmentsObject).length > 0;
 	};
 
 	return (
@@ -229,24 +225,24 @@ function App() {
 							/>
 							<Box flexGrow={1}>
 								{routePage}
+								{
+									Object.keys(inviteToJoin).length > 0 &&
+									<InvitesAppComponent />
+								}
+								{
+									states.flashMessage == 'dontPlaySound' &&
+									<SecurityFlashAppComponent />
+								}
+								{
+									states.flashMessage == 'delete' &&
+									<DeleteFlashAppComponent message={states.deleteMessage} />
+								}
 							</Box>
 							<Box mt={'20px'}>
 								{location != '/login' &&
 									<AppFooterComponent />
 								}
 							</Box>
-							{
-								Object.keys(inviteToJoin).length > 0 &&
-								<InvitesAppComponent />
-							}
-							{
-								states.flashMessage == 'dontPlaySound' &&
-								<SecurityFlashAppComponent />
-							}
-							{
-								states.flashMessage == 'delete' &&
-								<DeleteFlashAppComponent message={states.deleteMessage} />
-							}
 						</Box>
 					}
 				</>)

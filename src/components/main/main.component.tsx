@@ -121,6 +121,12 @@ function MainComponent() {
 		me.currentDepartment,
 	]);
 
+	useEffect(() => {
+		if (!path || path === '') {
+			document.title = 'Нет работы';
+		}
+	}, [path]);
+
 	return (
 		<>
 			{
@@ -134,13 +140,15 @@ function MainComponent() {
 							<TabsLineComponent tabs={tabs} chapter={path} section={'main'} />
 						</Box>
 					}
-					{path && path != '' ?
+					{path && path != ''
+						?
 						<Box
 							className={'flex-grow-1 box-sizing-border-box'}
 						>
 							{components[path] && components[path]}
 						</Box>
-						: <Box className={'table-container display-flex align-items-center justify-content-center'}>
+						:
+						<Box className={'table-container display-flex align-items-center justify-content-center'}>
 							<h2>
 								В работе ничего нет
 							</h2>

@@ -34,7 +34,10 @@ function TabsLineComponent({ section, chapter, tabs }: IProps) {
 		for (const tab of tabs) {
 			if (showTab(tab.access)) {
 				newTabs.push(tab);
-				newHotKeys.push({ letter: [(newHotKeys.length + 1).toString()], path: `/${section}/${tab.url}` });
+				newHotKeys.push({
+					letter: [(newHotKeys.length + 1).toString(), '¡™£¢∞§¶•ªº'[newHotKeys.length]],
+					path: `/${section}/${tab.url}`,
+				});
 			}
 		}
 		const splitResult = newHotKeys[0].path.split('/main/my/');
@@ -42,7 +45,6 @@ function TabsLineComponent({ section, chapter, tabs }: IProps) {
 		setHotkeys(newHotKeys);
 		setResultTabs(newTabs);
 	}, [tabs, me]);
-
 
 	useHotkeysNavigation(hotkeys, notNeedHotkeys);
 

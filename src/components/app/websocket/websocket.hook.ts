@@ -97,8 +97,8 @@ export const useWebSocket = ({ oldMeLength, me, users }: IProps) => {
 			// console.log('сменился me или auth');
 			const newSocket = io(DEFAULT_WEBSOCKET_URL, {
 				query: {
-					login: auth?.auth_login,
-					loginToken: auth?.auth_token,
+					login: auth?.authLogin,
+					loginToken: auth?.authToken,
 				},
 				reconnection: true,
 				reconnectionAttempts: 2,
@@ -113,6 +113,7 @@ export const useWebSocket = ({ oldMeLength, me, users }: IProps) => {
 			});
 
 			newSocket.on('servermessage', (message) => {
+				// console.log('получено сообщение от websocket:', message);
 				websocketReaction(message);
 			});
 
@@ -122,7 +123,7 @@ export const useWebSocket = ({ oldMeLength, me, users }: IProps) => {
 			});
 
 			newSocket.on('reconnect_attempt', (attemptNumber) => {
-				console.log('Попытка переподключения номер ', attemptNumber);
+				console.log('WS Попытка переподключения номер ', attemptNumber);
 			});
 		}
 		return () => {

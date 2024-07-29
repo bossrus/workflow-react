@@ -101,7 +101,6 @@ function NotPublishedMainComponent() {
 
 	const checkUncheckMyWorks = () => {
 
-		console.log(checksRef.current);
 		const allMyChecks: Record<string, boolean> = {};
 		const allChecks: Record<string, boolean> = JSON.parse(JSON.stringify(checksRef.current));
 		Object.keys(myChecksRef.current).map((key) => {

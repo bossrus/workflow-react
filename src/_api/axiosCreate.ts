@@ -18,8 +18,8 @@ axiosCreate.interceptors.request.use(async (config) => {
 	// config.headers.common = config.headers.common || {};
 
 	if (auth) {
-		config.headers['auth_login'] = auth.auth_login;
-		config.headers['auth_token'] = auth.auth_token;
+		config.headers['authLogin'] = auth.authLogin;
+		config.headers['authToken'] = auth.authToken;
 	}
 	return config;
 }, (error) => {
