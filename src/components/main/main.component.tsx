@@ -66,7 +66,7 @@ function MainComponent() {
 		}
 		if (workflowsInMyProcess.length > 0) {
 			newTabs.push({
-				label: 'Очередь заказов у меня в работе',
+				label: 'Заказы у меня в работе',
 				url: 'my',
 				badge: workflowsInMyProcess[0].urgency,
 				count: workflowsInMyProcess.length,

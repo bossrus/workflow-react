@@ -28,6 +28,8 @@ function InMyDepartmentMainComponent() {
 		workflowsInMyDepartment,
 	} = useWorksSelectors();
 
+	const workflowsInMyDepartmentRef = useRef(workflowsInMyDepartment);
+
 	const [listOfFirms, setListOfFirms] = useState<string[]>([]);
 	const [colors, setColors] = useState<Record<string, string>>({});
 
@@ -40,6 +42,8 @@ function InMyDepartmentMainComponent() {
 		setAnyChecked(false);
 		setCountChecked(0);
 
+		workflowsInMyDepartmentRef.current = workflowsInMyDepartment;
+
 		const newColors: Record<string, string> = {};
 		for (let work of workflowsInMyDepartment) {
 			newColors[work._id!] = assignColor(work.urgency);
@@ -50,7 +54,7 @@ function InMyDepartmentMainComponent() {
 	const uncheckAll = () => {
 		const allChecks: Record<string, boolean> = {};
 		const newFirmsList: Record<string, boolean> = {};
-		for (let workflow of workflowsInMyDepartment) {
+		for (let workflow of workflowsInMyDepartmentRef.current) {
 			allChecks[workflow._id!] = false;
 			if (!newFirmsList[workflow.firm]) newFirmsList[workflow.firm] = true;
 		}
@@ -116,7 +120,7 @@ function InMyDepartmentMainComponent() {
 				takeWorks().then();
 			}
 
-			if (event.key.toLowerCase() === 'a' || event.key.toLowerCase() === 'ф') {
+			if (event.key.toLowerCase() === 'a' || event.key.toLowerCase() === 'å') {
 				selectWorkflowsByFirm('');
 			}
 

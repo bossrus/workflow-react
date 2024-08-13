@@ -47,7 +47,6 @@ export const mesSlice = createSlice({
 					return action.type === authLoad.rejected.type && action.payload.store === 'users/auth';
 				},
 				(state, action: PayloadAction<IError | undefined>) => {
-					// console.log('ошибка авторизации в танке', action.payload);
 					if (action.payload) {
 						state.data = {};
 						state.error = {

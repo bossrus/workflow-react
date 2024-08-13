@@ -6,12 +6,14 @@ import { IHotkey } from '@/interfaces/appSupport.interface.ts';
 const useHotkeysNavigation = (hotkeys: IHotkey[], notNeedHotkeys: boolean) => {
 	const navigate = useNavigate();
 	const handleKeyDown = (event: KeyboardEvent) => {
+		// const isCyrillic = /[а-яё]/i.test(event.key);
 		// console.log('нажата кнопка',
-		// 	(event.ctrlKey ? ' + ctrl' : '') +
-		// 	(event.altKey ? ' + alt' : '') +
-		// 	(event.shiftKey ? ' + shift' : '') +
-		// 	(event.metaKey ? ' + meta' : '') +
+		// 	(event.ctrlKey ? '  ctrl ' : '') +
+		// 	(event.altKey ? '  alt ' : '') +
+		// 	(event.shiftKey ? '  shift ' : '') +
+		// 	(event.metaKey ? '  meta ' : '') +
 		// 	event.key,
+		// 	isCyrillic ? ' (Cyrillic)' : ' (Latin)',
 		// );
 		if (notNeedHotkeys || event.ctrlKey || event.metaKey || !event.altKey) {
 			return;

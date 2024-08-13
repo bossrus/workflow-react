@@ -60,7 +60,6 @@ export const createOne = createAsyncThunk<any, { url: IUrls, data: any }, { reje
 			dispatch({ type: createOne.fulfilled.type, payload: response.data, store: url });
 		} catch (e) {
 			const err = e as AxiosError;
-			// console.log('ошибка создания', err);
 			return rejectWithValue({
 				status: err.response ? err.response.status : 404,
 				message: err.response ? err.response.data.message : err.message,
@@ -75,13 +74,9 @@ export const patchOne = createAsyncThunk<any, { url: IUrls, data: any }, { rejec
 	async ({ url, data }: { url: IUrls, data: any }, { dispatch, rejectWithValue }) => {
 		try {
 			const response = await axiosCreate.patch(url, data);
-			// console.log('   >>>  patchOne', response.data);
 			if (response.data) dispatch({ type: patchOne.fulfilled.type, payload: response.data, store: url });
 		} catch (e) {
 			const err = e as AxiosError;
-			// console.log('ошибка в танке', err);
-			// console.log(err.response);
-			// console.log(err.response?.data);
 			return rejectWithValue({
 				status: err.response ? err.response.data.statusCode : err.status,
 				message: err.response ? err.response.data.message : err.message,
@@ -113,9 +108,7 @@ export const authLoad = createAsyncThunk<any, void, { rejectValue: IError }>(
 	async (_, { dispatch, rejectWithValue }) => {
 		const url = 'users/auth';
 		try {
-			// console.log('authLoad url = ', url);
 			const response = await axiosCreate.get(url);
-			// console.log('\t response = ', response.data);
 			dispatch({ type: authLoad.fulfilled.type, payload: response.data, store: url });
 		} catch (e) {
 			const err = e as AxiosError;

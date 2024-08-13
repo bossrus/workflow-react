@@ -30,7 +30,6 @@ export const useErrors = () => {
 	useEffect(() => {
 		const messages = errors.filter(Boolean).map(error => {
 			if ((error as IError).status === 403) {
-				// console.log('найдена ошибка 403');
 				hasForbiddenError = true;
 				dispatch(clearMe());
 			}

@@ -94,7 +94,6 @@ export const useWebSocket = ({ oldMeLength, me, users }: IProps) => {
 			return;
 		}
 		if (oldMeLength !== 0) {
-			// console.log('сменился me или auth');
 			const newSocket = io(DEFAULT_WEBSOCKET_URL, {
 				query: {
 					login: auth?.authLogin,

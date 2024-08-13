@@ -19,14 +19,14 @@ const links: ILinks[] = [
 	{
 		path: '/settings',
 		title: 'Настройки',
-		letter: ['O', 'Щ', 'ø'],
+		letter: ['O', 'ø'],
 		color: 'blue',
 		skipOnLines: ['/settings'],
 	},
 	{
 		path: '/main/create',
 		title: 'Создать новый заказ',
-		letter: ['N', 'Т', '˜'],
+		letter: ['N', 'Dead'],
 		color: 'red',
 		skipOnLines: ['/create'],
 		requiredField: 'canStartStopWorks',
@@ -34,7 +34,7 @@ const links: ILinks[] = [
 	{
 		path: '/main/',
 		title: 'Главное окно',
-		letter: ['M', 'Ь', 'µ'],
+		letter: ['M', 'µ'],
 		color: 'black',
 		skipOnLines: ['publish',
 			'my',
@@ -46,7 +46,7 @@ const links: ILinks[] = [
 	{
 		path: '/stat/',
 		title: 'Статистика',
-		letter: ['S', 'Ы', 'ß'],
+		letter: ['S', 'ß'],
 		color: 'green',
 		skipOnLines: ['/stat'],
 		requiredField: 'canSeeStatistics',

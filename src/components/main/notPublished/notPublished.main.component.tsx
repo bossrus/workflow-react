@@ -11,6 +11,7 @@ import { publishWorkflowThunk } from '@/store/workflows.thunks.ts';
 import { getTitleByID } from '@/_services/getTitleByID.service.ts';
 import OutlinedSmallButtonComponent from '@/components/_shared/outlinedSmallButtonComponent.tsx';
 import ContainedSmallButtonComponent from '@/components/_shared/contained.smallButton.component.tsx';
+import FlashWithAnyKeyReactionAppComponent from '@/components/app/flashWithAnyKeyReaction.app.component.tsx';
 
 function NotPublishedMainComponent() {
 	const {
@@ -130,27 +131,48 @@ function NotPublishedMainComponent() {
 
 	const dispatch = useDispatch<TAppDispatch>();
 
+	const [showModal, setShowModal] = useState<null | number>(null);
+
+	const getListOfPublishedId = (): string[] => {
+		if (Object.keys(checksRef.current).length <= 0) return [];
+		return Object.entries(checksRef.current)
+			.reduce<string[]>((acc, [key, value]) => (value ? [...acc, key] : acc), []);
+	};
+
+	let isAllowedToRun = true;
+
 	async function publishWorks() {
 		if (Object.keys(checksRef.current).length <= 0) return;
-		const data: string[] = Object.entries(checksRef.current)
-			.reduce<string[]>((acc, [key, value]) => (value ? [...acc, key] : acc), []);
+		console.log('публикация. isAllowedToRun = ', isAllowedToRun);
+		isAllowedToRun = false;
+		const data: string[] = getListOfPublishedId();
+		if (data.length <= 0) return;
+		setShowModal(data.length);
+	}
+
+	let hasRequested = false;
+
+	const goAway = () => {
+		console.log('попытка на эвей, ', hasRequested);
+		if (hasRequested) return;
+		hasRequested = true;
+		const data: string[] = getListOfPublishedId();
 		if (data.length <= 0) return;
 		dispatch(publishWorkflowThunk({ ids: data }));
-		navigate(`/main/`);
-	}
+	};
 
 	useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {
 			if (!event.altKey || event.shiftKey || event.ctrlKey || event.metaKey) return;
 
-			if (event.key.toLowerCase() === 'enter') {
+			if (isAllowedToRun && event.key.toLowerCase() === 'enter') {
 				publishWorks().then();
 			}
 
-			if (event.key.toLowerCase() === 'a' || event.key.toLowerCase() === 'ф') {
+			if (event.key.toLowerCase() === 'a' || event.key.toLowerCase() === 'å') {
 				checkUncheckAllWorks();
 			}
-			if (event.key.toLowerCase() === 'y' || event.key.toLowerCase() === 'н') {
+			if (event.key.toLowerCase() === 'y' || event.key.toLowerCase() === '¥') {
 				checkUncheckMyWorks();
 			}
 
@@ -252,6 +274,16 @@ function NotPublishedMainComponent() {
 							</ContainedSmallButtonComponent>
 						</Box>
 					</Box>
+					{showModal &&
+						(<>
+							<FlashWithAnyKeyReactionAppComponent buttonLabel={'Акей'} onSwitchOff={() => goAway()}>
+								Опубликовано заказов:
+								<h2>
+									{showModal}
+								</h2>
+							</FlashWithAnyKeyReactionAppComponent>
+						</>)
+					}
 				</Box>}
 		</>
 	);

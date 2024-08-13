@@ -144,14 +144,12 @@ function App() {
 
 	const checkSocketAndQueueStatus = () => {
 		if (socketRef.current) {
-			// console.log('socket connected?' + socketRef.current.connected);
 			if (!socketRef.current.connected) {
 				socketRef.current.connect();
 			}
 		}
-
 		//если есть работа, то звучим
-		if (me && workflowsInMyDepartmentCountRef.current > 0 && !me.currentWorkflowInWork && me.isSoundOn) {
+		if (meRef.current && workflowsInMyDepartmentCountRef.current > 0 && !meRef.current.currentWorkflowInWork && meRef.current.isSoundOn) {
 			workQueueNotificationSound.play()
 				.catch(() => {
 					dispatch(setState({
@@ -162,7 +160,9 @@ function App() {
 		timers.current['checkStatuses'] = setTimeout(() => checkSocketAndQueueStatus(), 5 * 60 * 1000);
 	};
 
+	const meRef = useRef(me);
 	useEffect(() => {
+		meRef.current = me;
 		if (me && me.isSoundOn) {
 			//пустой звук для определения запрета от политики автозапуска
 			silentSound.play()
@@ -177,6 +177,7 @@ function App() {
 	useEffect(() => {
 		checkSocketAndQueueStatus();
 		return () => {
+			console.log('очистка таймеров...');
 			Object.values(timers.current).forEach(timer => clearTimeout(timer));
 		};
 	}, []);

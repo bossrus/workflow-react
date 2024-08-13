@@ -31,9 +31,11 @@ function CreateMainComponent() {
 	const { workflowsObject } = useWorksSelectors();
 
 	const typeNewOrderId = useRef('');
-	useEffect(() => {
+
+	const getNewOrderId = () => {
 		typeNewOrderId.current = getIDByTitle(typesOfWorkArray, 'Новый заказ');
-	}, [typesOfWorkArray]);
+	};
+
 
 	const [workState, setWorkState] = useState<IWorkflowUpdate>({
 		firm: '',
@@ -49,6 +51,20 @@ function CreateMainComponent() {
 		description: '',
 	});
 
+	useEffect(() => {
+		getNewOrderId();
+		if (!workState.type) {
+			setWorkState({
+				...workState,
+				type: typeNewOrderId.current,
+			});
+			workStateRef.current = {
+				...workStateRef.current,
+				type: typeNewOrderId.current,
+			};
+		}
+	}, [typesOfWorkArray]);
+
 	const workStateRef = useRef(workState);
 
 
@@ -59,6 +75,13 @@ function CreateMainComponent() {
 	}, [departmentsArray]);
 
 	const [canAutoConvert, setCanAutoConvert] = useState(false);
+
+	const canAutoConvertRef = useRef(canAutoConvert);
+
+	useEffect(() => {
+		canAutoConvertRef.current = canAutoConvert;
+	}, [canAutoConvert]);
+
 	const [namesToShortList, setNamesToShortList] = useState<IWorkflowUpdate[] | null>(null);
 
 
@@ -69,6 +92,9 @@ function CreateMainComponent() {
 	const { id } = useParams();
 
 	const calculateCanSave = (list: IWorkflowUpdate[] | null): boolean => {
+		if (typeNewOrderId.current == '[неопределено]' || !typeNewOrderId.current.trim()) {
+			getNewOrderId();
+		}
 		let result: boolean = false;
 		const isCoincidence = list?.some(item => item.title?.toLowerCase() === workStateRef.current.title?.toLowerCase());
 		const isNotNewOrder = workStateRef.current.type !== typeNewOrderId.current;
@@ -121,11 +147,6 @@ function CreateMainComponent() {
 		setCanSave(result);
 	};
 
-	useEffect(() => {
-		makeCanSave(namesToShortList);
-		workStateRef.current = workState;
-	}, [workState]);
-
 	// noinspection SpellCheckingInspection
 	const tagsMappings = {
 		'[<FRM>]': (value: string, state: IWorkflowUpdate) => ({
@@ -153,8 +174,8 @@ function CreateMainComponent() {
 	};
 
 	const convertText = (allDescription: string | undefined) => {
-		if (!allDescription || !canAutoConvert) return null;
-		let newState = { ...workState };
+		if (!allDescription || !canAutoConvertRef.current) return null;
+		let newState = { ...workStateRef.current };
 		for (const [key, getNewState] of Object.entries(tagsMappings)) {
 			const tempTxt = allDescription.split(key);
 			if (tempTxt.length === 3) {
@@ -189,13 +210,16 @@ function CreateMainComponent() {
 	};
 
 	const setShortList = (data: IWorkflowUpdate[], currentType: string) => {
-		if (workState.firm == '' || workState.modification == '') return;
+		if (workStateRef.current.firm == '' || workStateRef.current.modification == '') return;
 		const dataWithoutCurrentWorkflow = removeCurrentIdFromArray(data);
+		if (typeNewOrderId.current == '[неопределено]' || !typeNewOrderId.current.trim()) {
+			getNewOrderId();
+		}
 		if (dataWithoutCurrentWorkflow.length > 0) {
 			for (const element of dataWithoutCurrentWorkflow) {
 				//В данном случае urgency используется как степень совпадения.
 				// Просто лениво создавать новое поле, которое нужно только в одном месте
-				element.urgency = getCoincidenceLevel(element.title!, workState.title!);
+				element.urgency = getCoincidenceLevel(element.title!, workStateRef.current.title!);
 			}
 			dataWithoutCurrentWorkflow.sort((a, b) => b.urgency! - a.urgency!);
 		}
@@ -213,7 +237,7 @@ function CreateMainComponent() {
 			...workState,
 			mainId: firstItem,
 		};
-		if (!newList && workState.type != typeNewOrderId.current) {
+		if (!newList && workStateRef.current.type != typeNewOrderId.current) {
 			newState.type = typeNewOrderId.current;
 		}
 
@@ -227,6 +251,9 @@ function CreateMainComponent() {
 	useEffect(() => {
 		const fetchData = async () => {
 			let currentType = workState.type as string;
+			if (typeNewOrderId.current == '[неопределено]' || !typeNewOrderId.current.trim()) {
+				getNewOrderId();
+			}
 			const result = await axiosCreate.post('workflows/in_this_modification', {
 				firm: workState.firm,
 				modification: workState.modification,
@@ -245,12 +272,14 @@ function CreateMainComponent() {
 		}
 	}, [workState.firm, workState.modification]);
 
-	const prevTypeRef = useRef<string | undefined>(undefined);
-
 	useEffect(() => {
-		if (!workState.type || !isShortListLoadAttemptedRef.current) return;
+		if (workState.type == '') return;
+		if (!workStateRef.current.type || !isShortListLoadAttemptedRef.current) return;
+		if (typeNewOrderId.current == '[неопределено]' || !typeNewOrderId.current.trim()) {
+			getNewOrderId();
+		}
 
-		let currentType = workState.type;
+		let currentType = workState.type as string;
 
 		if ((!namesToShortList || namesToShortList.length === 0) && currentType !== typeNewOrderId.current) {
 			dispatch(workflows.actions.setError({
@@ -261,24 +290,23 @@ function CreateMainComponent() {
 			const newState = { ...workState, type: typeNewOrderId.current };
 			setWorkState(newState);
 		}
-		if (currentType === typeNewOrderId.current && prevTypeRef.current !== typeNewOrderId.current) {
-			if (namesToShortList) {
-				setShortList(namesToShortList, currentType);
-			}
+		if (namesToShortList) {
+			setShortList(namesToShortList, currentType);
 		}
-		prevTypeRef.current = currentType;
 		setShowAnotherNameHandler(currentType);
 	}, [workState.type]);
 
 
 	useEffect(() => {
-		if (workState.firm !== '' && workState.modification !== '' && namesToShortList && namesToShortList.length > 0) {
-			setShortList(namesToShortList, workState.type as string);
+		if (workStateRef.current.firm !== '' && workStateRef.current.modification !== '' && namesToShortList && namesToShortList.length > 0) {
+			setShortList(namesToShortList, workStateRef.current.type as string);
 		}
 	}, [workState.title]);
 
 	const setShowAnotherNameHandler = (currentType: string) => {
-
+		if (typeNewOrderId.current == '[неопределено]' || !typeNewOrderId.current.trim()) {
+			getNewOrderId();
+		}
 		setShowAnotherName(currentType !== typeNewOrderId.current);
 	};
 
@@ -374,14 +402,11 @@ function CreateMainComponent() {
 	};
 
 	const changeField = (name: IWorkflowsKeys, value: string | number | boolean) => {
-		setWorkState({ ...workState, [name]: value });
+		setWorkState({ ...workStateRef.current, [name]: value });
 	};
 
 	const changeSwitcher = (checked: boolean) => changeField('setToStat', checked);
 
-	useEffect(() => {
-		setCanAutoConvert(canConvertDescription(workState.description));
-	}, [workState.description]);
 
 	useEffect(() => {
 		if (!id || Object.keys(workflowsObject).length <= 0) return;
@@ -418,11 +443,11 @@ function CreateMainComponent() {
 				saveWork().then();
 			}
 
-			if (event.key.toLowerCase() === 'a' || event.key.toLowerCase() === 'ф') {
-				convertText(workState.description);
+			if (event.key.toLowerCase() === 'a' || event.key.toLowerCase() === 'å') {
+				convertText(workStateRef.current.description);
 			}
 
-			if (event.key.toLowerCase() === 'v' || event.key.toLowerCase() === 'м') {
+			if (event.key.toLowerCase() === 'v' || event.key.toLowerCase() === '√') {
 				event.preventDefault();
 				if (descriptionRef.current) {
 					descriptionRef.current.focus();
@@ -446,6 +471,12 @@ function CreateMainComponent() {
 			document.removeEventListener('keydown', handleKeyDown);
 		};
 	}, []);
+
+	useEffect(() => {
+		workStateRef.current = workState;
+		makeCanSave(namesToShortList);
+		setCanAutoConvert(canConvertDescription(workState.description));
+	}, [workState]);
 
 	return (
 		<Box
@@ -669,7 +700,14 @@ function CreateMainComponent() {
 					<ContainedSmallButtonComponent
 						disabled={!canSave}
 						onClick={() => saveWork()}
-						color={id ? 'success' : 'primary'}
+						color={id
+							? workState.type === typeNewOrderId.current
+								? 'success'
+								: 'info'
+							: workState.type === typeNewOrderId.current
+								? 'primary'
+								: 'secondary'
+						}
 					>
 						{
 							id

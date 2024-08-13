@@ -191,7 +191,6 @@ export default function BodyTableStatComponent({
 	const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (event.target.checked) {
 			const newSelected = rows.filter(row => !row.isCheckedOnStat).map(row => row._id as string);
-			// console.log('newSelected = ', newSelected);
 			setSelected(newSelected);
 			return;
 		}
