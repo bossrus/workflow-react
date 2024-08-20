@@ -9,7 +9,7 @@ export const closeWorkflowThunk = createAsyncThunk(
 	async ({ workflow }: IWorkflowSlice, { dispatch, getState }) => {
 
 		const { data: workflowsObject } = (getState() as TAppState).workflows;
-		const me = Object.values((getState() as TAppState).me.data)[0];
+		const me = Object.values((getState() as TAppState).me.data)[0] as { _id: string };
 		const executors = workflowsObject[workflow._id as string].executors;
 		if (executors && executors.includes(me._id)) {
 			const newExecutors: string[] = executors.filter((executor: string) => executor !== me._id);

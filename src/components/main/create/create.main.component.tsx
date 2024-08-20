@@ -36,6 +36,7 @@ function CreateMainComponent() {
 		typeNewOrderId.current = getIDByTitle(typesOfWorkArray, 'Новый заказ');
 	};
 
+	let saveProcessed = false;
 
 	const [workState, setWorkState] = useState<IWorkflowUpdate>({
 		firm: '',
@@ -147,7 +148,6 @@ function CreateMainComponent() {
 		setCanSave(result);
 	};
 
-	// noinspection SpellCheckingInspection
 	const tagsMappings = {
 		'[<FRM>]': (value: string, state: IWorkflowUpdate) => ({
 			...state,
@@ -273,8 +273,7 @@ function CreateMainComponent() {
 	}, [workState.firm, workState.modification]);
 
 	useEffect(() => {
-		if (workState.type == '') return;
-		if (!workStateRef.current.type || !isShortListLoadAttemptedRef.current) return;
+		if (workState.type == '' || saveProcessed || !workStateRef.current.type || !isShortListLoadAttemptedRef.current) return;
 		if (typeNewOrderId.current == '[неопределено]' || !typeNewOrderId.current.trim()) {
 			getNewOrderId();
 		}
@@ -336,6 +335,8 @@ function CreateMainComponent() {
 
 		if (!calculateCanSave(namesToShortListRef.current)) return;
 
+		saveProcessed = true;
+
 		const work: IWorkflowUpdate = id ? workflowsObjectRef.current[id] : {};
 
 		const data: IWorkflowUpdate = { ...workStateRef.current };
@@ -387,6 +388,7 @@ function CreateMainComponent() {
 		setCanSave(false);
 		setShowAnotherName(false);
 		if (id) navigate('/main');
+		saveProcessed = false;
 	};
 
 	const canConvertDescription = (allDescription: string | undefined) => {
